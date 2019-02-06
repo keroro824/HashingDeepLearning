@@ -1,0 +1,35 @@
+Bucketsize = 1000
+RangePow = 8,8,9
+K = 2,2,3
+L = 200,200,200
+Sparsity = 1,1,0.05,1,1,0.05
+
+Batchsize = 100
+Rehash=1000
+InputDim = 80000
+totRecords = 13000000
+totRecordsTest = 2625000
+
+Adam = 1
+Beta1 = 0.9
+Beta2 = 0.999
+Eps=0.00000001
+
+Lr=0.001
+LrFactor=0
+Epoch=1
+Stepsize=30
+
+sizesOfLayers=1000,1000,22427
+numLayer=3
+
+
+trainData=/Users/beidchen/Documents/work/SUBLIME/HashingDeepLearning/bgd/q2bn/preproc_tst_0
+testData=/Users/beidchen/Documents/work/SUBLIME/HashingDeepLearning/bgd_new/preproc_tst_shuf_0
+weight=/Users/beidchen/Documents/work/SUBLIME/HashingDeepLearning/bgd_new/80k_1k_1k_22k_one_file_full_softmax.npz
+
+trainData=/search_labs/users/beidchen/workspace/SUBLIME/HashingDeepLearning/bgd/q2bn/preproc_tr_0
+testData=/search_labs/users/beidchen/workspace/SUBLIME/HashingDeepLearning/bgd/q2bn/preproc_tst_shuf_0
+weight=/search_labs/users/beidchen/workspace/SUBLIME/HashingDeepLearning/bgd_new/80k_1k_1k_22k_one_file_full_softmax.npz
+
+

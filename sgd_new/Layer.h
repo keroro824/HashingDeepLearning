@@ -1,0 +1,42 @@
+#pragma once
+#include "Node.h"
+#include "WtaHash.h"
+#include "DensifiedMinhash.h"
+#include "srp.h"
+#include "LSH.h"
+#include "DensifiedWtaHash.h"
+#include "cnpy.h"
+
+using namespace std;
+
+class Layer
+{
+private:
+	NodeType _type;
+	Node** _Nodes;
+	int * _randNode;
+	float* _normalizationConstants;
+	int*_inputIDs; //needed for SOFTMAX
+	int _K, _L;
+
+public:
+	int _layerID, _noOfActive;
+	int _noOfNodes;
+	LSH *_hashTables;
+	WtaHash *_wtaHasher;
+	DensifiedMinhash *_MinHasher;
+	SparseRandomProjection *_srp;
+	DensifiedWtaHash *_dwtaHasher;
+	int * _binids;
+	float* _weights;
+	float* _bias;
+	Layer(int _numNodex, int previousLayerNumOfNodes, int layerID, NodeType type, int batchsize, int K, int L, int RangePow, float Sparsity, float* weights=NULL, float* bias=NULL);
+	Node* getNodebyID(int nodeID);
+	Node** getAllNodes();
+	void addtoHashTable(float* weights, int length, float bias, int id);
+	float getNomalizationConstant(int inputID);
+	int queryActiveNodeandComputeActivations(int** activenodesperlayer, float** activeValuesperlayer, int* inlenght, int layerID, int inputID,  int* label, int labelsize, float Sparsity, int iter);
+	void saveWeights(string file);
+	~Layer();
+};
+

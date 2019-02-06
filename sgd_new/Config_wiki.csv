@@ -1,0 +1,37 @@
+Bucketsize = 100
+RangePow = 1,1
+K = 1,1
+L = 1,1
+Sparsity = 1,0.005,1,1
+
+Batchsize = 100
+Rehash=1000
+InputDim = 1617899
+totRecords = 1778351
+totRecordsTest = 587084
+totRecords = 1778300
+totRecordsTest = 587000
+
+Adam = 1
+Beta1 = 0.9
+Beta2 = 0.999
+Eps=0.00000001
+
+Lr=0.01
+LrFactor=0
+Epoch=1
+Stepsize=1000
+
+sizesOfLayers=128,325056
+numLayer=2
+
+
+
+
+trainData=/search_labs/users/beidchen/workspace/aloi/aloi_lsh/data/wikiLSHTC_train.txt
+testData=/search_labs/users/beidchen/workspace/aloi/aloi_lsh/data/wikiLSHTC_test.txt
+
+logFile=/search_labs/users/beidchen/workspace/SUBLIME/HashingDeepLearning/sgd_new/logs/log_wiki_acc
+
+trainData=/Users/beidchen/Downloads/WikiLSHTC/wikiLSHTC_shuf_train.txt
+testData=/Users/beidchen/Downloads/WikiLSHTC/wikiLSHTC_shuf_test.txt

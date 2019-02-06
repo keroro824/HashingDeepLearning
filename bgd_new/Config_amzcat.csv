@@ -1,0 +1,32 @@
+Bucketsize = 100
+RangePow = 2,10
+K = 2,10
+L = 200,100
+Sparsity = 1,0.005,1,1
+
+Batchsize = 256
+Rehash=12800
+InputDim = 203882
+totRecords = 1186239
+totRecordsTest = 306782
+
+Adam = 1
+Beta1 = 0.9
+Beta2 = 0.999
+Eps=0.00000001
+
+Lr=0.001
+LrFactor=0
+Epoch=1
+Stepsize=1000
+
+sizesOfLayers=128,13330
+numLayer=2
+
+
+
+trainData=/efs/users/beidchen/workspace/aloi/aloi_lsh/data/amazonCat_shuf_train.txt
+testData=/efs/users/beidchen/workspace/aloi/aloi_lsh/data/amazonCat_shuf_test.txt
+
+
+logFile=/efs/users/beidchen/workspace/SUBLIME/HashingDeepLearning/bgd_new/logs/log_amzcat_sim_10_100
