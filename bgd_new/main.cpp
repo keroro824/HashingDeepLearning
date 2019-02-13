@@ -383,7 +383,7 @@ void ReadDataSVM(int numBatches,  Network* _mynet, int epoch){
     int totalTime = 0;
     for (size_t i = 0; i < numBatches; i++) {
         if((i+epoch*numBatches)%Stepsize==0) {
-            EvalDataSVM(10, _mynet, epoch*numBatches+i);
+            EvalDataSVM(20, _mynet, epoch*numBatches+i);
         }
         int **records = new int *[Batchsize];
         float **values = new float *[Batchsize];
@@ -449,9 +449,16 @@ void ReadDataSVM(int numBatches,  Network* _mynet, int epoch){
         }
 
         bool rehash = false;
+        bool rebuild = false;
         if ((epoch*numBatches+i)%(Rehash/Batchsize) == (Rehash/Batchsize-1)){
             if(Mode==1 || Mode==4) {
                 rehash = true;
+            }
+        }
+
+        if ((epoch*numBatches+i)%(Rehash/Batchsize) == (Rehash/Batchsize-1)){
+            if(Mode==1 || Mode==4) {
+                rebuild = true;
             }
         }
 
@@ -459,7 +466,7 @@ void ReadDataSVM(int numBatches,  Network* _mynet, int epoch){
 
 
         auto logloss = _mynet->ProcessInput(records, values, sizes, labels, labelsize, epoch * numBatches + i,
-                                            rehash);
+                                            rehash, rebuild);
 
         auto t2 = std::chrono::high_resolution_clock::now();
 
@@ -679,9 +686,7 @@ int main(int argc, char* argv[])
     auto t2 = std::chrono::high_resolution_clock::now();
     int timeDiffInMiliseconds = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
     std::cout << "Network Initialization takes " << 1.0 * timeDiffInMiliseconds << std::endl;
-//    _mynet->saveWeights(Weights);
-//    EvalDataSVM(10, _mynet, 0);
-//    exit(0);
+
     //***********************************
     // Start Training
     //***********************************
@@ -699,7 +704,7 @@ int main(int argc, char* argv[])
         if(e%5==4) {
             EvalDataSVM(numBatchesTest, _mynet, (e+1)*numBatches);
         }else{
-            EvalDataSVM(100, _mynet, (e+1)*numBatches);
+            EvalDataSVM(50, _mynet, (e+1)*numBatches);
         }
 #endif
 //#ifdef EVAL

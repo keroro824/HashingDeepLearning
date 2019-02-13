@@ -19,6 +19,8 @@ Layer::Layer(int noOfNodes, int previousLayerNumOfNodes, int layerID, NodeType t
     _noOfActive = floor(_noOfNodes * Sparsity);
     _K = K;
     _L = L;
+    _RangeRow = RangePow;
+    _previousLayerNumOfNodes = previousLayerNumOfNodes;
 
 // create a list of random nodes just in case not enough nodes from hashtable for active nodes.
 //	std::random_device rd;
@@ -71,6 +73,33 @@ Layer::Layer(int noOfNodes, int previousLayerNumOfNodes, int layerID, NodeType t
     {
         _normalizationConstants = new float[batchsize]();
         _inputIDs = new int[batchsize]();
+    }
+}
+
+void Layer::updateTable()
+{
+
+
+
+
+
+    if (HashFunction == 1) {
+        delete _wtaHasher;
+        _wtaHasher = new WtaHash(_K * _L, _previousLayerNumOfNodes);
+    } else if (HashFunction == 2) {
+        delete _dwtaHasher, _binids;
+        _binids = new int[_previousLayerNumOfNodes];
+        _dwtaHasher = new DensifiedWtaHash(_K * _L, _previousLayerNumOfNodes);
+    } else if (HashFunction == 3) {
+
+        delete _MinHasher,  _binids;
+        _binids = new int[_previousLayerNumOfNodes];
+        _MinHasher = new DensifiedMinhash(_K * _L, _previousLayerNumOfNodes);
+        _MinHasher->getMap(_previousLayerNumOfNodes, _binids);
+    } else if (HashFunction == 4) {
+
+        _srp = new SparseRandomProjection(_previousLayerNumOfNodes, _K * _L, Ratio);
+
     }
 }
 
@@ -314,6 +343,29 @@ int Layer::queryActiveNodeandComputeActivations(int** activenodesperlayer, float
                         } else {
                             break;
                         }
+                    }
+                }
+            }
+
+                        srand(time(NULL));
+            int start = rand() % _noOfNodes;
+            for (int i = start; i < _noOfNodes; i++) {
+                if (counts.size() >= 1000) {
+                    break;
+                }
+                if (counts.count(_randNode[i]) == 0) {
+                    counts[_randNode[i]] = 0;
+                }
+            }
+
+
+            if (counts.size() < 1000) {
+                for (int i = 0; i < _noOfNodes; i++) {
+                    if (counts.size() >= len) {
+                        break;
+                    }
+                    if (counts.count(_randNode[i]) == 0) {
+                        counts[_randNode[i]] = 0;
                     }
                 }
             }

@@ -17,7 +17,8 @@ private:
 	int * _randNode;
 	float* _normalizationConstants;
     int*_inputIDs; //needed for SOFTMAX
-    int _K, _L;
+    int _K, _L, _RangeRow, _previousLayerNumOfNodes;
+
 
 public:
 	int _layerID, _noOfActive;
@@ -37,6 +38,8 @@ public:
 	float getNomalizationConstant(int inputID);
 	int queryActiveNodeandComputeActivations(int** activenodesperlayer, float** activeValuesperlayer, int* inlenght, int layerID, int inputID,  int* label, int labelsize, float Sparsity, int iter);
 	void saveWeights(string file);
+	void updateTable();
+
 	~Layer();
 };
 

@@ -18,7 +18,8 @@ hidden_dim_1 = 128
 n_train = 196606
 n_test = 100095
 n_epochs = 10
-batch_size = 16
+batch_size = 256
+# NUM_THREADS = 32
 
 # feature_dim = 135909
 # n_classes = 670091
@@ -31,14 +32,14 @@ batch_size = 16
 
 import os
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"]="1"
+os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
 import glob
 # train_files = glob.glob('/search_labs/users/medinit/SUBLIME/mach/Amazon-3M/amazon-3M_train_shuf')
 # test_files = glob.glob('/search_labs/users/medinit/SUBLIME/mach/Amazon-3M/amazon-3M_test_shuf')
-train_files = glob.glob('/efs/users/beidchen/workspace/aloi/aloi_lsh/data/deliciousLarge_shuf_train.txt')
-test_files = glob.glob('/efs/users/beidchen/workspace/aloi/aloi_lsh/data/deliciousLarge_shuf_test.txt')
-weights = np.load('/efs/users/beidchen/workspace/SUBLIME/HashingDeepLearning/bgd_new/log_paper/delicious/weightsave.npz')
+train_files = glob.glob('/beidi/NN/data/deliciousLarge_shuf_train.txt')
+test_files = glob.glob('/beidi/NN/data/deliciousLarge_shuf_test.txt')
+weights = np.load('/beidi/NN/HashingDeepLearning/bgd_new/log_paper/delicious/weightsave.npz')
 
 
 def data_generator(files, batch_size, n_classes):
@@ -136,7 +137,7 @@ loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=logits, lab
 
 # loss = tf.reduce_mean(tf.losses.hinge_loss(logits=logits, labels=y))
 
-train_step = tf.train.AdamOptimizer(0.0001).minimize(loss)
+train_step = tf.train.AdamOptimizer(0.00001).minimize(loss)
 
 
 # global_step = tf.Variable(0, trainable=False)
@@ -156,6 +157,7 @@ n_steps = n_epochs*(n_train//batch_size)
 training_data_generator = data_generator(train_files, batch_size, n_classes)
 
 
+# config = tf.ConfigProto(inter_op_parallelism_threads=NUM_THREADS, intra_op_parallelism_threads=NUM_THREADS)
 config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
 
@@ -166,22 +168,22 @@ import time
 begin_time = time.time()
 total_time = 0
 
-with open("/efs/users/beidchen/workspace/SUBLIME/HashingDeepLearning/bgd_new/log_paper/delicious/log_deli_16_tf", 'w') as out:
+with open("/beidi/NN/HashingDeepLearning/bgd_new/log_paper/delicious/log_deli_tf_44", 'w') as out:
     for i in range(n_steps):
-        if i%1000==0:
+        if i%100==0:
             total_time+=time.time()-begin_time
             print('Finished ',i,' steps. Time elapsed for last 100 batches = ',time.time()-begin_time)
             n_steps_val = n_test//batch_size
             test_data_generator = data_generator_tst(test_files, batch_size)
             tmp_k = 0
-            for h in range(50):
+            for h in range(20):
                 idxs_batch, vals_batch, labels_batch = next(test_data_generator)
                 top_k_classes = sess.run(top_idxs, feed_dict={x_idxs:idxs_batch, x_vals:vals_batch})
                 tmp_k += np.mean([len(np.intersect1d(top_k_classes[j],labels_batch[j]))/min(k,len(labels_batch[j])) for j in range(len(top_k_classes))])
-            print(' test_acc: ',tmp_k/50)
+            print(' test_acc: ',tmp_k/20)
             #print('train loss: ',train_loss)
             print('#######################')
-            print(i,int(total_time),tmp_k/50 , file=out)
+            print(i,int(total_time),tmp_k/20 , file=out)
             begin_time = time.time()
         idxs_batch, vals_batch, labels_batch = next(training_data_generator)
         sess.run(train_step, feed_dict={x_idxs:idxs_batch, x_vals:vals_batch, y:labels_batch})

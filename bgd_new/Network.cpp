@@ -3,6 +3,7 @@
 #include <math.h>
 #include <algorithm>
 #include "Config.h"
+#include <omp.h>
 #define DEBUG 1
 using namespace std;
 
@@ -144,7 +145,7 @@ int Network::predictClass(int **inputIndices, float **inputValues, int *length, 
     return correctPred;
 }
 
-int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths, int **labels, int *labelsize, int iter, bool rehash) {
+int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths, int **labels, int *labelsize, int iter, bool rehash, bool rebuild) {
 
 
     float logloss = 0.0;
@@ -153,17 +154,19 @@ int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths,
     int* avg_retrieval = new int[_numberOfLayers]();
 
     int check = 0;
-//    if(iter%400==399 && _learningRate>0.000009){
-//        _learningRate *= 0.2;
-//    }
+    if(iter%767==766 && _learningRate>0.000009){
+        _learningRate *= 0.5;
+    }
     float tmplr = _learningRate;
-
     if (ADAM) {
         tmplr = _learningRate * sqrt((1 - pow(BETA2, iter + 1))) /
                 (1 - pow(BETA1, iter + 1));
     }else{
 //        tmplr *= pow(0.9, iter/10.0);
     }
+
+//    omp_set_num_threads(44);
+//    int id  = omp_get_max_threads();
     # pragma omp parallel for
     for (int i = 0; i < _currentBatchSize; i++) {
         int **activenodesperlayer = new int *[_numberOfLayers + 1]();
@@ -174,12 +177,12 @@ int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths,
         activeValuesperlayer[0] = inputValues[i];
         sizes[0] = lengths[i];
         // cout<<"start query"<<endl;
-
+        int in;
         auto t1 = std::chrono::high_resolution_clock::now();
         for (int j = 0; j < _numberOfLayers; j++) {
 
 
-            int in = _hiddenlayers[j]->queryActiveNodeandComputeActivations(activenodesperlayer, activeValuesperlayer, sizes, j, i, labels[i], labelsize[i], _Sparsity[j], iter*_currentBatchSize+i);
+             in = _hiddenlayers[j]->queryActiveNodeandComputeActivations(activenodesperlayer, activeValuesperlayer, sizes, j, i, labels[i], labelsize[i], _Sparsity[j], iter*_currentBatchSize+i);
 //            if (labelsize[i]==in) {
 //                check ++;
 //            }
@@ -187,6 +190,11 @@ int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths,
 
 
         }
+
+
+
+
+
         auto t2 = std::chrono::high_resolution_clock::now();
         auto timeDiffInMiliseconds = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
 //        std::cout << "forward "<<" takes" << 1.0 * timeDiffInMiliseconds << std::endl;
@@ -236,6 +244,7 @@ int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths,
 
     auto t1 = std::chrono::high_resolution_clock::now();
     bool tmpRehash;
+    bool tmpRebuild;
 
     for (int l=0; l<_numberOfLayers ;l++) {
         if(rehash & _Sparsity[l]<1){
@@ -243,26 +252,38 @@ int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths,
         }else{
             tmpRehash=false;
         }
-        if (rehash) {
+        if(rebuild & _Sparsity[l]<1){
+            tmpRebuild=true;
+        }else{
+            tmpRebuild=false;
+        }
+        if (tmpRehash) {
             _hiddenlayers[l]->_hashTables->clear();
         }
-        int counthash = 0;
-        # pragma omp parallel for reduction(+:counthash)
+        if (tmpRebuild){
+            _hiddenlayers[l]->updateTable();
+        }
+        int ratio = 1;
+//        if ((l==_numberOfLayers-1) & avg_retrieval[l]<1000){
+//            ratio = avg_retrieval[l]/5000.0;;
+//        }
+        # pragma omp parallel for
         for (int m=0; m< _hiddenlayers[l]->_noOfNodes; m++) {
             Node *tmp = _hiddenlayers[l]->getNodebyID(m);
 
             if(ADAM){
+
                 for (int d=0; d< tmp->_dim;d++){
                         tmp->_adamAvgMom[d] = BETA1 * tmp->_adamAvgMom[d] + (1 - BETA1) * tmp->_t[d];
                         tmp->_adamAvgVel[d] = BETA2 * tmp->_adamAvgVel[d] + (1 - BETA2) * tmp->_t[d] * tmp->_t[d];
-                        tmp->_weights[d] += tmplr * tmp->_adamAvgMom[d] / (sqrt(tmp->_adamAvgVel[d]) + EPS);
+                        tmp->_weights[d] += ratio*tmplr * tmp->_adamAvgMom[d] / (sqrt(tmp->_adamAvgVel[d]) + EPS);
                         tmp->_t[d] = 0;
                 }
 
 
                     tmp->_adamAvgMombias = BETA1 * tmp->_adamAvgMombias + (1 - BETA1) * tmp->_tbias;
                     tmp->_adamAvgVelbias = BETA2 * tmp->_adamAvgVelbias + (1 - BETA2) * tmp->_tbias * tmp->_tbias;
-                    tmp->_bias += tmplr * tmp->_adamAvgMombias / (sqrt(tmp->_adamAvgVelbias) + EPS);
+                    tmp->_bias += ratio*tmplr * tmp->_adamAvgMombias / (sqrt(tmp->_adamAvgVelbias) + EPS);
                     tmp->_tbias = 0;
 
 
@@ -272,7 +293,6 @@ int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths,
                 tmp->_bias = tmp->_mirrorbias;
             }
             if (tmpRehash) {
-
 
                 int *hashes;
                 if(HashFunction==1) {
