@@ -16,6 +16,5 @@ mnist.scale
 */aloi*
 */*.np*
 */*/cmake-build-debug
-*/Makefile
 */cppobjs
 */runme
