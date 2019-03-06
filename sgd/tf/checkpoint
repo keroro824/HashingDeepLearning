@@ -1,2 +1,0 @@
-model_checkpoint_path: "mnist_fc_best"
-all_model_checkpoint_paths: "mnist_fc_best"
