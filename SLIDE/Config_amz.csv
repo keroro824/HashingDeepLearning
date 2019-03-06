@@ -1,0 +1,40 @@
+Bucketsize = 100
+RangePow = 6,18
+K = 2,6
+L = 20,50
+Sparsity = 1,0.005,1,1
+
+Batchsize = 128
+Rehash=6400
+Rebuild=128000
+InputDim = 135909
+totRecords = 490449
+totRecordsTest = 153025
+
+Adam = 1
+Beta1 = 0.9
+Beta2 = 0.999
+Eps=0.00000001
+
+Lr=0.0001
+LrFactor=0
+Epoch=200
+Stepsize=100
+
+sizesOfLayers=128,670091
+numLayer=2
+
+
+trainData=/Users/beidchen/Downloads/WikiLSHTC/wikiLSHTC_shuf_train.txt
+testData=/Users/beidchen/Downloads/WikiLSHTC/wikiLSHTC_shuf_test.txt
+
+trainData=/beidi/NN/data/amazon_shuf_train
+testData=/beidi/NN/data/amazon_shuf_test
+
+
+
+weight=
+savedweight=
+
+logFile=
+logFile=
