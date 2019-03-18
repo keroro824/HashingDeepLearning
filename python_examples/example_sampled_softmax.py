@@ -68,7 +68,7 @@ def main():
     training_data_generator = data_generator(train_files, batch_size, n_classes)
     steps_per_epoch = n_train//batch_size
     n_steps = n_epochs*steps_per_epoch
-    n_check = 50
+    n_check = 500
     #
     begin_time = time.time()
     total_time = 0

@@ -1,3 +1,7 @@
+from itertools import islice
+import numpy as np
+
+
 def data_generator(files, batch_size, n_classes):
     while 1:
         lines = []
