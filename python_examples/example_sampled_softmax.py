@@ -30,8 +30,8 @@ def main():
         os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
         os.environ["CUDA_VISIBLE_DEVICES"] = config.GPUs
     #
-    train_files = glob.glob(config.data_path)
-    test_files = glob.glob(config.data_path)
+    train_files = glob.glob(config.data_path_train)
+    test_files = glob.glob(config.data_path_test)
     #
     x_idxs = tf.placeholder(tf.int64, shape=[None,2])
     x_vals = tf.placeholder(tf.float32, shape=[None])
