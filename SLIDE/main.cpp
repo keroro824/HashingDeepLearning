@@ -172,6 +172,10 @@ void parseconfig(string filename)
         {
             Epoch = atoi(trim(second).c_str());
         }
+        else if (trim(first) == "Lr")
+        {
+            Lr = atof(trim(second).c_str());
+        }
         else if (trim(first) == "Stepsize")
         {
             Stepsize = atoi(trim(second).c_str());

@@ -15,10 +15,8 @@ For Tensorflow-CPU compiled with AVX2, we recommend using this precompiled [buil
 
 Run
 
-```python python_examples/example_full_softmax.py
- ```
-``` python python_examples/example_sampled_softmax.py
-```
+```python python_examples/example_full_softmax.py```
+``` python python_examples/example_sampled_softmax.py```
 
 ## Running SLIDE
 
@@ -26,11 +24,9 @@ Firstly,  [CNPY](https://github.com/rogersce/cnpy) package needs to be installed
 
 Run 
 
-```make
-```
+```make```
 
-```./runme Config_amz.csv
-```
+```./runme Config_amz.csv```
 
 Note that `Makefile` needs to be modified based on the CNPY path. Also the `trainData, testData, logFile` in Config_amz.csv needs to be changed accordingly too.
 
