@@ -12,21 +12,21 @@ COBJS := $(CSOURCES:%.c=$(COBJDIR)/%.o)
 
 OBJS = $(CPPOBJS) $(COBJS)
 
-OPT_FLAGS   := -fno-strict-aliasing -O2 -fopenmp
+OPT_FLAGS   := -fno-strict-aliasing -O2 -fopenmp #-march=skylake -mtune=intel -mavx2 -mavx512f
 
 INC := /usr/include/
 
-LIB += -fopenmp -L /Users/beidchen/Documents/work/cnpy/build/ -lcnpy -lz
+LIB += -fopenmp -L ~/workspace/baseline/cnpy/build/ -lcnpy -lz
 
-CXXFLAGS := -m64 -DUNIX -L /Users/beidchen/Documents/work/cnpy/build/ -lcnpy -lz -std=c++11 $(WARN_FLAGS) $(OPT_FLAGS) -I$(INC)
-CFLAGS := -m64 -DUNIX -L /Users/beidchen/Documents/work/cnpy/build/ -lcnpy -lz $(WARN_FLAGS) $(OPT_FLAGS) -I$(INC)
+CXXFLAGS := -m64  -DUNIX -I ~/workspace/baseline/cnpy/ -lcnpy -lz -std=c++11 $(WARN_FLAGS) $(OPT_FLAGS) -I$(INC)
+CFLAGS := -m64 -DUNIX -I ~/workspace/baseline/cnpy/ -lcnpy -lz $(WARN_FLAGS) $(OPT_FLAGS) -I$(INC)
 
 LDFLAGS := $(LIBRARY_PATH) $(LIB)
 
 .PHONY: clean
 
 $(TARGET): $(CPPOBJDIR) $(COBJDIR) $(CPPOBJS) $(COBJS)
-	g++-5 -fPIC -L /Users/beidchen/Documents/work/cnpy/build/ -lcnpy -lz -o $(TARGET) $(CPPOBJS) $(LDFLAGS)
+	g++-5 -fPIC -L ~/workspace/baseline/cnpy/build/ -lcnpy -lz -o $(TARGET) $(CPPOBJS) $(LDFLAGS)
 
 $(CPPOBJS): $(CPPOBJDIR)/%.o: %.cpp
 	@echo "compile $@ $<"

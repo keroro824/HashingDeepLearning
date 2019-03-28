@@ -7,6 +7,7 @@
 #include "Config.h"
 #include <bitset>
 #include <fstream>
+#include <omp.h>
 
 using namespace std;
 
@@ -201,11 +202,18 @@ float collision(int* hashes, int* table_hashes, int k, int l){
 int Layer::queryActiveNodeandComputeActivations(int** activenodesperlayer, float** activeValuesperlayer, int* lengths, int layerIndex, int inputID, int* label, int labelsize, float Sparsity, int iter)
 {
     //LSH QueryLogic
+    //if (omp_get_thread_num() == 1)
+//#pragma omp single
+//    std::cout << "queryActiveNodeandComputeActivations inputID = " << inputID << std::endl;
 
     //Beidi. Query out all the candidate nodes
     int len;
-    int in =0;
-    if(Sparsity==1.0){
+    int in = 0;
+
+//    std::chrono::high_resolution_clock::time_point t0, t1, t2, t3;
+//    t2 = std::chrono::high_resolution_clock::now();
+
+    if(Sparsity == 1.0){
         len = _noOfNodes;
         lengths[layerIndex + 1] = len;
         activenodesperlayer[layerIndex + 1] = new int[len]; //assuming not intitialized;
@@ -213,15 +221,16 @@ int Layer::queryActiveNodeandComputeActivations(int** activenodesperlayer, float
         {
             activenodesperlayer[layerIndex + 1][i] = i;
         }
+//        if (omp_get_thread_num() == 1)
+//            std::cout << "Sparsity 1" << std::endl;
     }
-    else {
-
-
+    else
+    {
+//        if (omp_get_thread_num() == 1)
+//            std::cout << "Mode " << Mode << std::endl;
         if (Mode==1) {
-
-
             int *hashes;
-            auto t0 = std::chrono::high_resolution_clock::now();
+            //t0 = std::chrono::high_resolution_clock::now();
             if (HashFunction == 1) {
                 hashes = _wtaHasher->getHash(activeValuesperlayer[layerIndex]);
             } else if (HashFunction == 2) {
@@ -238,7 +247,7 @@ int Layer::queryActiveNodeandComputeActivations(int** activenodesperlayer, float
             // Get candidates from hashtable
             auto t00 = std::chrono::high_resolution_clock::now();
 
-            auto t1 = std::chrono::high_resolution_clock::now();
+            //t1 = std::chrono::high_resolution_clock::now();
             std::map<int, size_t> counts;
             // Make sure that the true label node is in candidates
             if (_type == NodeType::Softmax) {
@@ -248,7 +257,6 @@ int Layer::queryActiveNodeandComputeActivations(int** activenodesperlayer, float
                     }
                 }
             }
-
 
             for (int i = 0; i < _L; i++) {
                 if (actives[i] == NULL) {
@@ -265,47 +273,6 @@ int Layer::queryActiveNodeandComputeActivations(int** activenodesperlayer, float
                 }
             }
             auto t11 = std::chrono::high_resolution_clock::now();
-//            in = counts.size();
-
-//            srand(time(NULL));
-//            int start = rand() % _noOfNodes;
-//            for (int i = start; i < _noOfNodes; i++) {
-//                if (counts.size() >= len) {
-//                    break;
-//                }
-//                if (counts.count(_randNode[i]) == 0) {
-//                    counts[_randNode[i]] = 0;
-//                }
-//            }
-//
-//
-//            if (counts.size() < len) {
-//                for (int i = 0; i < _noOfNodes; i++) {
-//                    if (counts.size() >= len) {
-//                        break;
-//                    }
-//                    if (counts.count(_randNode[i]) == 0) {
-//                        counts[_randNode[i]] = 0;
-//                    }
-//                }
-//            }
-
-//            len = min((int)floor(_noOfNodes * Sparsity), (int)counts.size());
-//            lengths[layerIndex + 1] = len;
-//            activenodesperlayer[layerIndex + 1] = new int[len];
-//
-//            //sorting
-//            auto t2 = std::chrono::high_resolution_clock::now();
-//            std::vector<std::pair<int, int>> sortNodes;
-//            sortNodes.reserve(counts.size());
-//
-//            for (auto &&x : counts)
-//                sortNodes.emplace_back(-x.second, x.first);
-//
-//            std::random_shuffle(sortNodes.begin(), sortNodes.end());
-//            std::sort(begin(sortNodes), end(sortNodes));
-//            auto t22 = std::chrono::high_resolution_clock::now();
-
 
             //thresholding
             auto t3 = std::chrono::high_resolution_clock::now();
@@ -333,6 +300,9 @@ int Layer::queryActiveNodeandComputeActivations(int** activenodesperlayer, float
         }
         if (Mode==4) {
             int *hashes;
+//            if (omp_get_thread_num() == 1)
+//                std::cout << "Mode 4; get hashes" << std::endl;
+//            auto t0 = std::chrono::high_resolution_clock::now();
             if (HashFunction == 1) {
                 hashes = _wtaHasher->getHash(activeValuesperlayer[layerIndex]);
             } else if (HashFunction == 2) {
@@ -345,24 +315,24 @@ int Layer::queryActiveNodeandComputeActivations(int** activenodesperlayer, float
             }
             int *hashIndices = _hashTables->hashesToIndex(hashes);
             int **actives = _hashTables->retrieveRaw(hashIndices);
+            // we now have a sparse array of indices of active nodes
 
+//            if (omp_get_thread_num() == 1)
+//                std::cout << "Mode 4; got actives" << std::endl;
             // Get candidates from hashtable
-
             std::map<int, size_t> counts;
             // Make sure that the true label node is in candidates
-            if (_type == NodeType::Softmax) {
-                if (labelsize > 0) {
-                    for (int i=0; i<labelsize ;i++){
-                        counts[label[i]] = _L;
-                    }
+            if (_type == NodeType::Softmax && labelsize > 0) {
+                for (int i = 0; i < labelsize ;i++){
+                    counts[label[i]] = _L;
                 }
             }
-
 
             for (int i = 0; i < _L; i++) {
                 if (actives[i] == NULL) {
                     continue;
                 } else {
+                    // copy sparse array into (dense) map
                     for (int j = 0; j < BUCKETSIZE; j++) {
                         int tempID = actives[i][j] - 1;
                         if (tempID >= 0) {
@@ -375,9 +345,7 @@ int Layer::queryActiveNodeandComputeActivations(int** activenodesperlayer, float
             }
 
             in = counts.size();
-
             if (counts.size()<1500){
-
                 srand(time(NULL));
                 int start = rand() % _noOfNodes;
                 for (int i = start; i < _noOfNodes; i++) {
@@ -388,7 +356,6 @@ int Layer::queryActiveNodeandComputeActivations(int** activenodesperlayer, float
                         counts[_randNode[i]] = 0;
                     }
                 }
-
 
                 if (counts.size() < 1000) {
                     for (int i = 0; i < _noOfNodes; i++) {
@@ -406,14 +373,20 @@ int Layer::queryActiveNodeandComputeActivations(int** activenodesperlayer, float
             lengths[layerIndex + 1] = len;
             activenodesperlayer[layerIndex + 1] = new int[len];
 
+            // copy map into new array
             int i=0;
             for (auto &&x : counts) {
                 activenodesperlayer[layerIndex + 1][i] = x.first;
                 i++;
             }
 
+//            t1 = std::chrono::high_resolution_clock::now();
 
-
+//            if (omp_get_thread_num() == 1)
+//            {
+//                float timeDiff = std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count();
+//                std::cout << "activenodesperlayer ready " << timeDiff << " microseconds" << std::endl;
+//            }
 
             delete[] hashes;
             delete[] hashIndices;
@@ -487,8 +460,11 @@ int Layer::queryActiveNodeandComputeActivations(int** activenodesperlayer, float
         }
     }
 
-
-
+//    if (omp_get_thread_num() == 1)
+//    {
+//        std::cout << "hashes completed" << std::endl;
+//        std::cout << "calculate activations for " <<  lengths[layerIndex] << " x " << len << " nodes"<< std::endl;
+//    }
     //***********************************
 //    auto t1 = std::chrono::high_resolution_clock::now();
     activeValuesperlayer[layerIndex + 1] = new float[len]; //assuming its not initialized else memory leak;
@@ -496,32 +472,84 @@ int Layer::queryActiveNodeandComputeActivations(int** activenodesperlayer, float
     if (_type == NodeType::Softmax)
         _normalizationConstants[inputID] = 0;
 
-    int filtered = 0;
-    for (int i = 0; i < len; i++)
+    //int filtered = 0;
+    // find activation for all ACTIVE nodes in layer
+    //t0 = std::chrono::high_resolution_clock::now();
+//#pragma omp parallel for reduction(+:maxValue)
+    if (len < 262144)
     {
-        activeValuesperlayer[layerIndex + 1][i] = _Nodes[activenodesperlayer[layerIndex + 1][i]]->getActivation(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex], lengths[layerIndex], inputID);
-        if(activeValuesperlayer[layerIndex + 1][i]==0){
-            filtered++;
+        for (int i = 0; i < len; i++)
+        {
+            activeValuesperlayer[layerIndex + 1][i] = _Nodes[activenodesperlayer[layerIndex + 1][i]]->getActivation(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex], lengths[layerIndex], inputID);
+            //if(activeValuesperlayer[layerIndex + 1][i]==0){
+            //    filtered++;
+            //}
+            if(_type == NodeType::Softmax && activeValuesperlayer[layerIndex + 1][i] > maxValue){
+                maxValue = activeValuesperlayer[layerIndex + 1][i];
+            }
         }
-        if(_type == NodeType::Softmax){
-            if (activeValuesperlayer[layerIndex + 1][i]>maxValue){
+    }
+    else
+    {
+        for (int i = 0; i < len/2; i++)
+        {
+            activeValuesperlayer[layerIndex + 1][i] = _Nodes[activenodesperlayer[layerIndex + 1][i]]->getActivation(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex], lengths[layerIndex], inputID);
+            //if(activeValuesperlayer[layerIndex + 1][i]==0){
+            //    filtered++;
+            //}
+            if(_type == NodeType::Softmax && activeValuesperlayer[layerIndex + 1][i] > maxValue){
+                maxValue = activeValuesperlayer[layerIndex + 1][i];
+            }
+        }
+#pragma omp barrier
+        for (int i = len/2; i < len; i++)
+        {
+            activeValuesperlayer[layerIndex + 1][i] = _Nodes[activenodesperlayer[layerIndex + 1][i]]->getActivation(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex], lengths[layerIndex], inputID);
+            //if(activeValuesperlayer[layerIndex + 1][i]==0){
+            //    filtered++;
+            //}
+            if(_type == NodeType::Softmax && activeValuesperlayer[layerIndex + 1][i] > maxValue){
                 maxValue = activeValuesperlayer[layerIndex + 1][i];
             }
         }
     }
 
+//    t1 = std::chrono::high_resolution_clock::now();
+
+//    if (omp_get_thread_num() == 1)
+//    {
+//        float timeDiff = std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count();
+//        std::cout << "nodes activated " << timeDiff / 1000 << " milliseconds" << std::endl;
+//    }
+
     if(_type == NodeType::Softmax) {
+        //t0 = std::chrono::high_resolution_clock::now();
+//#pragma omp parallel for
         for (int i = 0; i < len; i++) {
             float realActivation = exp(activeValuesperlayer[layerIndex + 1][i] - maxValue);
-            activeValuesperlayer[layerIndex + 1][i] =realActivation;
+            activeValuesperlayer[layerIndex + 1][i] = realActivation;
             _Nodes[activenodesperlayer[layerIndex + 1][i]]->_lastActivations[inputID] = realActivation;
             _normalizationConstants[inputID] += realActivation;
         }
+//        t1 = std::chrono::high_resolution_clock::now();
+
+//        if (omp_get_thread_num() == 1)
+//        {
+//            float timeDiff = std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count();
+//            std::cout << "softmax calculated " << timeDiff / 1000 << " milliseconds" << std::endl;
+//        }
     }
+
+//    t3 = std::chrono::high_resolution_clock::now();
+
+//    if (omp_get_thread_num() == 1)
+//    {
+//        float timeDiff = std::chrono::duration_cast<std::chrono::microseconds>(t3 - t2).count();
+//        std::cout << "queryActiveNodeandComputeActivations total time " << timeDiff / 1000 << " milliseconds" << std::endl << std::endl;
+//    }
 
     return in;
 }
-
 
 void Layer::saveWeights(string file)
 {

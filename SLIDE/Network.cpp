@@ -70,10 +70,11 @@ Layer *Network::getLayer(int LayerID) {
 
 int Network::predictClass(int **inputIndices, float **inputValues, int *length, int **labels, int *labelsize) {
     int correctPred = 0;
-    int inhashtable = 0;
+    //int inhashtable = 0;
 
     auto t1 = std::chrono::high_resolution_clock::now();
-    #pragma omp parallel for reduction(+:correctPred)
+    #pragma omp parallel for reduction(+:correctPred) num_threads(24)  // num_threads must evenly divide batch size,
+                                                                      // else we get stuck on a deadlock
     for (int i = 0; i < _currentBatchSize; i++) {
         int **activenodesperlayer = new int *[_numberOfLayers + 1]();
         float **activeValuesperlayer = new float *[_numberOfLayers + 1]();
@@ -85,8 +86,10 @@ int Network::predictClass(int **inputIndices, float **inputValues, int *length, 
 
         //inference
         for (int j = 0; j < _numberOfLayers; j++) {
-            int tmp = _hiddenlayers[j]->queryActiveNodeandComputeActivations(activenodesperlayer, activeValuesperlayer, sizes, j, i, labels[i], 0, _Sparsity[_numberOfLayers+j], -1);
-            inhashtable+=tmp;
+            //int tmp =
+            _hiddenlayers[j]->queryActiveNodeandComputeActivations(activenodesperlayer, activeValuesperlayer, sizes, j, i, labels[i], 0,
+                    _Sparsity[_numberOfLayers+j], -1);
+            //inhashtable+=tmp;
         }
 
         //compute softmax
@@ -105,7 +108,6 @@ int Network::predictClass(int **inputIndices, float **inputValues, int *length, 
             correctPred++;
         }
 
-
         delete[] sizes;
         for (int j = 1; j < _numberOfLayers + 1; j++) {
             delete[] activenodesperlayer[j];
@@ -115,8 +117,8 @@ int Network::predictClass(int **inputIndices, float **inputValues, int *length, 
         delete[] activeValuesperlayer;
     }
     auto t2 = std::chrono::high_resolution_clock::now();
-    int timeDiffInMiliseconds = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
-    std::cout << "Inference " <<" takes" << 1.0 * timeDiffInMiliseconds << std::endl;
+    float timeDiffInMiliseconds = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+    std::cout << "Inference takes " << timeDiffInMiliseconds/1000 << " milliseconds" << std::endl;
 
     return correctPred;
 }
@@ -158,8 +160,9 @@ int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths,
         int in;
         auto t1 = std::chrono::high_resolution_clock::now();
         for (int j = 0; j < _numberOfLayers; j++) {
-            in = _hiddenlayers[j]->queryActiveNodeandComputeActivations(activenodesperlayer, activeValuesperlayer, sizes, j, i, labels[i], labelsize[i], _Sparsity[j], iter*_currentBatchSize+i);
-            avg_retrieval[j]+=in;
+            in = _hiddenlayers[j]->queryActiveNodeandComputeActivations(activenodesperlayer, activeValuesperlayer, sizes, j, i, labels[i], labelsize[i],
+                    _Sparsity[j], iter*_currentBatchSize+i);
+            avg_retrieval[j] += in;
         }
 
         auto t2 = std::chrono::high_resolution_clock::now();
@@ -168,7 +171,6 @@ int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths,
 
 
         //Now backpropagate.
-
         for (int j = _numberOfLayers - 1; j >= 0; j--) {
             for (int k = 0; k < sizes[j + 1]; k++) {
                 if (j == _numberOfLayers - 1) {
@@ -181,14 +183,11 @@ int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths,
                     _hiddenlayers[j]->getNodebyID(activenodesperlayer[j + 1][k])->backPropagate(
                             _hiddenlayers[j - 1]->getAllNodes(), activenodesperlayer[j], sizes[j], tmplr, i);
                 } else {
-
                     _hiddenlayers[j]->getNodebyID(activenodesperlayer[j + 1][k])->backPropagateFirstLayer(
                             inputIndices[i], inputValues[i], lengths[i], tmplr, i);
                 }
             }
-
         }
-
 
         //Free memory to avoid leaks
         delete[] sizes;
@@ -223,12 +222,12 @@ int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths,
             _hiddenlayers[l]->updateTable();
         }
         int ratio = 1;
-        # pragma omp parallel for
-        for (int m=0; m< _hiddenlayers[l]->_noOfNodes; m++) {
+# pragma omp parallel for
+        for (int m = 0; m < _hiddenlayers[l]->_noOfNodes; m++)
+        {
             Node *tmp = _hiddenlayers[l]->getNodebyID(m);
 
             if(ADAM){
-
                 for (int d=0; d< tmp->_dim;d++){
                         tmp->_adamAvgMom[d] = BETA1 * tmp->_adamAvgMom[d] + (1 - BETA1) * tmp->_t[d];
                         tmp->_adamAvgVel[d] = BETA2 * tmp->_adamAvgVel[d] + (1 - BETA2) * tmp->_t[d] * tmp->_t[d];
@@ -236,15 +235,13 @@ int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths,
                         tmp->_t[d] = 0;
                 }
 
-
-                    tmp->_adamAvgMombias = BETA1 * tmp->_adamAvgMombias + (1 - BETA1) * tmp->_tbias;
-                    tmp->_adamAvgVelbias = BETA2 * tmp->_adamAvgVelbias + (1 - BETA2) * tmp->_tbias * tmp->_tbias;
-                    tmp->_bias += ratio*tmplr * tmp->_adamAvgMombias / (sqrt(tmp->_adamAvgVelbias) + EPS);
-                    tmp->_tbias = 0;
-
-
+                tmp->_adamAvgMombias = BETA1 * tmp->_adamAvgMombias + (1 - BETA1) * tmp->_tbias;
+                tmp->_adamAvgVelbias = BETA2 * tmp->_adamAvgVelbias + (1 - BETA2) * tmp->_tbias * tmp->_tbias;
+                tmp->_bias += ratio*tmplr * tmp->_adamAvgMombias / (sqrt(tmp->_adamAvgVelbias) + EPS);
+                tmp->_tbias = 0;
             }
-            else{
+            else
+            {
                 std::copy(tmp->_mirrorWeights, tmp->_mirrorWeights+(tmp->_dim) , tmp->_weights);
                 tmp->_bias = tmp->_mirrorbias;
             }
@@ -274,7 +271,6 @@ int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths,
     auto t2 = std::chrono::high_resolution_clock::now();
     int timeDiffInMiliseconds = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
 //            std::cout << "Layer " <<" takes" << 1.0 * timeDiffInMiliseconds << std::endl;
-
 
     if (DEBUG&rehash) {
 

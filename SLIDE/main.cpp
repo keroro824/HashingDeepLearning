@@ -16,6 +16,7 @@
 #include<iostream>
 #include<map>
 #include<string>
+//#include <omp.h>
 #include "Config.h"
 
 int *RangePow;
@@ -30,7 +31,7 @@ int Rebuild = 1000;
 int InputDim = 784;
 int totRecords = 60000;
 int totRecordsTest = 10000;
-float Lr = 0.01;
+float Lr = 0.0001;
 int Epoch = 5;
 int Stepsize = 20;
 int *sizesOfLayers;
@@ -172,6 +173,10 @@ void parseconfig(string filename)
         {
             Epoch = atoi(trim(second).c_str());
         }
+        else if (trim(first) == "Lr")
+        {
+            Lr = atof(trim(second).c_str());
+        }
         else if (trim(first) == "Stepsize")
         {
             Stepsize = atoi(trim(second).c_str());
@@ -297,9 +302,17 @@ void EvalDataSVM(int numBatchesTest,  Network* _mynet, int iter){
                 break;
         }
 
+        int num_features = 0, num_labels = 0;
+        for (int i = 0; i < Batchsize; i++)
+        {
+            num_features += sizes[i];
+            num_labels += labelsize[i];
+        }
+
+        std::cout << Batchsize << " records, with "<< num_features << " features and " << num_labels << " labels" << std::endl;
         auto correctPredict = _mynet->predictClass(records, values, sizes, labels, labelsize);
         totCorrect += correctPredict;
-        std::cout <<" iter "<< i<<" "<< totCorrect*1.0/(Batchsize*(i+1))<<std::endl;
+        std::cout <<" iter "<< i << ": " << totCorrect*1.0/(Batchsize*(i+1)) << " correct" << std::endl;
 
         delete[] sizes;
         delete[] labels;
@@ -312,8 +325,8 @@ void EvalDataSVM(int numBatchesTest,  Network* _mynet, int iter){
 
     }
     testfile.close();
-    cout << "over all" << totCorrect * 1.0 / (numBatchesTest*Batchsize)<< endl;
-    outputFile << iter<<" " <<globalTime/1000 << " " << totCorrect * 1.0 / (numBatchesTest*Batchsize) << endl;
+    cout << "over all " << totCorrect * 1.0 / (numBatchesTest*Batchsize) << endl;
+    outputFile << iter << " " << globalTime/1000 << " " << totCorrect * 1.0 / (numBatchesTest*Batchsize) << endl;
 
 }
 
@@ -448,7 +461,6 @@ int main(int argc, char* argv[])
     int numBatchesTest = totRecordsTest/Batchsize;
     NodeType* layersTypes = new NodeType[numLayer];
 
-
     for (int i=0; i<numLayer-1; i++){
         layersTypes[i] = NodeType::ReLU;
     }
@@ -461,8 +473,8 @@ int main(int argc, char* argv[])
     auto t1 = std::chrono::high_resolution_clock::now();
     Network *_mynet = new Network(sizesOfLayers, layersTypes, numLayer, Batchsize, Lr, InputDim, K, L, RangePow, Sparsity, arr);
     auto t2 = std::chrono::high_resolution_clock::now();
-    int timeDiffInMiliseconds = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
-    std::cout << "Network Initialization takes " << 1.0 * timeDiffInMiliseconds << std::endl;
+    float timeDiffInMiliseconds = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+    std::cout << "Network Initialization takes " << timeDiffInMiliseconds/1000 << " milliseconds" << std::endl;
 
     //***********************************
     // Start Training
@@ -471,8 +483,10 @@ int main(int argc, char* argv[])
     for (int e=0; e< Epoch; e++) {
         ofstream outputFile(logFile,  std::ios_base::app);
         outputFile<<"Epoch "<<e<<endl;
+        // train
         ReadDataSVM(numBatches, _mynet, e);
 
+        // test
         if(e==Epoch-1) {
             EvalDataSVM(numBatchesTest, _mynet, (e+1)*numBatches);
         }else{

@@ -56,12 +56,9 @@ void Node::incrementDelta(int inputID, float incrementValue)
 
 float Node::getActivation(int* indices, float* values, int length, int inputID)
 {
-    if (inputID>_currentBatchsize){
-
-    }
 	assert(("Input ID more than Batch Size", inputID <= _currentBatchsize));
-	
-	//FUTURE TODO: shrink batchsize and check if input is alread active then ignore and ensure backpopagation is ignored too. 
+
+	//FUTURE TODO: shrink batchsize and check if input is alread active then ignore and ensure backpopagation is ignored too.
 	_ActiveinputIds[inputID] = 1; //activate input
 
 	_lastActivations[inputID] = 0;
@@ -91,7 +88,6 @@ float Node::getActivation(int* indices, float* values, int length, int inputID)
 		cout << "Invalid Node type from Constructor" <<endl;
 		break;
 	}
-
 
 	return _lastActivations[inputID];
 }
@@ -194,7 +190,7 @@ void Node::backPropagateFirstLayer(int* nnzindices, float* nnzvalues, int nnzSiz
 
 Node::~Node()
 {
-	
+
 	delete[] _indicesInTables;
 	delete[] _indicesInBuckets;
 	delete[] _lastActivations;
