@@ -16,7 +16,6 @@ private:
 	Node** _Nodes;
 	int * _randNode;
 	float* _normalizationConstants;
-    int*_inputIDs; //needed for SOFTMAX
     int _K, _L, _RangeRow, _previousLayerNumOfNodes, _batchsize;
 
 
@@ -36,6 +35,7 @@ public:
 	Layer(int _numNodex, int previousLayerNumOfNodes, int layerID, NodeType type, int batchsize, int K, int L, int RangePow, float Sparsity, float* weights=NULL, float* bias=NULL, float *adamAvgMom=NULL, float *adamAvgVel=NULL);
 	Node* getNodebyID(int nodeID);
 	Node** getAllNodes();
+	int getNodeCount();
 	void addtoHashTable(float* weights, int length, float bias, int id);
 	float getNomalizationConstant(int inputID);
 	int queryActiveNodeandComputeActivations(int** activenodesperlayer, float** activeValuesperlayer, int* inlenght, int layerID, int inputID,  int* label, int labelsize, float Sparsity, int iter);

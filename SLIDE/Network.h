@@ -13,7 +13,7 @@ private:
 	int* _sizesOfLayers;
 	NodeType* _layersTypes;
 	float * _Sparsity;
-	int* _inputIDs;
+	//int* _inputIDs;
 	int  _currentBatchSize;
 
 

@@ -54,7 +54,6 @@ Network::Network(int *sizesOfLayers, NodeType *layersTypes, int noOfLayers, int 
         }
     }
     cout << "after layer" << endl;
-    _inputIDs = new int[_currentBatchSize]();
 }
 
 
@@ -70,7 +69,6 @@ Layer *Network::getLayer(int LayerID) {
 
 int Network::predictClass(int **inputIndices, float **inputValues, int *length, int **labels, int *labelsize) {
     int correctPred = 0;
-    //int inhashtable = 0;
 
     auto t1 = std::chrono::high_resolution_clock::now();
     #pragma omp parallel for reduction(+:correctPred) num_threads(24)  // num_threads must evenly divide batch size,
@@ -86,10 +84,8 @@ int Network::predictClass(int **inputIndices, float **inputValues, int *length, 
 
         //inference
         for (int j = 0; j < _numberOfLayers; j++) {
-            //int tmp =
             _hiddenlayers[j]->queryActiveNodeandComputeActivations(activenodesperlayer, activeValuesperlayer, sizes, j, i, labels[i], 0,
                     _Sparsity[_numberOfLayers+j], -1);
-            //inhashtable+=tmp;
         }
 
         //compute softmax
@@ -132,6 +128,10 @@ int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths,
     float prob = 0.0;
     int* avg_retrieval = new int[_numberOfLayers]();
 
+    for (int j = 0; j < _numberOfLayers; j++)
+        avg_retrieval[j] = 0;
+
+
     int check = 0;
     if(iter%6946==6945 ){
         //_learningRate *= 0.5;
@@ -145,18 +145,22 @@ int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths,
 //        tmplr *= pow(0.9, iter/10.0);
     }
 
-//    omp_set_num_threads(44);
-//    int id  = omp_get_max_threads();
-    # pragma omp parallel for
+    int*** activeNodesPerBatch = new int**[_currentBatchSize];
+    float*** activeValuesPerBatch = new float**[_currentBatchSize];
+    int** sizesPerBatch = new int*[_currentBatchSize];
+#pragma omp parallel for
     for (int i = 0; i < _currentBatchSize; i++) {
         int **activenodesperlayer = new int *[_numberOfLayers + 1]();
         float **activeValuesperlayer = new float *[_numberOfLayers + 1]();
         int *sizes = new int[_numberOfLayers + 1]();
 
-        activenodesperlayer[0] = inputIndices[i];
+        activeNodesPerBatch[i] = activenodesperlayer;
+        activeValuesPerBatch[i] = activeValuesperlayer;
+        sizesPerBatch[i] = sizes;
+
+        activenodesperlayer[0] = inputIndices[i];  // inputs parsed from training data file
         activeValuesperlayer[0] = inputValues[i];
         sizes[0] = lengths[i];
-        // cout<<"start query"<<endl;
         int in;
         auto t1 = std::chrono::high_resolution_clock::now();
         for (int j = 0; j < _numberOfLayers; j++) {
@@ -164,40 +168,45 @@ int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths,
                     _Sparsity[j], iter*_currentBatchSize+i);
             avg_retrieval[j] += in;
         }
+    }
 
-        auto t2 = std::chrono::high_resolution_clock::now();
-        auto timeDiffInMiliseconds = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
-//        std::cout << "forward "<<" takes" << 1.0 * timeDiffInMiliseconds << std::endl;
-
-
-        //Now backpropagate.
-        for (int j = _numberOfLayers - 1; j >= 0; j--) {
-            for (int k = 0; k < sizes[j + 1]; k++) {
+    // layers
+    for (int j = _numberOfLayers - 1; j >= 0; j--) {
+        Layer* layer = _hiddenlayers[j];
+        Layer* prev_layer = _hiddenlayers[j - 1];
+#pragma omp parallel for
+        for (int i = 0; i < _currentBatchSize; i++) {
+            //Now backpropagate.
+            // nodes
+            for (int k = 0; k < sizesPerBatch[i][j + 1]; k++) {
+                Node* node = layer->getNodebyID(activeNodesPerBatch[i][j + 1][k]);
                 if (j == _numberOfLayers - 1) {
                     //TODO: Compute Extra stats: labels[i];
-                    _hiddenlayers[j]->getNodebyID(activenodesperlayer[j + 1][k])->ComputeExtaStatsForSoftMax(
-                            _hiddenlayers[j]->getNomalizationConstant(i), i, labels[i], labelsize[i]);
+                    node->ComputeExtaStatsForSoftMax(layer->getNomalizationConstant(i), i, labels[i], labelsize[i]);
                 }
-
                 if (j != 0) {
-                    _hiddenlayers[j]->getNodebyID(activenodesperlayer[j + 1][k])->backPropagate(
-                            _hiddenlayers[j - 1]->getAllNodes(), activenodesperlayer[j], sizes[j], tmplr, i);
+                    node->backPropagate(prev_layer->getAllNodes(), activeNodesPerBatch[i][j], sizesPerBatch[i][j], tmplr, i);
                 } else {
-                    _hiddenlayers[j]->getNodebyID(activenodesperlayer[j + 1][k])->backPropagateFirstLayer(
-                            inputIndices[i], inputValues[i], lengths[i], tmplr, i);
+                    node->backPropagateFirstLayer(inputIndices[i], inputValues[i], lengths[i], tmplr, i);
                 }
             }
         }
-
-        //Free memory to avoid leaks
-        delete[] sizes;
-        for (int j = 1; j < _numberOfLayers + 1; j++) {
-            delete[] activenodesperlayer[j];
-            delete[] activeValuesperlayer[j];
-        }
-        delete[] activenodesperlayer;
-        delete[] activeValuesperlayer;
     }
+
+    for (int i = 0; i < _currentBatchSize; i++) {
+        //Free memory to avoid leaks
+        delete[] sizesPerBatch[i];
+        for (int j = 1; j < _numberOfLayers + 1; j++) {
+            delete[] activeNodesPerBatch[i][j];
+            delete[] activeValuesPerBatch[i][j];
+        }
+        delete[] activeNodesPerBatch[i];
+        delete[] activeValuesPerBatch[i];
+    }
+
+    delete[] activeNodesPerBatch;
+    delete[] activeValuesPerBatch;
+    delete[] sizesPerBatch;
 
 
     auto t1 = std::chrono::high_resolution_clock::now();
@@ -222,17 +231,25 @@ int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths,
             _hiddenlayers[l]->updateTable();
         }
         int ratio = 1;
-# pragma omp parallel for
+#pragma omp parallel for
         for (int m = 0; m < _hiddenlayers[l]->_noOfNodes; m++)
         {
             Node *tmp = _hiddenlayers[l]->getNodebyID(m);
+            int dim = tmp->_dim;
+            float* local_weights = new float[dim];
+            std::copy(tmp->_weights, tmp->_weights + dim, local_weights);
 
             if(ADAM){
-                for (int d=0; d< tmp->_dim;d++){
-                        tmp->_adamAvgMom[d] = BETA1 * tmp->_adamAvgMom[d] + (1 - BETA1) * tmp->_t[d];
-                        tmp->_adamAvgVel[d] = BETA2 * tmp->_adamAvgVel[d] + (1 - BETA2) * tmp->_t[d] * tmp->_t[d];
-                        tmp->_weights[d] += ratio*tmplr * tmp->_adamAvgMom[d] / (sqrt(tmp->_adamAvgVel[d]) + EPS);
-                        tmp->_t[d] = 0;
+                for (int d=0; d < dim;d++){
+                    float _t = tmp->_t[d];
+                    float Mom = tmp->_adamAvgMom[d];
+                    float Vel = tmp->_adamAvgVel[d];
+                    Mom = BETA1 * Mom + (1 - BETA1) * _t;
+                    Vel = BETA2 * Vel + (1 - BETA2) * _t * _t;
+                    local_weights[d] += ratio * tmplr * Mom / (sqrt(Vel) + EPS);
+                    tmp->_adamAvgMom[d] = Mom;
+                    tmp->_adamAvgVel[d] = Vel;
+                    tmp->_t[d] = 0;
                 }
 
                 tmp->_adamAvgMombias = BETA1 * tmp->_adamAvgMombias + (1 - BETA1) * tmp->_tbias;
@@ -246,16 +263,15 @@ int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths,
                 tmp->_bias = tmp->_mirrorbias;
             }
             if (tmpRehash) {
-
                 int *hashes;
                 if(HashFunction==1) {
-                    hashes = _hiddenlayers[l]->_wtaHasher->getHash(tmp->_weights);
+                    hashes = _hiddenlayers[l]->_wtaHasher->getHash(local_weights);
                 }else if (HashFunction==2){
-                    hashes = _hiddenlayers[l]->_dwtaHasher->getHashEasy(tmp->_weights, tmp->_dim, TOPK);
+                    hashes = _hiddenlayers[l]->_dwtaHasher->getHashEasy(local_weights, dim, TOPK);
                 }else if (HashFunction==3){
-                    hashes = _hiddenlayers[l]->_MinHasher->getHashEasy(_hiddenlayers[l]->_binids, tmp->_weights, tmp->_dim, TOPK);
+                    hashes = _hiddenlayers[l]->_MinHasher->getHashEasy(_hiddenlayers[l]->_binids, local_weights, dim, TOPK);
                 }else if (HashFunction==4){
-                    hashes = _hiddenlayers[l]->_srp->getHash(tmp->_weights, tmp->_dim);
+                    hashes = _hiddenlayers[l]->_srp->getHash(local_weights, dim);
                 }
 
                 int *hashIndices = _hiddenlayers[l]->_hashTables->hashesToIndex(hashes);
@@ -265,6 +281,9 @@ int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths,
                 delete[] hashIndices;
                 delete[] bucketIndices;
             }
+
+            std::copy(local_weights, local_weights + dim, tmp->_weights);
+            delete[] local_weights;
         }
     }
 
@@ -273,9 +292,7 @@ int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths,
 //            std::cout << "Layer " <<" takes" << 1.0 * timeDiffInMiliseconds << std::endl;
 
     if (DEBUG&rehash) {
-
         cout << "Avg sample size = " << avg_retrieval[0]*1.0/_currentBatchSize<<" "<<avg_retrieval[1]*1.0/_currentBatchSize << endl;
-
     }
     return logloss;
 }
@@ -297,5 +314,4 @@ Network::~Network() {
     }
     delete[] _hiddenlayers;
     delete[] _layersTypes;
-    delete[] _inputIDs;
 }

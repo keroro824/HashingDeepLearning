@@ -3,25 +3,24 @@ K = 2,6
 L = 20,50
 Sparsity = 1,0.005,1,1
 
-Batchsize = 128
+Batchsize=144
 Rehash=6400
 Rebuild=128000
-InputDim = 135909
-totRecords = 490449
-totRecordsTest = 153025
+InputDim=135909
+totRecords=490449
+totRecordsTest=153025
 
 Lr=0.0001
-Epoch=200
-Stepsize=100
+Epoch=10
+Stepsize=1000
 
 sizesOfLayers=128,670091
 numLayer=2
 
-trainData=/beidi/NN/data/amazon_shuf_train
-testData=/beidi/NN/data/amazon_shuf_test
+trainData=../dataset/Amazon/amazon_train.txt
+testData=../dataset/Amazon/amazon_test.txt
 
-weight=
-savedweight=
+weight=../savedWeight.npz
+savedweight=../savedWeight.npz
 
-logFile=
-logFile=
+logFile=../dataset/log.txt

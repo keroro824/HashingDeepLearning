@@ -57,7 +57,6 @@ DensifiedWtaHash::DensifiedWtaHash(int numHashes, int noOfBitsToHash)
 
 int * DensifiedWtaHash::getHashEasy(float* data, int dataLen, int topk)
 {
-
     // binsize is the number of times the range is larger than the total number of hashes we need.
 
     int *hashes = new int[_numhashes];
@@ -71,13 +70,14 @@ int * DensifiedWtaHash::getHashEasy(float* data, int dataLen, int topk)
     }
 
     for (int p=0; p< _permute; p++) {
+        int bin_index = p * _rangePow;
         for (size_t i = 0; i < dataLen; i++) {
-            int binid = _indices[p*_rangePow+i];
-            if(binid<_numhashes) {
-                if (values[binid] < data[i]) {
-                    values[binid] = data[i];
-                    hashes[binid] = _pos[p*_rangePow+i];
-                }
+            int inner_index = bin_index + i;
+            int binid = _indices[inner_index];
+            float loc_data = data[i];
+            if(binid < _numhashes && values[binid] < loc_data) {
+                values[binid] = loc_data;
+                hashes[binid] = _pos[inner_index];
             }
         }
     }
