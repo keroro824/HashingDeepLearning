@@ -17,7 +17,7 @@ OPT_FLAGS   := -fno-strict-aliasing -g -O3 -fopenmp -march=skylake -mtune=intel 
 
 INC := /usr/include/
 
-LIB += -fPIC -fopenmp -L ~/workspace/baseline/cnpy/build/ -lcnpy -lz -lhugetlbfs
+LIB += -fPIC -fopenmp -L ~/workspace/baseline/cnpy/build/ -lcnpy -lz
 
 CXXFLAGS := -m64  -DUNIX -I ~/workspace/baseline/cnpy/ -lcnpy -lz -std=c++11 $(WARN_FLAGS) $(OPT_FLAGS) -I$(INC)
 CFLAGS := -m64 -DUNIX -I ~/workspace/baseline/cnpy/ -lcnpy -lz $(WARN_FLAGS) $(OPT_FLAGS) -I$(INC)

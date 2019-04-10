@@ -1,11 +1,11 @@
 #include "Node.h"
 #include <random>
 #include <math.h>
-#include <iostream>
 #include <time.h>
 #include <stdlib.h>
 #include <chrono>
 #include <algorithm>
+#include <sys/mman.h>
 #include "Config.h"
 
 using namespace std;
@@ -35,6 +35,30 @@ Node::Node(int dim, int nodeID, int layerID, NodeType type, int batchsize, float
 
 }
 
+void Node::Update(int dim, int nodeID, int layerID, NodeType type, int batchsize, float *weights, float bias, float *adamAvgMom, float *adamAvgVel, train* train_blob)
+{
+    _dim = dim;
+    _IDinLayer = nodeID;
+    _type = type;
+    _layerNum = layerID;
+    _currentBatchsize = batchsize;
+
+    if (ADAM)
+    {
+        _adamAvgMom = adamAvgMom;
+        _adamAvgVel = adamAvgVel;
+        _t = new float[_dim]();
+
+    }
+
+    _train = train_blob + nodeID * batchsize;
+    _activeInputs = 0;
+
+    _weights = weights;
+    _bias = bias;
+    _mirrorbias = _bias;
+
+}
 
 float Node::getLastActivation(int inputID)
 {
@@ -51,6 +75,11 @@ void Node::incrementDelta(int inputID, float incrementValue)
 	    _train[inputID]._lastDeltaforBPs += incrementValue;
 }
 
+bool Node::getInputActive(int inputID)
+{
+    return _train[inputID]._ActiveinputIds == 1;
+}
+
 bool Node::getActiveInputs(void)
 {
     return _activeInputs > 0;
@@ -61,8 +90,10 @@ float Node::getActivation(int* indices, float* values, int length, int inputID)
 	assert(("Input ID more than Batch Size", inputID <= _currentBatchsize));
 
 	//FUTURE TODO: shrink batchsize and check if input is alread active then ignore and ensure backpopagation is ignored too.
-	_train[inputID]._ActiveinputIds = 1; //activate input
-	_activeInputs++;
+	if (_train[inputID]._ActiveinputIds != 1) {
+	    _train[inputID]._ActiveinputIds = 1; //activate input
+	    _activeInputs++;
+	}
 
 	_train[inputID]._lastActivations = 0;
 	for (int i = 0; i < length; i++)
@@ -112,15 +143,16 @@ void Node::ComputeExtaStatsForSoftMax(float normalizationConstant, int inputID, 
 }
 
 
-void Node::backPropagate(Node** previousNodes, int* previousLayerActiveNodeIds, int previousLayerActiveNodeSize, float learningRate, int inputID)
+void Node::backPropagate(Node* previousNodes, int* previousLayerActiveNodeIds, int previousLayerActiveNodeSize, float learningRate, int inputID)
 {
 	assert(("Input Not Active but still called !! BUG", _train[inputID]._ActiveinputIds == 1));
 	for (int i = 0; i < previousLayerActiveNodeSize; i++)
 	{
 		//UpdateDelta before updating weights
-	    previousNodes[previousLayerActiveNodeIds[i]]->incrementDelta(inputID, _train[inputID]._lastDeltaforBPs * _weights[previousLayerActiveNodeIds[i]]);
+	    Node* prev_node = &(previousNodes[previousLayerActiveNodeIds[i]]);
+	    prev_node->incrementDelta(inputID, _train[inputID]._lastDeltaforBPs * _weights[previousLayerActiveNodeIds[i]]);
 
-		float grad_t = _train[inputID]._lastDeltaforBPs * previousNodes[previousLayerActiveNodeIds[i]]->getLastActivation(inputID);
+		float grad_t = _train[inputID]._lastDeltaforBPs * prev_node->getLastActivation(inputID);
 		float grad_tsq = grad_t * grad_t;
 
 		if (ADAM)
@@ -183,6 +215,7 @@ void Node::backPropagateFirstLayer(int* nnzindices, float* nnzvalues, int nnzSiz
 	_train[inputID]._ActiveinputIds = 0;//deactivate inputIDs
 	_train[inputID]._lastDeltaforBPs = 0;
 	_train[inputID]._lastActivations = 0;
+    _activeInputs--;
 }
 
 void Node::SetlastActivation(int inputID, float realActivation)
@@ -195,7 +228,6 @@ Node::~Node()
 
 	delete[] _indicesInTables;
 	delete[] _indicesInBuckets;
-	delete[] _train;
 
 	if (ADAM)
 	{
@@ -219,13 +251,3 @@ float Node::getGradient(int weightid, int inputID, float InputVal)
 	return -_train[inputID]._lastDeltaforBPs * InputVal;
 }
 
-
-//float* Node::getTestActivation() {
-//	return 0;//_train[inputID]._lastActivations;
-//}
-
-
-//float* Node::getLastDeltaForBPs() {
-//	return 0;//_lastDeltaforBPs;
-
-//}

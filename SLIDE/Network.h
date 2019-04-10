@@ -2,6 +2,8 @@
 #include "Layer.h"
 #include <chrono>
 #include "cnpy.h"
+#include <sys/mman.h>
+
 using namespace std;
 
 class Network
@@ -24,5 +26,11 @@ public:
 	int ProcessInput(int** inputIndices, float** inputValues, int* lengths, int ** label, int *labelsize, int iter, bool rehash, bool rebuild);
 	void saveWeights(string file);
 	~Network();
+	void * operator new(size_t size){
+	    cout << "new Network" << endl;
+	    return mmap(NULL, size,
+            PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB,
+            -1, 0);};
+	void operator delete(void * pointer){munmap(pointer, sizeof(Network));};
 };
 

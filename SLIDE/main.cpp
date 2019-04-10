@@ -16,7 +16,6 @@
 #include<iostream>
 #include<map>
 #include<string>
-//#include <omp.h>
 #include "Config.h"
 
 int *RangePow;
@@ -453,7 +452,6 @@ int main(int argc, char* argv[])
     //***********************************
     parseconfig(argv[1]);
 
-
     //***********************************
     // Initialize Network
     //***********************************
@@ -500,6 +498,7 @@ int main(int argc, char* argv[])
     delete [] K;
     delete [] L;
     delete [] Sparsity;
+
     return 0;
 
 }

@@ -6,6 +6,7 @@
 #include "LSH.h"
 #include "DensifiedWtaHash.h"
 #include "cnpy.h"
+#include <sys/mman.h>
 
 using namespace std;
 
@@ -13,10 +14,11 @@ class Layer
 {
 private:
 	NodeType _type;
-	Node** _Nodes;
+	Node* _Nodes;
 	int * _randNode;
 	float* _normalizationConstants;
     int _K, _L, _RangeRow, _previousLayerNumOfNodes, _batchsize;
+    train* _train_blob;
 
 
 public:
@@ -34,7 +36,7 @@ public:
 	int * _binids;
 	Layer(int _numNodex, int previousLayerNumOfNodes, int layerID, NodeType type, int batchsize, int K, int L, int RangePow, float Sparsity, float* weights=NULL, float* bias=NULL, float *adamAvgMom=NULL, float *adamAvgVel=NULL);
 	Node* getNodebyID(int nodeID);
-	Node** getAllNodes();
+	Node* getAllNodes();
 	int getNodeCount();
 	void addtoHashTable(float* weights, int length, float bias, int id);
 	float getNomalizationConstant(int inputID);
@@ -47,5 +49,16 @@ public:
 	void updateRandomNodes();
 
 	~Layer();
+
+    void * operator new(size_t size){
+        cout << "new Layer" << endl;
+        void* ptr = mmap(NULL, size,
+            PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB,
+            -1, 0);
+        if (ptr == NULL)
+            std::cout << "mmap fail! No new layer!" << std::endl;
+        return ptr;};
+    void operator delete(void * pointer){munmap(pointer, sizeof(Layer));};
+
 };
 

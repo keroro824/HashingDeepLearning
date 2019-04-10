@@ -122,7 +122,6 @@ int Network::predictClass(int **inputIndices, float **inputValues, int *length, 
 
 int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths, int **labels, int *labelsize, int iter, bool rehash, bool rebuild) {
 
-
     float logloss = 0.0;
     int lowconf = 0;
     float prob = 0.0;
@@ -162,21 +161,18 @@ int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths,
         activeValuesperlayer[0] = inputValues[i];
         sizes[0] = lengths[i];
         int in;
-        auto t1 = std::chrono::high_resolution_clock::now();
+        //auto t1 = std::chrono::high_resolution_clock::now();
         for (int j = 0; j < _numberOfLayers; j++) {
             in = _hiddenlayers[j]->queryActiveNodeandComputeActivations(activenodesperlayer, activeValuesperlayer, sizes, j, i, labels[i], labelsize[i],
                     _Sparsity[j], iter*_currentBatchSize+i);
             avg_retrieval[j] += in;
         }
-    }
 
-    // layers
-    for (int j = _numberOfLayers - 1; j >= 0; j--) {
-        Layer* layer = _hiddenlayers[j];
-        Layer* prev_layer = _hiddenlayers[j - 1];
-#pragma omp parallel for
-        for (int i = 0; i < _currentBatchSize; i++) {
-            //Now backpropagate.
+        //Now backpropagate.
+        // layers
+        for (int j = _numberOfLayers - 1; j >= 0; j--) {
+            Layer* layer = _hiddenlayers[j];
+            Layer* prev_layer = _hiddenlayers[j - 1];
             // nodes
             for (int k = 0; k < sizesPerBatch[i][j + 1]; k++) {
                 Node* node = layer->getNodebyID(activeNodesPerBatch[i][j + 1][k]);
@@ -192,7 +188,6 @@ int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths,
             }
         }
     }
-
     for (int i = 0; i < _currentBatchSize; i++) {
         //Free memory to avoid leaks
         delete[] sizesPerBatch[i];
@@ -286,10 +281,6 @@ int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths,
             delete[] local_weights;
         }
     }
-
-    auto t2 = std::chrono::high_resolution_clock::now();
-    int timeDiffInMiliseconds = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
-//            std::cout << "Layer " <<" takes" << 1.0 * timeDiffInMiliseconds << std::endl;
 
     if (DEBUG&rehash) {
         cout << "Avg sample size = " << avg_retrieval[0]*1.0/_currentBatchSize<<" "<<avg_retrieval[1]*1.0/_currentBatchSize << endl;

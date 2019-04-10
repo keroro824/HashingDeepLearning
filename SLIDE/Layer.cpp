@@ -15,7 +15,7 @@ using namespace std;
 Layer::Layer(int noOfNodes, int previousLayerNumOfNodes, int layerID, NodeType type, int batchsize,  int K, int L, int RangePow, float Sparsity, float* weights, float* bias, float *adamAvgMom, float *adamAvgVel) {
     _layerID = layerID;
     _noOfNodes = noOfNodes;
-    _Nodes = new Node *[noOfNodes];
+    _Nodes = new Node[noOfNodes];
     _type = type;
     _noOfActive = floor(_noOfNodes * Sparsity);
     _K = K;
@@ -79,13 +79,15 @@ Layer::Layer(int noOfNodes, int previousLayerNumOfNodes, int layerID, NodeType t
 
     auto t1 = std::chrono::high_resolution_clock::now();
 
+    _train_blob = new train[noOfNodes*batchsize];
 
     // create nodes for this layer
 #pragma omp parallel for
     for (size_t i = 0; i < noOfNodes; i++)
     {
-        _Nodes[i] = new Node(previousLayerNumOfNodes, i, _layerID, type, batchsize, _weights+previousLayerNumOfNodes*i, _bias[i], _adamAvgMom+previousLayerNumOfNodes*i , _adamAvgVel+previousLayerNumOfNodes*i);
-        addtoHashTable(_Nodes[i]->_weights, previousLayerNumOfNodes, _Nodes[i]->_bias, i);
+        _Nodes[i].Update(previousLayerNumOfNodes, i, _layerID, type, batchsize, _weights+previousLayerNumOfNodes*i,
+                _bias[i], _adamAvgMom+previousLayerNumOfNodes*i , _adamAvgVel+previousLayerNumOfNodes*i, _train_blob);
+        addtoHashTable(_Nodes[i]._weights, previousLayerNumOfNodes, _Nodes[i]._bias, i);
     }
     auto t2 = std::chrono::high_resolution_clock::now();
     auto timeDiffInMiliseconds = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
@@ -145,8 +147,8 @@ void Layer::addtoHashTable(float* weights, int length, float bias, int ID)
     int * hashIndices = _hashTables->hashesToIndex(hashes);
     int * bucketIndices = _hashTables->add(hashIndices, ID+1);
 
-    _Nodes[ID]->_indicesInTables = hashIndices;
-    _Nodes[ID]->_indicesInBuckets = bucketIndices;
+    _Nodes[ID]._indicesInTables = hashIndices;
+    _Nodes[ID]._indicesInBuckets = bucketIndices;
 
     delete [] hashes;
 
@@ -156,11 +158,11 @@ void Layer::addtoHashTable(float* weights, int length, float bias, int ID)
 Node* Layer::getNodebyID(int nodeID)
 {
     assert(("nodeID less than _noOfNodes" , nodeID < _noOfNodes));
-    return _Nodes[nodeID];
+    return &_Nodes[nodeID];
 }
 
 
-Node ** Layer::getAllNodes()
+Node* Layer::getAllNodes()
 {
     return _Nodes;
 }
@@ -417,8 +419,8 @@ int Layer::queryActiveNodeandComputeActivations(int** activenodesperlayer, float
 
             for (int s = 0; s < _noOfNodes; s++) {
                 float tmp = innerproduct(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex],
-                                         lengths[layerIndex], _Nodes[s]->_weights);
-                tmp += _Nodes[s]->_bias;
+                                         lengths[layerIndex], _Nodes[s]._weights);
+                tmp += _Nodes[s]._bias;
                 if (find(label, label + labelsize, s) != label + labelsize) {
                     sortW.push_back(make_pair(-1000000000, s));
                     what++;
@@ -451,7 +453,7 @@ int Layer::queryActiveNodeandComputeActivations(int** activenodesperlayer, float
     {
         for (int i = 0; i < len; i++)
         {
-            activeValuesperlayer[layerIndex + 1][i] = _Nodes[activenodesperlayer[layerIndex + 1][i]]->getActivation(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex], lengths[layerIndex], inputID);
+            activeValuesperlayer[layerIndex + 1][i] = _Nodes[activenodesperlayer[layerIndex + 1][i]].getActivation(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex], lengths[layerIndex], inputID);
             if(_type == NodeType::Softmax && activeValuesperlayer[layerIndex + 1][i] > maxValue){
                 maxValue = activeValuesperlayer[layerIndex + 1][i];
             }
@@ -461,7 +463,7 @@ int Layer::queryActiveNodeandComputeActivations(int** activenodesperlayer, float
     {
         for (int i = 0; i < len/2; i++)
         {
-            activeValuesperlayer[layerIndex + 1][i] = _Nodes[activenodesperlayer[layerIndex + 1][i]]->getActivation(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex], lengths[layerIndex], inputID);
+            activeValuesperlayer[layerIndex + 1][i] = _Nodes[activenodesperlayer[layerIndex + 1][i]].getActivation(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex], lengths[layerIndex], inputID);
             if(_type == NodeType::Softmax && activeValuesperlayer[layerIndex + 1][i] > maxValue){
                 maxValue = activeValuesperlayer[layerIndex + 1][i];
             }
@@ -469,7 +471,7 @@ int Layer::queryActiveNodeandComputeActivations(int** activenodesperlayer, float
 #pragma omp barrier
         for (int i = len/2; i < len; i++)
         {
-            activeValuesperlayer[layerIndex + 1][i] = _Nodes[activenodesperlayer[layerIndex + 1][i]]->getActivation(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex], lengths[layerIndex], inputID);
+            activeValuesperlayer[layerIndex + 1][i] = _Nodes[activenodesperlayer[layerIndex + 1][i]].getActivation(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex], lengths[layerIndex], inputID);
             if(_type == NodeType::Softmax && activeValuesperlayer[layerIndex + 1][i] > maxValue){
                 maxValue = activeValuesperlayer[layerIndex + 1][i];
             }
@@ -480,7 +482,7 @@ int Layer::queryActiveNodeandComputeActivations(int** activenodesperlayer, float
         for (int i = 0; i < len; i++) {
             float realActivation = exp(activeValuesperlayer[layerIndex + 1][i] - maxValue);
             activeValuesperlayer[layerIndex + 1][i] = realActivation;
-            _Nodes[activenodesperlayer[layerIndex + 1][i]]->SetlastActivation(inputID, realActivation);
+            _Nodes[activenodesperlayer[layerIndex + 1][i]].SetlastActivation(inputID, realActivation);
             _normalizationConstants[inputID] += realActivation;
         }
     }
@@ -491,17 +493,17 @@ int Layer::queryActiveNodeandComputeActivations(int** activenodesperlayer, float
 void Layer::saveWeights(string file)
 {
     if (_layerID==0) {
-        cnpy::npz_save(file, "w_layer_0", _weights, {_noOfNodes, _Nodes[0]->_dim}, "w");
+        cnpy::npz_save(file, "w_layer_0", _weights, {_noOfNodes, _Nodes[0]._dim}, "w");
         cnpy::npz_save(file, "b_layer_0", _bias, {_noOfNodes}, "a");
-        cnpy::npz_save(file, "am_layer_0", _adamAvgMom, {_noOfNodes, _Nodes[0]->_dim}, "a");
-        cnpy::npz_save(file, "av_layer_0", _adamAvgVel, {_noOfNodes, _Nodes[0]->_dim}, "a");
+        cnpy::npz_save(file, "am_layer_0", _adamAvgMom, {_noOfNodes, _Nodes[0]._dim}, "a");
+        cnpy::npz_save(file, "av_layer_0", _adamAvgVel, {_noOfNodes, _Nodes[0]._dim}, "a");
         cout<<"save for layer 0"<<endl;
         cout<<_weights[0]<<" "<<_weights[1]<<endl;
     }else{
-        cnpy::npz_save(file, "w_layer_"+ to_string(_layerID), _weights, {_noOfNodes, _Nodes[0]->_dim}, "a");
+        cnpy::npz_save(file, "w_layer_"+ to_string(_layerID), _weights, {_noOfNodes, _Nodes[0]._dim}, "a");
         cnpy::npz_save(file, "b_layer_"+ to_string(_layerID), _bias, {_noOfNodes}, "a");
-        cnpy::npz_save(file, "am_layer_"+ to_string(_layerID), _adamAvgMom, {_noOfNodes, _Nodes[0]->_dim}, "a");
-        cnpy::npz_save(file, "av_layer_"+ to_string(_layerID), _adamAvgVel, {_noOfNodes, _Nodes[0]->_dim}, "a");
+        cnpy::npz_save(file, "am_layer_"+ to_string(_layerID), _adamAvgMom, {_noOfNodes, _Nodes[0]._dim}, "a");
+        cnpy::npz_save(file, "av_layer_"+ to_string(_layerID), _adamAvgVel, {_noOfNodes, _Nodes[0]._dim}, "a");
         cout<<"save for layer "<<to_string(_layerID)<<endl;
         cout<<_weights[0]<<" "<<_weights[1]<<endl;
     }
@@ -513,11 +515,9 @@ Layer::~Layer()
 
     for (size_t i = 0; i < _noOfNodes; i++)
     {
-        free(_Nodes[i]);
         if (_type == NodeType::Softmax)
         {
             delete[] _normalizationConstants;
-            //delete[] _inputIDs;
         }
     }
     delete [] _Nodes;
@@ -529,4 +529,5 @@ Layer::~Layer()
     delete _srp;
     delete _MinHasher;
     delete [] _randNode;
+    delete[] _train_blob;
 }
