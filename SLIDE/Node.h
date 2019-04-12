@@ -25,7 +25,7 @@ struct train {
     void* operator new (std::size_t size, void* ptr){return operator new (size);};
     void* operator new[] (std::size_t size){
         void* ptr = mmap(NULL, size,
-            PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB,
+            PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB | (30 << MAP_HUGE_SHIFT),
             -1, 0);
         if (ptr == NULL)
             std::cout << "mmap fail! No train array!" << std::endl;
@@ -40,7 +40,7 @@ struct train {
     void operator delete[] (void* ptr, const std::nothrow_t& nothrow_constant){munmap(ptr, sizeof(train));};
     void operator delete[] (void* ptr, void* voidptr2){};
 
-};
+} __attribute__ ((aligned (64)));
 
 class Node
 {
@@ -85,14 +85,14 @@ public:
     void * operator new(size_t size){
         std::cout << "new Node" << std::endl;
         return mmap(NULL, size,
-            PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB,
+            PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB | (30 << MAP_HUGE_SHIFT),
             -1, 0);};
     void* operator new (std::size_t size, const std::nothrow_t& nothrow_value){return operator new (size);};
     void* operator new (std::size_t size, void* ptr){return operator new (size);};
     void* operator new[] (std::size_t size){
         std::cout << "new Node array" << std::endl;
         return mmap(NULL, size,
-            PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB,
+            PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB | (30 << MAP_HUGE_SHIFT),
             -1, 0);};
     void* operator new[] (std::size_t size, const std::nothrow_t& nothrow_value){return operator new (size);};
     void* operator new[] (std::size_t size, void* ptr){return operator new (size);};
