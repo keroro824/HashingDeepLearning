@@ -1,6 +1,5 @@
 #include <iostream>
 #include "Bucket.h"
-#pragma once
 
 
 Bucket::Bucket()

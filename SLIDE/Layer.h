@@ -18,7 +18,7 @@ private:
 	int * _randNode;
 	float* _normalizationConstants;
     int _K, _L, _RangeRow, _previousLayerNumOfNodes, _batchsize;
-    train* _train_blob;
+    train* _train_array;
 
 
 public:

@@ -79,14 +79,14 @@ Layer::Layer(int noOfNodes, int previousLayerNumOfNodes, int layerID, NodeType t
 
     auto t1 = std::chrono::high_resolution_clock::now();
 
-    _train_blob = new train[noOfNodes*batchsize];
+    _train_array = new train[noOfNodes*batchsize];
 
     // create nodes for this layer
 #pragma omp parallel for
     for (size_t i = 0; i < noOfNodes; i++)
     {
         _Nodes[i].Update(previousLayerNumOfNodes, i, _layerID, type, batchsize, _weights+previousLayerNumOfNodes*i,
-                _bias[i], _adamAvgMom+previousLayerNumOfNodes*i , _adamAvgVel+previousLayerNumOfNodes*i, _train_blob);
+                _bias[i], _adamAvgMom+previousLayerNumOfNodes*i , _adamAvgVel+previousLayerNumOfNodes*i, _train_array);
         addtoHashTable(_Nodes[i]._weights, previousLayerNumOfNodes, _Nodes[i]._bias, i);
     }
     auto t2 = std::chrono::high_resolution_clock::now();
@@ -448,33 +448,11 @@ int Layer::queryActiveNodeandComputeActivations(int** activenodesperlayer, float
         _normalizationConstants[inputID] = 0;
 
     // find activation for all ACTIVE nodes in layer
-    // if len is large, break into two groups to improve cache performance
-    if (len < 262144)
+    for (int i = 0; i < len; i++)
     {
-        for (int i = 0; i < len; i++)
-        {
-            activeValuesperlayer[layerIndex + 1][i] = _Nodes[activenodesperlayer[layerIndex + 1][i]].getActivation(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex], lengths[layerIndex], inputID);
-            if(_type == NodeType::Softmax && activeValuesperlayer[layerIndex + 1][i] > maxValue){
-                maxValue = activeValuesperlayer[layerIndex + 1][i];
-            }
-        }
-    }
-    else
-    {
-        for (int i = 0; i < len/2; i++)
-        {
-            activeValuesperlayer[layerIndex + 1][i] = _Nodes[activenodesperlayer[layerIndex + 1][i]].getActivation(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex], lengths[layerIndex], inputID);
-            if(_type == NodeType::Softmax && activeValuesperlayer[layerIndex + 1][i] > maxValue){
-                maxValue = activeValuesperlayer[layerIndex + 1][i];
-            }
-        }
-#pragma omp barrier
-        for (int i = len/2; i < len; i++)
-        {
-            activeValuesperlayer[layerIndex + 1][i] = _Nodes[activenodesperlayer[layerIndex + 1][i]].getActivation(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex], lengths[layerIndex], inputID);
-            if(_type == NodeType::Softmax && activeValuesperlayer[layerIndex + 1][i] > maxValue){
-                maxValue = activeValuesperlayer[layerIndex + 1][i];
-            }
+        activeValuesperlayer[layerIndex + 1][i] = _Nodes[activenodesperlayer[layerIndex + 1][i]].getActivation(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex], lengths[layerIndex], inputID);
+        if(_type == NodeType::Softmax && activeValuesperlayer[layerIndex + 1][i] > maxValue){
+            maxValue = activeValuesperlayer[layerIndex + 1][i];
         }
     }
 
@@ -529,5 +507,5 @@ Layer::~Layer()
     delete _srp;
     delete _MinHasher;
     delete [] _randNode;
-    delete[] _train_blob;
+    delete[] _train_array;
 }

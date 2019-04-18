@@ -36,6 +36,7 @@ struct train {
     void operator delete(void * ptr){munmap(ptr, sizeof(train));};
     void operator delete (void* ptr, const std::nothrow_t& nothrow_constant){munmap(ptr, sizeof(train));};
     void operator delete (void* ptr, void* voidptr2){};
+    // TODO: The size to be munmap'd should be the entire array, not just a single object
     void operator delete[](void * ptr){munmap(ptr, sizeof(train));};
     void operator delete[] (void* ptr, const std::nothrow_t& nothrow_constant){munmap(ptr, sizeof(train));};
     void operator delete[] (void* ptr, void* voidptr2){};
