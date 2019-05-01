@@ -20,9 +20,11 @@ Run
 
 ## Running SLIDE
 
-Firstly,  [CNPY](https://github.com/rogersce/cnpy) package needs to be installed. 
+Firstly,  [CNPY](https://github.com/rogersce/cnpy) package needs to be installed.
 
-Run 
+Additionally, Transparent Huge Pages must be enabled.  SLIDE requires approximately 900 2MB pages, and 10 1GB pages.
+
+Run
 
 ```make```
 
