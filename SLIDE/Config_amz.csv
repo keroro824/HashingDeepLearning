@@ -3,7 +3,7 @@ K = 2,6
 L = 20,50
 Sparsity = 1,0.005,1,1
 
-Batchsize=144
+Batchsize=128
 Rehash=6400
 Rebuild=128000
 InputDim=135909

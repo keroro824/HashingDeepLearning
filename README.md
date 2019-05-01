@@ -1,6 +1,6 @@
 # SLIDE
 
-The SLIDE package contains the source code for reproducing the main experiments in this [paper](arxiv).
+The SLIDE package contains the source code for reproducing the main experiments in this [paper](https://arxiv.org/abs/1903.03129).
 
 ## Dataset
 

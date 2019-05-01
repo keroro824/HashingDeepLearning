@@ -101,6 +101,7 @@ public:
     void operator delete(void * ptr){munmap(ptr, sizeof(Node));};
     void operator delete (void* ptr, const std::nothrow_t& nothrow_constant){munmap(ptr, sizeof(Node));};
     void operator delete (void* ptr, void* voidptr2){};
+    // TODO: should munmap the size of the entire array, not a single Node
     void operator delete[](void * ptr){munmap(ptr, sizeof(Node));};
     void operator delete[] (void* ptr, const std::nothrow_t& nothrow_constant){munmap(ptr, sizeof(Node));};
     void operator delete[] (void* ptr, void* voidptr2){};
