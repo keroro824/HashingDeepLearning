@@ -30,8 +30,8 @@ def main():
         os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
         os.environ["CUDA_VISIBLE_DEVICES"] = config.GPUs
     #
-    train_files = glob.glob(config.data_path)
-    test_files = glob.glob(config.data_path)
+    train_files = glob.glob(config.data_path_train)
+    test_files = glob.glob(config.data_path_test)
     #
     x_idxs = tf.placeholder(tf.int64, shape=[None,2])
     x_vals = tf.placeholder(tf.float32, shape=[None])
@@ -68,7 +68,7 @@ def main():
     training_data_generator = data_generator(train_files, batch_size, n_classes)
     steps_per_epoch = n_train//batch_size
     n_steps = n_epochs*steps_per_epoch
-    n_check = 50
+    n_check = 500
     #
     begin_time = time.time()
     total_time = 0
