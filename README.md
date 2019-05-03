@@ -23,6 +23,7 @@ Run
 Firstly,  [CNPY](https://github.com/rogersce/cnpy) package needs to be installed.
 
 Additionally, Transparent Huge Pages must be enabled.  SLIDE requires approximately 900 2MB pages, and 10 1GB pages.
+([Instructions](https://wiki.debian.org/Hugepages))
 
 Run
 
