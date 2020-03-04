@@ -18,3 +18,4 @@ mnist.scale
 */*/cmake-build-debug
 */cppobjs
 */runme
+bin/*
