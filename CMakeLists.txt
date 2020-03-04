@@ -32,6 +32,7 @@ ExternalProject_Add(
     -DINSTALL_LIB_DIR:STRING=${PROJECT_BINARY_DIR}/ep/lib
     -DINSTALL_MAN_DIR:STRING=${PROJECT_BINARY_DIR}/ep/share/man
     -DINSTALL_PKGCONFIG_DIR:STRING=${PROJECT_BINARY_DIR}/ep/share/pkgconfig
+    -DCMAKE_BUILD_TYPE:STRING=Release
 )
 functionInstallExternalCMakeProject(ZLIB)
 
@@ -60,6 +61,7 @@ ExternalProject_Add(
     -DZLIB_LIBRARY_RELEASE:STRING=${PROJECT_BINARY_DIR}/ep/lib/zlibstatic.${LIBRARY_EXTENSION}
     -DCMAKE_INSTALL_PREFIX:STRING=${PROJECT_BINARY_DIR}/ep
     -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS} 
+    -DCMAKE_BUILD_TYPE:STRING=Release
 )
 functionInstallExternalCMakeProject(CNPY)
 
