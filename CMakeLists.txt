@@ -1,0 +1,65 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 3.0 FATAL_ERROR)
+
+PROJECT( HashDeepLearning )
+# build dependencies
+INCLUDE( ExternalProject )
+
+FIND_PACKAGE( Git REQUIRED )
+
+OPTION( USE_GIT_PROTOCOL "If behind a firewall turn this off to use https instead." OFF )
+
+function(functionInstallExternalCMakeProject ep_name)
+  ExternalProject_Get_Property(${ep_name} binary_dir)
+  install(SCRIPT ${binary_dir}/cmake_install.cmake)
+endfunction()
+
+ExternalProject_Add( 
+  ZLIB
+  DEPENDS ""
+  GIT_REPOSITORY https://github.com/madler/zlib.git
+  GIT_TAG v1.2.11
+  SOURCE_DIR ZLIB-source
+  BINARY_DIR ZLIB-build
+  UPDATE_COMMAND ""
+  PATCH_COMMAND ""
+  # INSTALL_COMMAND ""
+  CMAKE_GENERATOR ${gen}
+  CMAKE_ARGS
+    -DCMAKE_INSTALL_PREFIX:STRING=${PROJECT_BINARY_DIR}/ep
+    -DINSTALL_BIN_DIR:STRING=${PROJECT_BINARY_DIR}/ep/bin
+    -DINSTALL_INC_DIR:STRING=${PROJECT_BINARY_DIR}/ep/include
+    -DINSTALL_LIB_DIR:STRING=${PROJECT_BINARY_DIR}/ep/lib
+    -DINSTALL_MAN_DIR:STRING=${PROJECT_BINARY_DIR}/ep/share/man
+    -DINSTALL_PKGCONFIG_DIR:STRING=${PROJECT_BINARY_DIR}/ep/share/pkgconfig
+)
+functionInstallExternalCMakeProject(ZLIB)
+
+IF( WIN32 )
+  SET( LIBRARY_EXTENSION "lib" )
+  SET( ZLIB_LIB_DEBUG ${PROJECT_BINARY_DIR}/ep/lib/zlibstaticd.${LIBRARY_EXTENSION} )
+ELSE()
+  SET( LIBRARY_EXTENSION "a" )
+  SET( ZLIB_LIB_DEBUG ${PROJECT_BINARY_DIR}/ep/lib/zlibstatic.${LIBRARY_EXTENSION} )
+ENDIF()
+
+ExternalProject_Add( 
+  CNPY
+  DEPENDS ZLIB
+  GIT_REPOSITORY https://github.com/sarthakpati/cnpy.git
+  # GIT_TAG v1.2.11
+  SOURCE_DIR CNPY-source
+  BINARY_DIR CNPY-build
+  UPDATE_COMMAND ""
+  PATCH_COMMAND ""
+  # INSTALL_COMMAND ""
+  CMAKE_GENERATOR ${gen}
+  CMAKE_ARGS
+    -DZLIB_INCLUDE_DIR:STRING=${PROJECT_BINARY_DIR}/ep/include
+    -DZLIB_LIBRARY_DEBUG:STRING=${ZLIB_LIB_DEBUG}
+    -DZLIB_LIBRARY_RELEASE:STRING=${PROJECT_BINARY_DIR}/ep/lib/zlibstatic.${LIBRARY_EXTENSION}
+    -DCMAKE_INSTALL_PREFIX:STRING=${PROJECT_BINARY_DIR}/ep
+    -DBUILD_EXAMPLES:BOOL=OFF # examples are not needed
+    -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS} 
+    -DBUILD_TESTING:BOOL=OFF 
+)
+functionInstallExternalCMakeProject(CNPY)
