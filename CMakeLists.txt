@@ -37,9 +37,11 @@ ExternalProject_Add(
 functionInstallExternalCMakeProject(ZLIB)
 
 IF( WIN32 )
+  SET( LIBRARY_EXTENSION "lib" )
   SET( ZLIB_LIB_DEBUG ${PROJECT_BINARY_DIR}/ep/lib/zlibstaticd.lib )
   SET( ZLIB_LIB_RELEASE ${PROJECT_BINARY_DIR}/ep/lib/zlibstatic.lib )
 ELSE()
+  SET( LIBRARY_EXTENSION "a" )
   SET( ZLIB_LIB_DEBUG ${PROJECT_BINARY_DIR}/ep/lib/libz.a )
   SET( ZLIB_LIB_RELEASE ${PROJECT_BINARY_DIR}/ep/lib/libz.a )
 ENDIF()
@@ -64,6 +66,8 @@ ExternalProject_Add(
     -DCMAKE_BUILD_TYPE:STRING=Release
 )
 functionInstallExternalCMakeProject(CNPY)
+
+INCLUDE_DIRECTORIES( ${PROJECT_BINARY_DIR}/ep/include )
 
 SET( CNPY_LIB ${PROJECT_BINARY_DIR}/ep/lib/cnpy.${LIBRARY_EXTENSION})
 # now build SLIDE
