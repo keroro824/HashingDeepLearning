@@ -20,17 +20,21 @@ Run
 
 ## Running SLIDE
 
-Firstly,  [CNPY](https://github.com/rogersce/cnpy) package needs to be installed.
+The CMake version of the code builds all dependencies (which currently are [ZLIB](https://github.com/madler/zlib/tree/v1.2.11) and [CNPY](https://github.com/sarthakpati/cnpy)).
 
 Additionally, Transparent Huge Pages must be enabled.  SLIDE requires approximately 900 2MB pages, and 10 1GB pages.
 ([Instructions](https://wiki.debian.org/Hugepages))
 
-Run
+### Commands
 
-```make```
+Change the paths in ```./SLIDE/Config_amz.csv``` appropriately.
 
-```./runme Config_amz.csv```
-
-Note that `Makefile` needs to be modified based on the CNPY path. Also the `trainData, testData, logFile` in Config_amz.csv needs to be changed accordingly too.
-
-
+```bash
+git clone https://github.com/sarthakpati/HashingDeepLearning.git
+cd HashingDeepLearning
+mkdir bin
+cd bin
+cmake ..
+make
+./runme ../SLIDE/Config_amz.csv
+```
