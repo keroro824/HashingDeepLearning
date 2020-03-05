@@ -19,3 +19,4 @@ mnist.scale
 */cppobjs
 */runme
 bin/*
+bin_linux/*
