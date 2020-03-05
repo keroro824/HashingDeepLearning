@@ -4,7 +4,6 @@
 #include <cmath>
 
 using namespace std;
-#pragma once
 
 SparseRandomProjection::SparseRandomProjection(int dimension, int numOfHashes, int ratio) {
     _dim = dimension;
