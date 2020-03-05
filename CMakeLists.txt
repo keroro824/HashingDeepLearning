@@ -2,6 +2,8 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.0 FATAL_ERROR)
 
 PROJECT( HashDeepLearning )
 
+SET( CMAKE_CXX_STANDARD 11 )
+
 # build dependencies
 INCLUDE( ExternalProject )
 
