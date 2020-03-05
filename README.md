@@ -20,10 +20,15 @@ Run
 
 ## Running SLIDE
 
-The CMake version of the code builds all dependencies (which currently are [ZLIB](https://github.com/madler/zlib/tree/v1.2.11) and [CNPY](https://github.com/sarthakpati/cnpy)).
+### Dependencies
 
-Additionally, Transparent Huge Pages must be enabled.  SLIDE requires approximately 900 2MB pages, and 10 1GB pages.
-([Instructions](https://wiki.debian.org/Hugepages))
+- CMake v3.0 and above
+- C++11 Compliant compiler
+- Linux: Ubuntu 16.04 and newer
+- Transparent Huge Pages must be enabled.
+  - SLIDE requires approximately 900 2MB pages, and 10 1GB pages: ([Instructions](https://wiki.debian.org/Hugepages))
+
+This version builds all dependencies (which currently are [ZLIB](https://github.com/madler/zlib/tree/v1.2.11) and [CNPY](https://github.com/sarthakpati/cnpy)).
 
 ### Commands
 
