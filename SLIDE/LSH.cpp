@@ -142,10 +142,9 @@ int LSH::retrieve(int table, int indices, int bucket)
 LSH::~LSH()
 {
 	delete [] rand1;
-	 for (size_t i = 0; i < _L; i++)
+	 for (int i = 0; i < _L; i++)
 	 {
 	 	delete[] _bucket[i];
 	 }
 	 delete[] _bucket;
 }
-

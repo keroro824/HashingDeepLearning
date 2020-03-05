@@ -25,7 +25,7 @@ DensifiedWtaHash::DensifiedWtaHash(int numHashes, int noOfBitsToHash)
     _indices = new int[_rangePow * _permute];
     _pos = new int[_rangePow * _permute];
 
-    for (size_t i = 0; i < _rangePow; i++) {
+    for (int i = 0; i < _rangePow; i++) {
         n_array[i] = i;
     }
 
@@ -63,7 +63,7 @@ int * DensifiedWtaHash::getHashEasy(float* data, int dataLen, int topk)
     float *values = new float[_numhashes];
     int *hashArray = new int[_numhashes];
 
-    for (size_t i = 0; i < _numhashes; i++)
+    for (int i = 0; i < _numhashes; i++)
     {
         hashes[i] = INT_MIN;
         values[i] = INT_MIN;
@@ -71,7 +71,7 @@ int * DensifiedWtaHash::getHashEasy(float* data, int dataLen, int topk)
 
     for (int p=0; p< _permute; p++) {
         int bin_index = p * _rangePow;
-        for (size_t i = 0; i < dataLen; i++) {
+        for (int i = 0; i < dataLen; i++) {
             int inner_index = bin_index + i;
             int binid = _indices[inner_index];
             float loc_data = data[i];
@@ -82,7 +82,7 @@ int * DensifiedWtaHash::getHashEasy(float* data, int dataLen, int topk)
         }
     }
 
-    for (size_t i = 0; i < _numhashes; i++)
+    for (int i = 0; i < _numhashes; i++)
     {
         int next = hashes[i];
         if (next != INT_MIN)
@@ -116,7 +116,7 @@ int* DensifiedWtaHash::getHash(int* indices, float* data, int dataLen)
     int *hashArray = new int[_numhashes];
 
     // init hashes and values to INT_MIN to start
-    for (size_t i = 0; i < _numhashes; i++)
+    for (int i = 0; i < _numhashes; i++)
     {
         hashes[i] = INT_MIN;
         values[i] = INT_MIN;
@@ -124,7 +124,7 @@ int* DensifiedWtaHash::getHash(int* indices, float* data, int dataLen)
 
     //
     for (int p = 0; p < _permute; p++) {
-        for (size_t i = 0; i < dataLen; i++) {
+        for (int i = 0; i < dataLen; i++) {
             int binid = _indices[p * _rangePow + indices[i]];
             if(binid < _numhashes) {
                 if (values[binid] < data[i]) {
@@ -135,7 +135,7 @@ int* DensifiedWtaHash::getHash(int* indices, float* data, int dataLen)
         }
     }
 
-    for (size_t i = 0; i < _numhashes; i++)
+    for (int i = 0; i < _numhashes; i++)
     {
         int next = hashes[i];
         if (next != INT_MIN)

@@ -226,7 +226,7 @@ int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths,
         }
         int ratio = 1;
 #pragma omp parallel for
-        for (int m = 0; m < _hiddenlayers[l]->_noOfNodes; m++)
+        for (size_t m = 0; m < _hiddenlayers[l]->_noOfNodes; m++)
         {
             Node *tmp = _hiddenlayers[l]->getNodebyID(m);
             int dim = tmp->_dim;
