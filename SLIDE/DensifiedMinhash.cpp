@@ -54,7 +54,6 @@ void DensifiedMinhash::getMap(int n, int* binids)
         h ^= h >> 13;
         h *= 0x85ebca6b;
 //        unsigned int curhash = (unsigned int)(((unsigned int)h*i) << 5);
-        int tmp = i;
         uint32_t curhash = MurmurHash ((char *)&i, (uint32_t) sizeof(i), (uint32_t)_randa);
         curhash = curhash & ((1<<_rangePow)-1);
         binids[i] = (int)floor(curhash / binsize);;

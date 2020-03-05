@@ -124,7 +124,6 @@ int LSH::add(int tableId, int indices, int id)
 int** LSH::retrieveRaw(int *indices)
 {
 	int ** rawResults = new int*[_L];
-	int count = 0;
 
 	for (int i = 0; i < _L; i++)
 	{

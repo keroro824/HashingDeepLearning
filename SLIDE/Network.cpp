@@ -122,15 +122,12 @@ int Network::predictClass(int **inputIndices, float **inputValues, int *length, 
 int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths, int **labels, int *labelsize, int iter, bool rehash, bool rebuild) {
 
     float logloss = 0.0;
-    int lowconf = 0;
-    float prob = 0.0;
     int* avg_retrieval = new int[_numberOfLayers]();
 
     for (int j = 0; j < _numberOfLayers; j++)
         avg_retrieval[j] = 0;
 
 
-    int check = 0;
     if(iter%6946==6945 ){
         //_learningRate *= 0.5;
         _hiddenlayers[1]->updateRandomNodes();

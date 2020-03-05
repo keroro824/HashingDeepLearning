@@ -331,11 +331,9 @@ void EvalDataSVM(int numBatchesTest,  Network* _mynet, int iter){
 
 void ReadDataSVM(size_t numBatches,  Network* _mynet, int epoch){
     std::ifstream file(trainData);
-    float accumlogss = 0;
     std::string str;
     //skipe header
     std::getline( file, str );
-    int totalTime = 0;
     for (size_t i = 0; i < numBatches; i++) {
         if((i+epoch*numBatches)%Stepsize==0) {
             EvalDataSVM(20, _mynet, epoch*numBatches+i);
@@ -419,8 +417,8 @@ void ReadDataSVM(size_t numBatches,  Network* _mynet, int epoch){
 
         auto t1 = std::chrono::high_resolution_clock::now();
 
-
-        auto logloss = _mynet->ProcessInput(records, values, sizes, labels, labelsize, epoch * numBatches + i,
+        // logloss
+        _mynet->ProcessInput(records, values, sizes, labels, labelsize, epoch * numBatches + i,
                                             rehash, rebuild);
 
         auto t2 = std::chrono::high_resolution_clock::now();

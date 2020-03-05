@@ -153,7 +153,6 @@ void Node::backPropagate(Node* previousNodes, int* previousLayerActiveNodeIds, i
 	    prev_node->incrementDelta(inputID, _train[inputID]._lastDeltaforBPs * _weights[previousLayerActiveNodeIds[i]]);
 
 		float grad_t = _train[inputID]._lastDeltaforBPs * prev_node->getLastActivation(inputID);
-		float grad_tsq = grad_t * grad_t;
 
 		if (ADAM)
 		{
@@ -250,4 +249,3 @@ float Node::getGradient(int weightid, int inputID, float InputVal)
 {
 	return -_train[inputID]._lastDeltaforBPs * InputVal;
 }
-

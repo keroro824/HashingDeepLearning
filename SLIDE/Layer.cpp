@@ -75,7 +75,6 @@ Layer::Layer(size_t noOfNodes, int previousLayerNumOfNodes, int layerID, NodeTyp
 
         }
     }
-        int total_time = 0;
 
     auto t1 = std::chrono::high_resolution_clock::now();
 
@@ -404,7 +403,6 @@ int Layer::queryActiveNodeandComputeActivations(int** activenodesperlayer, float
 
 
             auto t2 = std::chrono::high_resolution_clock::now();
-            auto timeDiffInMiliseconds = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
 //            std::cout << "sampling "<<" takes" << 1.0 * timeDiffInMiliseconds << std::endl;
 
         }
