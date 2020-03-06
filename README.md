@@ -23,7 +23,7 @@ Run
 Firstly,  [CNPY](https://github.com/rogersce/cnpy) package needs to be installed.
 
 Additionally, Transparent Huge Pages must be enabled.  SLIDE requires approximately 900 2MB pages, and 10 1GB pages.
-([Instructions](https://wiki.debian.org/Hugepages))
+([Instructions](https://wiki.debian.org/Hugepages)). Please that only Skylake or newer architectures support Hugepages. For older Haswell processors, we need to remove the flag _-mavx512f_ from the _OPT_FLAGS_ line in Makefile. You can also revert to the commit 2d10d46b5f6f1eda5d19f27038a596446fc17cee to ignore the HugePages optmization and still use SLIDE (which could lead to a 30% slower performance). 
 
 Run
 
