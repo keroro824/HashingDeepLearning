@@ -34,7 +34,7 @@ Additionally, Transparent Huge Pages must be enabled.  SLIDE requires approximat
 
 
 Please see the [Instructions](https://wiki.debian.org/Hugepages) to enable Hugepages on Ubuntu.
-([Instructions](https://wiki.debian.org/Hugepages)). Please that only Skylake or newer architectures support Hugepages. For older Haswell processors, we need to remove the flag _-mavx512f_ from the _OPT_FLAGS_ line in Makefile. You can also revert to the commit 2d10d46b5f6f1eda5d19f27038a596446fc17cee to ignore the HugePages optmization and still use SLIDE (which could lead to a 30% slower performance). 
+([Instructions](https://wiki.debian.org/Hugepages)). Please note that only Skylake or newer architectures support Hugepages. For older Haswell processors, we need to remove the flag `-mavx512f` from the `OPT_FLAGS` line in Makefile. You can also revert to the commit `2d10d46b5f6f1eda5d19f27038a596446fc17cee` to ignore the HugePages optmization and still use SLIDE (which could lead to a 30% slower performance). 
 
 
 
