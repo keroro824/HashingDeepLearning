@@ -27,10 +27,16 @@ public:
 	void saveWeights(string file);
 	~Network();
 	void * operator new(size_t size){
-	    cout << "new Network" << endl;
-	    return mmap(NULL, size,
+            cout << "new Network size=" << size << endl;
+            auto ret = mmap(NULL, size,
             PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB,
-            -1, 0);};
+            -1, 0);
+            if (ret  == MAP_FAILED) {
+               cout << "Fatal error of mmap(): " << strerror(errno) << endl;
+               abort();
+            }
+            return ret;
+        };
 	void operator delete(void * pointer){munmap(pointer, sizeof(Network));};
 };
 

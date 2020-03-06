@@ -1,4 +1,4 @@
-TARGET  := runme
+TARGET := runme
 
 CPPOBJDIR = cppobjs
 
@@ -12,38 +12,51 @@ COBJS := $(CSOURCES:%.c=$(COBJDIR)/%.o)
 
 OBJS = $(CPPOBJS) $(COBJS)
 
+CXX := g++-6
+CC := gcc-6
+RM := rm
+
 #OPT_FLAGS   := -fno-strict-aliasing -O2 -fopenmp #-march=skylake -mtune=intel -mavx2 -mavx512f
 OPT_FLAGS   := -fno-strict-aliasing -g -O3 -fopenmp -march=skylake -mtune=intel -mavx2 -mavx512f
 
 INC := /usr/include/
 
-LIB += -fPIC -fopenmp -L ~/workspace/baseline/cnpy/build/ -lcnpy -lz
+CNPY := ~/workspace/baseline/cnpy
 
-CXXFLAGS := -m64  -DUNIX -I ~/workspace/baseline/cnpy/ -lcnpy -lz -std=c++11 $(WARN_FLAGS) $(OPT_FLAGS) -I$(INC)
-CFLAGS := -m64 -DUNIX -I ~/workspace/baseline/cnpy/ -lcnpy -lz $(WARN_FLAGS) $(OPT_FLAGS) -I$(INC)
+LIB += -fPIC -fopenmp -L $(CNPY)/build/ -lcnpy -lz
 
-LDFLAGS := $(LIBRARY_PATH) $(LIB)
+CXXFLAGS := -m64  -DUNIX -I $(CNPY) -lcnpy -lz -std=c++11 $(WARN_FLAGS) $(OPT_FLAGS) -I$(INC)
+CFLAGS := -m64 -DUNIX -I $(CNPY) -lcnpy -lz $(WARN_FLAGS) $(OPT_FLAGS) -I$(INC)
 
-.PHONY: clean
+LDFLAGS := $(LIBRARY_PATH) $(LIB) -Wl,-rpath=$(CNPY)/build
+
+.PHONY: clean deps
 
 $(TARGET): $(CPPOBJDIR) $(COBJDIR) $(CPPOBJS) $(COBJS)
-	g++-6 -o $(TARGET) $(CPPOBJS) $(LDFLAGS)
+	$(CXX) -o $(TARGET) $(CPPOBJS) $(LDFLAGS)
 
 $(CPPOBJS): $(CPPOBJDIR)/%.o: %.cpp
 	@echo "compile $@ $<"
-	g++-6 -fPIC $(CXXFLAGS) -c $< -o $@
+	$(CXX) -fPIC $(CXXFLAGS) -c $< -o $@
         
 $(COBJS): $(COBJDIR)/%.o: %.c
 	@echo "compile $@ $<"
-	gcc-6 -fPIC $(CFLAGS) -c $< -o $@
+	$(CC) -fPIC $(CFLAGS) -c $< -o $@
         
 $(CPPOBJDIR):   
-	@ mkdir -p $(CPPOBJDIR)
+	@mkdir -p $(CPPOBJDIR)
         
 $(COBJDIR):     
-	@ mkdir -p $(COBJDIR)
+	@mkdir -p $(COBJDIR)
 
 clean:
-	$(RM) $(TARGET) $(OBJ)
+	$(RM) -f $(TARGET) $(OBJ)
 	$(RM) -rf $(CPPOBJDIR)
 	$(RM) -rf $(COBJDIR)
+
+deps:
+	# fetch and build cnpy
+	rm -rf deps
+	mkdir deps
+	(cd deps; git clone https://github.com/rogersce/cnpy.git)
+	(cd deps/cnpy; mkdir build; cd build; cmake ../../cnpy; make)
