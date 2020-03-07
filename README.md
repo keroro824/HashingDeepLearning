@@ -28,6 +28,8 @@ python python_examples/example_sampled_softmax.py
 
 ## Running SLIDE
 
+For simplicity, please refer to the our [Docker](https://hub.docker.com/repository/docker/ottovonxu/slide) image with all environments installed. To replicate the experiment without setting Hugepages, please download [Amazon-670K](https://drive.google.com/open?id=0B3lPMIHmG6vGdUJwRzltS1dvUVk) in path ```/home/code/HashingDeepLearning/dataset/Amazon``` 
+
 Firstly,  [CNPY](https://github.com/rogersce/cnpy) package needs to be installed.
 
 Additionally, Transparent Huge Pages must be enabled.  SLIDE requires approximately 900 2MB pages, and 10 1GB pages.
