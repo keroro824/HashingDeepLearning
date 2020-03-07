@@ -71,7 +71,7 @@ int Network::predictClass(int **inputIndices, float **inputValues, int *length, 
     int correctPred = 0;
 
     auto t1 = std::chrono::high_resolution_clock::now();
-    #pragma omp parallel for reduction(+:correctPred) num_threads(24)
+    #pragma omp parallel for reduction(+:correctPred)
     for (int i = 0; i < _currentBatchSize; i++) {
         int **activenodesperlayer = new int *[_numberOfLayers + 1]();
         float **activeValuesperlayer = new float *[_numberOfLayers + 1]();
