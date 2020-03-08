@@ -23,7 +23,7 @@ private:
 
 public:
 	int _layerID, _noOfActive;
-	int _noOfNodes;
+	size_t _noOfNodes;
 	float* _weights;
 	float* _adamAvgMom;
 	float* _adamAvgVel;
@@ -34,8 +34,8 @@ public:
     SparseRandomProjection *_srp;
     DensifiedWtaHash *_dwtaHasher;
 	int * _binids;
-	Layer(int _numNodex, int previousLayerNumOfNodes, int layerID, NodeType type, int batchsize, int K, int L, int RangePow, float Sparsity, float* weights=NULL, float* bias=NULL, float *adamAvgMom=NULL, float *adamAvgVel=NULL);
-	Node* getNodebyID(int nodeID);
+	Layer(size_t _numNodex, int previousLayerNumOfNodes, int layerID, NodeType type, int batchsize, int K, int L, int RangePow, float Sparsity, float* weights=NULL, float* bias=NULL, float *adamAvgMom=NULL, float *adamAvgVel=NULL);
+	Node* getNodebyID(size_t nodeID);
 	Node* getAllNodes();
 	int getNodeCount();
 	void addtoHashTable(float* weights, int length, float bias, int id);
@@ -61,4 +61,3 @@ public:
     void operator delete(void * pointer){munmap(pointer, sizeof(Layer));};
 
 };
-

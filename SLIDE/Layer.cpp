@@ -12,7 +12,7 @@
 using namespace std;
 
 
-Layer::Layer(int noOfNodes, int previousLayerNumOfNodes, int layerID, NodeType type, int batchsize,  int K, int L, int RangePow, float Sparsity, float* weights, float* bias, float *adamAvgMom, float *adamAvgVel) {
+Layer::Layer(size_t noOfNodes, int previousLayerNumOfNodes, int layerID, NodeType type, int batchsize,  int K, int L, int RangePow, float Sparsity, float* weights, float* bias, float *adamAvgMom, float *adamAvgVel) {
     _layerID = layerID;
     _noOfNodes = noOfNodes;
     _Nodes = new Node[noOfNodes];
@@ -26,7 +26,7 @@ Layer::Layer(int noOfNodes, int previousLayerNumOfNodes, int layerID, NodeType t
 
 // create a list of random nodes just in case not enough nodes from hashtable for active nodes.
     _randNode = new int[_noOfNodes];
-    for (int n = 0; n < _noOfNodes; n++) {
+    for (size_t n = 0; n < _noOfNodes; n++) {
         _randNode[n] = n;
     }
 
@@ -75,7 +75,6 @@ Layer::Layer(int noOfNodes, int previousLayerNumOfNodes, int layerID, NodeType t
 
         }
     }
-        int total_time = 0;
 
     auto t1 = std::chrono::high_resolution_clock::now();
 
@@ -155,7 +154,7 @@ void Layer::addtoHashTable(float* weights, int length, float bias, int ID)
 }
 
 
-Node* Layer::getNodebyID(int nodeID)
+Node* Layer::getNodebyID(size_t nodeID)
 {
     assert(("nodeID less than _noOfNodes" , nodeID < _noOfNodes));
     return &_Nodes[nodeID];
@@ -336,8 +335,8 @@ int Layer::queryActiveNodeandComputeActivations(int** activenodesperlayer, float
             in = counts.size();
             if (counts.size()<1500){
                 srand(time(NULL));
-                int start = rand() % _noOfNodes;
-                for (int i = start; i < _noOfNodes; i++) {
+                size_t start = rand() % _noOfNodes;
+                for (size_t i = start; i < _noOfNodes; i++) {
                     if (counts.size() >= 1000) {
                         break;
                     }
@@ -347,7 +346,7 @@ int Layer::queryActiveNodeandComputeActivations(int** activenodesperlayer, float
                 }
 
                 if (counts.size() < 1000) {
-                    for (int i = 0; i < _noOfNodes; i++) {
+                    for (size_t i = 0; i < _noOfNodes; i++) {
                         if (counts.size() >= 1000) {
                             break;
                         }
@@ -404,7 +403,6 @@ int Layer::queryActiveNodeandComputeActivations(int** activenodesperlayer, float
 
 
             auto t2 = std::chrono::high_resolution_clock::now();
-            auto timeDiffInMiliseconds = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
 //            std::cout << "sampling "<<" takes" << 1.0 * timeDiffInMiliseconds << std::endl;
 
         }
@@ -417,7 +415,7 @@ int Layer::queryActiveNodeandComputeActivations(int** activenodesperlayer, float
             vector<pair<float, int> > sortW;
             int what = 0;
 
-            for (int s = 0; s < _noOfNodes; s++) {
+            for (size_t s = 0; s < _noOfNodes; s++) {
                 float tmp = innerproduct(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex],
                                          lengths[layerIndex], _Nodes[s]._weights);
                 tmp += _Nodes[s]._bias;

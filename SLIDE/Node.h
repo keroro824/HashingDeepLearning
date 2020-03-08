@@ -54,7 +54,7 @@ private:
 public:
 	train* _train;
     int _currentBatchsize;
-    int _dim, _layerNum, _IDinLayer;
+    size_t _dim, _layerNum, _IDinLayer;
 	int* _indicesInTables;
 	int* _indicesInBuckets;
 	float* _weights;
