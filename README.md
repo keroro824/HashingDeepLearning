@@ -6,17 +6,25 @@ The SLIDE package contains the source code for reproducing the main experiments 
 
 The Datasets can be downloaded in [Amazon-670K](https://drive.google.com/open?id=0B3lPMIHmG6vGdUJwRzltS1dvUVk).
 
-## Tensorflow Baselines
+## TensorFlow Baselines
 
-We suggest directly get Tensorflow docker image to install [Tensorflow-GPU] (https://www.tensorflow.org/install/docker).
-For Tensorflow-CPU compiled with AVX2, we recommend using this precompiled [build](https://github.com/lakshayg/tensorflow-build).
+We suggest directly get TensorFlow docker image to install [TensorFlow-GPU](https://www.tensorflow.org/install/docker).
+For TensorFlow-CPU compiled with AVX2, we recommend using this precompiled [build](https://github.com/lakshayg/tensorflow-build).
 
-`config.py` controls the parameters of Tensorflow training like `learning rate`. `example_full_softmax.py, example_sampled_softmax.py` are example files for `Amazon-670K` dataset with full softmax and sampled softmax respectively.
+Also there is a TensorFlow docker image specifically built for CPUs with AVX-512 instructions, to get it use:
+
+```bash
+docker pull clearlinux/stacks-dlrs_2-mkl    
+```
+
+`config.py` controls the parameters of TensorFlow training like `learning rate`. `example_full_softmax.py, example_sampled_softmax.py` are example files for `Amazon-670K` dataset with full softmax and sampled softmax respectively.
 
 Run
 
-```python python_examples/example_full_softmax.py```
-``` python python_examples/example_sampled_softmax.py```
+```bash
+python python_examples/example_full_softmax.py
+python python_examples/example_sampled_softmax.py
+```
 
 ## Running SLIDE
 
@@ -27,6 +35,10 @@ Run
 - Linux: Ubuntu 16.04 and newer
 - Transparent Huge Pages must be enabled.
   - SLIDE requires approximately 900 2MB pages, and 10 1GB pages: ([Instructions](https://wiki.debian.org/Hugepages))
+
+For simplicity, please refer to the our [Docker](https://hub.docker.com/repository/docker/ottovonxu/slide) image with all environments installed. To replicate the experiment without setting Hugepages, please download [Amazon-670K](https://drive.google.com/open?id=0B3lPMIHmG6vGdUJwRzltS1dvUVk) in path ```/home/code/HashingDeepLearning/dataset/Amazon``` 
+
+Also, note that only Skylake or newer architectures support Hugepages. For older Haswell processors, we need to remove the flag `-mavx512f` from the `OPT_FLAGS` line in Makefile. You can also revert to the commit `2d10d46b5f6f1eda5d19f27038a596446fc17cee` to ignore the HugePages optmization and still use SLIDE (which could lead to a 30% slower performance). 
 
 This version builds all dependencies (which currently are [ZLIB](https://github.com/madler/zlib/tree/v1.2.11) and [CNPY](https://github.com/sarthakpati/cnpy)).
 
