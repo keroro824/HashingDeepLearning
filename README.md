@@ -28,7 +28,7 @@ python python_examples/example_sampled_softmax.py
 
 ## Running SLIDE
 
-For simplicity, please refer to the our [Docker](https://hub.docker.com/repository/docker/ottovonxu/slide) image with all environments and a dataset installed [Amazon-670K](https://drive.google.com/open?id=0B3lPMIHmG6vGdUJwRzltS1dvUVk). To replicate the experiment, please type ```docker pull ottovonxu/slide:v2``` 
+For simplicity, please refer to the our [Docker](https://hub.docker.com/repository/docker/ottovonxu/slide) image with all environments and a dataset installed [Amazon-670K](https://drive.google.com/open?id=0B3lPMIHmG6vGdUJwRzltS1dvUVk). To replicate the experiment, please type ```docker pull ottovonxu/slide:v3``` 
 
 Firstly,  [CNPY](https://github.com/rogersce/cnpy) package needs to be installed.
 
