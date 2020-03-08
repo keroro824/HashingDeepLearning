@@ -24,7 +24,7 @@ WtaHash::WtaHash(int numHashes, int noOfBitsToHash)
     int* n_array = new int[_rangePow];
     _indices = new int[_rangePow*permute];
 
-    for (size_t i = 0; i < _rangePow; i++) {
+    for (int i = 0; i < _rangePow; i++) {
         n_array[i] = i;
     }
     for (int p=0; p<permute ;p++) {
@@ -43,14 +43,14 @@ int * WtaHash::getHash(float* data)
     int *hashes = new int[_numhashes];
     float *values = new float[_numhashes];
 
-    for (size_t i = 0; i < _numhashes; i++)
+    for (int i = 0; i < _numhashes; i++)
     {
         hashes[i] = INT_MIN;
         values[i] = INT_MIN;
     }
 
 
-    for (size_t i = 0; i < _numhashes; i++)
+    for (int i = 0; i < _numhashes; i++)
     {
         for (int j=0; j< binsize; j++){
             if (values[i] < data[_indices[i*binsize+j]]) {
