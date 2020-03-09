@@ -55,7 +55,12 @@ public:
         void* ptr = mmap(NULL, size,
             PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB,
             -1, 0);
-        if (ptr == NULL)
+        if (ptr == MAP_FAILED){
+            ptr = mmap(NULL, size,
+                PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS,
+                -1, 0);
+        }
+        if (ptr == MAP_FAILED)
             std::cout << "mmap fail! No new layer!" << std::endl;
         return ptr;};
     void operator delete(void * pointer){munmap(pointer, sizeof(Layer));};
