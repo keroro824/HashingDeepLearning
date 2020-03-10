@@ -4,7 +4,7 @@ The SLIDE package contains the source code for reproducing the main experiments 
 
 ## Dataset
 
-The Datasets can be downloaded in [Amazon-670K](https://drive.google.com/open?id=0B3lPMIHmG6vGdUJwRzltS1dvUVk).
+The Datasets can be downloaded in [Amazon-670K](https://drive.google.com/open?id=0B3lPMIHmG6vGdUJwRzltS1dvUVk). Note that the data is sorted by labels so please shuffle at least the validation/testing data.
 
 ## TensorFlow Baselines
 
