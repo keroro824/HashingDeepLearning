@@ -1,7 +1,9 @@
 #pragma once
 #include <stdlib.h>
 #include <assert.h>
+#include <iostream>
 #include <cmath>
+#include <sys/mman.h>
 
 
 using namespace std;
@@ -9,18 +11,49 @@ using namespace std;
 enum NodeType
 { ReLU, Softmax};
 
+struct train {
+    float _lastDeltaforBPs;
+    float _lastActivations;
+    float _lastGradients;
+    int _ActiveinputIds;
+
+    void * operator new(size_t size){
+        return mmap(NULL, size,
+            PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB,
+            -1, 0);};
+    void* operator new (std::size_t size, const std::nothrow_t& nothrow_value){return operator new (size);};
+    void* operator new (std::size_t size, void* ptr){return operator new (size);};
+    void* operator new[] (std::size_t size){
+        void* ptr = mmap(NULL, size,
+            PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB | (30 << MAP_HUGE_SHIFT),
+            -1, 0);
+        if (ptr == NULL)
+            std::cout << "mmap fail! No train array!" << std::endl;
+        return ptr;};
+    void* operator new[] (std::size_t size, const std::nothrow_t& nothrow_value){return operator new (size);};
+    void* operator new[] (std::size_t size, void* ptr){return operator new (size);};
+
+    void operator delete(void * ptr){munmap(ptr, sizeof(train));};
+    void operator delete (void* ptr, const std::nothrow_t& nothrow_constant){munmap(ptr, sizeof(train));};
+    void operator delete (void* ptr, void* voidptr2){};
+    // TODO: The size to be munmap'd should be the entire array, not just a single object
+    void operator delete[](void * ptr){munmap(ptr, sizeof(train));};
+    void operator delete[] (void* ptr, const std::nothrow_t& nothrow_constant){munmap(ptr, sizeof(train));};
+    void operator delete[] (void* ptr, void* voidptr2){};
+
+} __attribute__ ((aligned (64)));
+
 class Node
 {
 private:
-	float* _lastGradients;
-	int* _ActiveinputIds;
-	NodeType _type;
+	int _activeInputs;
+    NodeType _type;
+
 
 public:
-	float* _lastDeltaforBPs;
-    float* _lastActivations;
+	train* _train;
     int _currentBatchsize;
-    int _dim, _layerNum, _IDinLayer;
+    size_t _dim, _layerNum, _IDinLayer;
 	int* _indicesInTables;
 	int* _indicesInBuckets;
 	float* _weights;
@@ -34,19 +67,44 @@ public:
 	float _adamAvgMombias=0;
 	float _adamAvgVelbias=0;
 	float _mirrorbias =0;
-	float* getTestActivation();
-	float* getLastDeltaForBPs();
 
+	Node(){};
 	Node(int dim, int nodeID, int layerID, NodeType type, int batchsize, float *weights, float bias, float *adamAvgMom, float *adamAvgVel);
+	void Update(int dim, int nodeID, int layerID, NodeType type, int batchsize, float *weights, float bias, float *adamAvgMom, float *adamAvgVel, train* train_blob);
 	void updateWeights(float* newWeights, float newbias);
 	float getLastActivation(int inputID);
 	void incrementDelta(int inputID, float incrementValue);
 	float getActivation(int* indices, float* values, int length, int inputID);
+	bool getInputActive(int inputID);
+	bool getActiveInputs(void);
+	void SetlastActivation(int inputID, float realActivation);
 	void ComputeExtaStatsForSoftMax(float normalizationConstant, int inputID, int* label, int labelsize);
-	void backPropagate(Node** previousNodes,int* previousLayerActiveNodeIds, int previousLayerActiveNodeSize, float learningRate, int inputID);
+	void backPropagate(Node* previousNodes,int* previousLayerActiveNodeIds, int previousLayerActiveNodeSize, float learningRate, int inputID);
 	void backPropagateFirstLayer(int* nnzindices, float* nnzvalues, int nnzSize, float learningRate, int inputID);
 	~Node();
-	//Node clone();
+
+    void * operator new(size_t size){
+        std::cout << "new Node" << std::endl;
+        return mmap(NULL, size,
+            PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB | (30 << MAP_HUGE_SHIFT),
+            -1, 0);};
+    void* operator new (std::size_t size, const std::nothrow_t& nothrow_value){return operator new (size);};
+    void* operator new (std::size_t size, void* ptr){return operator new (size);};
+    void* operator new[] (std::size_t size){
+        std::cout << "new Node array" << std::endl;
+        return mmap(NULL, size,
+            PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB | (30 << MAP_HUGE_SHIFT),
+            -1, 0);};
+    void* operator new[] (std::size_t size, const std::nothrow_t& nothrow_value){return operator new (size);};
+    void* operator new[] (std::size_t size, void* ptr){return operator new (size);};
+
+    void operator delete(void * ptr){munmap(ptr, sizeof(Node));};
+    void operator delete (void* ptr, const std::nothrow_t& nothrow_constant){munmap(ptr, sizeof(Node));};
+    void operator delete (void* ptr, void* voidptr2){};
+    // TODO: should munmap the size of the entire array, not a single Node
+    void operator delete[](void * ptr){munmap(ptr, sizeof(Node));};
+    void operator delete[] (void* ptr, const std::nothrow_t& nothrow_constant){munmap(ptr, sizeof(Node));};
+    void operator delete[] (void* ptr, void* voidptr2){};
 
 	//only for debugging
 	float purturbWeight(int weightid, float delta);

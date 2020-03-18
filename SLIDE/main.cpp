@@ -30,7 +30,7 @@ int Rebuild = 1000;
 int InputDim = 784;
 int totRecords = 60000;
 int totRecordsTest = 10000;
-float Lr = 0.01;
+float Lr = 0.0001;
 int Epoch = 5;
 int Stepsize = 20;
 int *sizesOfLayers;
@@ -235,7 +235,7 @@ void EvalDataSVM(int numBatchesTest,  Network* _mynet, int iter){
     std::getline( testfile, str );
 
     ofstream outputFile(logFile,  std::ios_base::app);
-    for (size_t i = 0; i < numBatchesTest; i++) {
+    for (int i = 0; i < numBatchesTest; i++) {
         int **records = new int *[Batchsize];
         float **values = new float *[Batchsize];
         int *sizes = new int[Batchsize];
@@ -301,13 +301,21 @@ void EvalDataSVM(int numBatchesTest,  Network* _mynet, int iter){
                 break;
         }
 
+        int num_features = 0, num_labels = 0;
+        for (int i = 0; i < Batchsize; i++)
+        {
+            num_features += sizes[i];
+            num_labels += labelsize[i];
+        }
+
+        std::cout << Batchsize << " records, with "<< num_features << " features and " << num_labels << " labels" << std::endl;
         auto correctPredict = _mynet->predictClass(records, values, sizes, labels, labelsize);
         totCorrect += correctPredict;
-        std::cout <<" iter "<< i<<" "<< totCorrect*1.0/(Batchsize*(i+1))<<std::endl;
+        std::cout <<" iter "<< i << ": " << totCorrect*1.0/(Batchsize*(i+1)) << " correct" << std::endl;
 
         delete[] sizes;
         delete[] labels;
-        for (size_t d = 0; d < Batchsize; d++) {
+        for (int d = 0; d < Batchsize; d++) {
             delete[] records[d];
             delete[] values[d];
         }
@@ -316,18 +324,16 @@ void EvalDataSVM(int numBatchesTest,  Network* _mynet, int iter){
 
     }
     testfile.close();
-    cout << "over all" << totCorrect * 1.0 / (numBatchesTest*Batchsize)<< endl;
-    outputFile << iter<<" " <<globalTime/1000 << " " << totCorrect * 1.0 / (numBatchesTest*Batchsize) << endl;
+    cout << "over all " << totCorrect * 1.0 / (numBatchesTest*Batchsize) << endl;
+    outputFile << iter << " " << globalTime/1000 << " " << totCorrect * 1.0 / (numBatchesTest*Batchsize) << endl;
 
 }
 
-void ReadDataSVM(int numBatches,  Network* _mynet, int epoch){
+void ReadDataSVM(size_t numBatches,  Network* _mynet, int epoch){
     std::ifstream file(trainData);
-    float accumlogss = 0;
     std::string str;
     //skipe header
     std::getline( file, str );
-    int totalTime = 0;
     for (size_t i = 0; i < numBatches; i++) {
         if((i+epoch*numBatches)%Stepsize==0) {
             EvalDataSVM(20, _mynet, epoch*numBatches+i);
@@ -397,13 +403,13 @@ void ReadDataSVM(int numBatches,  Network* _mynet, int epoch){
 
         bool rehash = false;
         bool rebuild = false;
-        if ((epoch*numBatches+i)%(Rehash/Batchsize) == (Rehash/Batchsize-1)){
+        if ((epoch*numBatches+i)%(Rehash/Batchsize) == ((size_t)Rehash/Batchsize-1)){
             if(Mode==1 || Mode==4) {
                 rehash = true;
             }
         }
 
-        if ((epoch*numBatches+i)%(Rebuild/Batchsize) == (Rehash/Batchsize-1)){
+        if ((epoch*numBatches+i)%(Rebuild/Batchsize) == ((size_t)Rehash/Batchsize-1)){
             if(Mode==1 || Mode==4) {
                 rebuild = true;
             }
@@ -411,8 +417,8 @@ void ReadDataSVM(int numBatches,  Network* _mynet, int epoch){
 
         auto t1 = std::chrono::high_resolution_clock::now();
 
-
-        auto logloss = _mynet->ProcessInput(records, values, sizes, labels, labelsize, epoch * numBatches + i,
+        // logloss
+        _mynet->ProcessInput(records, values, sizes, labels, labelsize, epoch * numBatches + i,
                                             rehash, rebuild);
 
         auto t2 = std::chrono::high_resolution_clock::now();
@@ -422,7 +428,7 @@ void ReadDataSVM(int numBatches,  Network* _mynet, int epoch){
 
         delete[] sizes;
 
-        for (size_t d = 0; d < Batchsize; d++) {
+        for (int d = 0; d < Batchsize; d++) {
             delete[] records[d];
             delete[] values[d];
             delete[] labels[d];
@@ -444,14 +450,12 @@ int main(int argc, char* argv[])
     //***********************************
     parseconfig(argv[1]);
 
-
     //***********************************
     // Initialize Network
     //***********************************
     int numBatches = totRecords/Batchsize;
     int numBatchesTest = totRecordsTest/Batchsize;
     NodeType* layersTypes = new NodeType[numLayer];
-
 
     for (int i=0; i<numLayer-1; i++){
         layersTypes[i] = NodeType::ReLU;
@@ -465,8 +469,8 @@ int main(int argc, char* argv[])
     auto t1 = std::chrono::high_resolution_clock::now();
     Network *_mynet = new Network(sizesOfLayers, layersTypes, numLayer, Batchsize, Lr, InputDim, K, L, RangePow, Sparsity, arr);
     auto t2 = std::chrono::high_resolution_clock::now();
-    int timeDiffInMiliseconds = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
-    std::cout << "Network Initialization takes " << 1.0 * timeDiffInMiliseconds << std::endl;
+    float timeDiffInMiliseconds = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+    std::cout << "Network Initialization takes " << timeDiffInMiliseconds/1000 << " milliseconds" << std::endl;
 
     //***********************************
     // Start Training
@@ -475,8 +479,10 @@ int main(int argc, char* argv[])
     for (int e=0; e< Epoch; e++) {
         ofstream outputFile(logFile,  std::ios_base::app);
         outputFile<<"Epoch "<<e<<endl;
+        // train
         ReadDataSVM(numBatches, _mynet, e);
 
+        // test
         if(e==Epoch-1) {
             EvalDataSVM(numBatchesTest, _mynet, (e+1)*numBatches);
         }else{
@@ -490,6 +496,7 @@ int main(int argc, char* argv[])
     delete [] K;
     delete [] L;
     delete [] Sparsity;
+
     return 0;
 
 }
