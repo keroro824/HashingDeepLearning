@@ -28,9 +28,19 @@ public:
 	~Network();
 	void * operator new(size_t size){
 	    cout << "new Network" << endl;
-	    return mmap(NULL, size,
-            PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB,
-            -1, 0);};
+	    void* ptr = mmap(NULL, size,
+	        PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB,
+	        -1, 0);
+	    if (ptr == MAP_FAILED){
+	        ptr = mmap(NULL, size,
+	            PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS,
+	            -1, 0);
+	    }
+	    if (ptr == MAP_FAILED){
+	        std::cout << "mmap failed at Network." << std::endl;
+	    }
+	    return ptr;
+	}
 	void operator delete(void * pointer){munmap(pointer, sizeof(Network));};
 };
 

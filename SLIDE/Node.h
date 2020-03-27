@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <iostream>
 #include <cmath>
+#include <linux/mman.h>
 #include <sys/mman.h>
 #include <asm-generic/mman-common.h>
 
@@ -19,18 +20,35 @@ struct train {
     int _ActiveinputIds;
 
     void * operator new(size_t size){
-        return mmap(NULL, size,
+        void* ptr = mmap(NULL, size,
             PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB,
-            -1, 0);};
+            -1, 0);
+        if (ptr == MAP_FAILED){
+            ptr = mmap(NULL, size,
+                PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS,
+                -1, 0);
+        }
+        if (ptr == MAP_FAILED){
+            std::cout << "mmap failed at train." << std::endl;
+        }
+        return ptr;
+    }
     void* operator new (std::size_t size, const std::nothrow_t& nothrow_value){return operator new (size);};
     void* operator new (std::size_t size, void* ptr){return operator new (size);};
     void* operator new[] (std::size_t size){
         void* ptr = mmap(NULL, size,
-            PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB | (30 << MAP_HUGE_SHIFT),
+            PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB | MAP_HUGE_1GB,
             -1, 0);
-        if (ptr == NULL)
+        if (ptr == MAP_FAILED){
+            ptr = mmap(NULL, size,
+                PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS,
+                -1, 0);
+        }
+        if (ptr == MAP_FAILED){
             std::cout << "mmap fail! No train array!" << std::endl;
-        return ptr;};
+        }
+        return ptr;
+    }
     void* operator new[] (std::size_t size, const std::nothrow_t& nothrow_value){return operator new (size);};
     void* operator new[] (std::size_t size, void* ptr){return operator new (size);};
 
@@ -86,16 +104,36 @@ public:
 
     void * operator new(size_t size){
         std::cout << "new Node" << std::endl;
-        return mmap(NULL, size,
-            PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB | (30 << MAP_HUGE_SHIFT),
-            -1, 0);};
+        void* ptr = mmap(NULL, size,
+            PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB | MAP_HUGE_1GB,
+            -1, 0);
+        if (ptr == MAP_FAILED){
+            ptr = mmap(NULL, size,
+                PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS,
+                -1, 0);
+        }
+        if (ptr == MAP_FAILED){
+            std::cout << "mmap failed at Node." << std::endl;
+        }
+        return ptr;
+    }
     void* operator new (std::size_t size, const std::nothrow_t& nothrow_value){return operator new (size);};
     void* operator new (std::size_t size, void* ptr){return operator new (size);};
     void* operator new[] (std::size_t size){
         std::cout << "new Node array" << std::endl;
-        return mmap(NULL, size,
-            PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB | (30 << MAP_HUGE_SHIFT),
-            -1, 0);};
+        void* ptr = mmap(NULL, size,
+            PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB | MAP_HUGE_1GB,
+            -1, 0);
+        if (ptr == MAP_FAILED){
+            ptr = mmap(NULL, size,
+                PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS,
+                -1, 0);
+        }
+        if (ptr == MAP_FAILED){
+            std::cout << "mmap failed at Node array." << std::endl;
+        }
+        return ptr;
+    }
     void* operator new[] (std::size_t size, const std::nothrow_t& nothrow_value){return operator new (size);};
     void* operator new[] (std::size_t size, void* ptr){return operator new (size);};
 
