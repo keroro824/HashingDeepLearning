@@ -28,25 +28,32 @@ python python_examples/example_sampled_softmax.py
 
 ## Running SLIDE
 
-For simplicity, please refer to the our [Docker](https://hub.docker.com/repository/docker/ottovonxu/slide) image with all environments and a dataset installed [Amazon-670K](https://drive.google.com/open?id=0B3lPMIHmG6vGdUJwRzltS1dvUVk). To replicate the experiment, please type ```docker pull ottovonxu/slide:v3``` 
+### Dependencies
 
-Firstly,  [CNPY](https://github.com/rogersce/cnpy) package needs to be installed.
+- CMake v3.0 and above
+- C++11 Compliant compiler
+- Linux: Ubuntu 16.04 and newer
+- Transparent Huge Pages must be enabled.
+  - SLIDE requires approximately 900 2MB pages, and 10 1GB pages: ([Instructions](https://wiki.debian.org/Hugepages))
 
-Additionally, Transparent Huge Pages must be enabled.  SLIDE requires approximately 900 2MB pages, and 10 1GB pages.
+### Notes:
 
+- For simplicity, please refer to the our [Docker](https://hub.docker.com/repository/docker/ottovonxu/slide) image with all environments installed. To replicate the experiment without setting Hugepages, please download [Amazon-670K](https://drive.google.com/open?id=0B3lPMIHmG6vGdUJwRzltS1dvUVk) in path ```/home/code/HashingDeepLearning/dataset/Amazon``` 
 
-Please see the [Instructions](https://wiki.debian.org/Hugepages) to enable Hugepages on Ubuntu.
+- Also, note that only Skylake or newer architectures support Hugepages. For older Haswell processors, we need to remove the flag `-mavx512f` from the `OPT_FLAGS` line in Makefile. You can also revert to the commit `2d10d46b5f6f1eda5d19f27038a596446fc17cee` to ignore the HugePages optimization and still use SLIDE (which could lead to a 30% slower performance). 
 
-Also, note that only Skylake or newer architectures support Hugepages. For older Haswell processors, we need to remove the flag `-mavx512f` from the `OPT_FLAGS` line in Makefile. You can also revert to the commit `2d10d46b5f6f1eda5d19f27038a596446fc17cee` to ignore the HugePages optmization and still use SLIDE (which could lead to a 30% slower performance). 
+- This version builds all dependencies (which currently are [ZLIB](https://github.com/madler/zlib/tree/v1.2.11) and [CNPY](https://github.com/sarthakpati/cnpy)).
 
+### Commands
 
+Change the paths in ```./SLIDE/Config_amz.csv``` appropriately.
 
-Run
-
-```make```
-
-```./runme Config_amz.csv```
-
-Note that `Makefile` needs to be modified based on the CNPY path. Also the `trainData, testData, logFile` in Config_amz.csv needs to be changed accordingly too.
-
-
+```bash
+git clone https://github.com/sarthakpati/HashingDeepLearning.git
+cd HashingDeepLearning
+mkdir bin
+cd bin
+cmake ..
+make
+./runme ../SLIDE/Config_amz.csv
+```

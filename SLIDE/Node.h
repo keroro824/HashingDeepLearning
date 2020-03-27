@@ -4,6 +4,7 @@
 #include <iostream>
 #include <cmath>
 #include <sys/mman.h>
+#include <asm-generic/mman-common.h>
 
 
 using namespace std;
