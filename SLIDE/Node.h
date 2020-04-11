@@ -93,7 +93,7 @@ public:
   int *&indicesInTables() { return _indicesInTables; }
   int *&indicesInBuckets() { return _indicesInBuckets; }
   float *weights() const { return _weights; }
-  const float *mirrorWeights() const { return _mirrorWeights; }
+  const float *mirrorWeights() const { return _mirrorWeights; } // not adam
 
   float *adamAvgMom() const { return _adamAvgMom; }
   float *adamAvgVel() const { return _adamAvgVel; }
@@ -109,7 +109,6 @@ public:
 	Node(){};
 	Node(int dim, int nodeID, int layerID, NodeType type, int batchsize, float *weights, float bias, float *adamAvgMom, float *adamAvgVel);
 	void Update(int dim, int nodeID, int layerID, NodeType type, int batchsize, float *weights, float bias, float *adamAvgMom, float *adamAvgVel, train* train_blob);
-	void updateWeights(float* newWeights, float newbias);
 	float getLastActivation(int inputID);
 	void incrementDelta(int inputID, float incrementValue);
 	float getActivation(int* indices, float* values, int length, int inputID);
