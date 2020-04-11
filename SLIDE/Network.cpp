@@ -17,7 +17,6 @@ Network::Network(const std::vector<int> &sizesOfLayers, const std::vector<NodeTy
 ,_learningRate(lr)
 ,_currentBatchSize(batchSize)
 {
-
     for (int i = 0; i < noOfLayers; i++) {
         if (i != 0) {
             /*
@@ -94,7 +93,7 @@ int Network::predictClass(int **inputIndices, float **inputValues, int *length, 
         float max_act = -222222222;
         int predict_class = -1;
         for (int k = 0; k < noOfClasses; k++) {
-            float cur_act = _hiddenlayers[_numberOfLayers - 1]->getNodebyID(activenodesperlayer[_numberOfLayers][k])->getLastActivation(i);
+            float cur_act = _hiddenlayers[_numberOfLayers - 1]->getNodebyID(activenodesperlayer[_numberOfLayers][k]).getLastActivation(i);
             if (max_act < cur_act) {
                 max_act = cur_act;
                 predict_class = activenodesperlayer[_numberOfLayers][k];
@@ -173,15 +172,15 @@ int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths,
             Layer* prev_layer = _hiddenlayers[j - 1];
             // nodes
             for (int k = 0; k < sizesPerBatch[i][j + 1]; k++) {
-                Node* node = layer->getNodebyID(activeNodesPerBatch[i][j + 1][k]);
+                Node &node = layer->getNodebyID(activeNodesPerBatch[i][j + 1][k]);
                 if (j == _numberOfLayers - 1) {
                     //TODO: Compute Extra stats: labels[i];
-                    node->ComputeExtaStatsForSoftMax(layer->getNomalizationConstant(i), i, labels[i], labelsize[i]);
+                    node.ComputeExtaStatsForSoftMax(layer->getNomalizationConstant(i), i, labels[i], labelsize[i]);
                 }
                 if (j != 0) {
-                    node->backPropagate(prev_layer->getAllNodes(), activeNodesPerBatch[i][j], sizesPerBatch[i][j], tmplr, i);
+                    node.backPropagate(prev_layer->getAllNodes(), activeNodesPerBatch[i][j], sizesPerBatch[i][j], tmplr, i);
                 } else {
-                    node->backPropagateFirstLayer(inputIndices[i], inputValues[i], lengths[i], tmplr, i);
+                    node.backPropagateFirstLayer(inputIndices[i], inputValues[i], lengths[i], tmplr, i);
                 }
             }
         }
@@ -227,33 +226,33 @@ int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths,
 #pragma omp parallel for
         for (size_t m = 0; m < _hiddenlayers[l]->noOfNodes(); m++)
         {
-            Node *tmp = _hiddenlayers[l]->getNodebyID(m);
-            int dim = tmp->dim();
+            Node &tmp = _hiddenlayers[l]->getNodebyID(m);
+            int dim = tmp.dim();
             float* local_weights = new float[dim];
-            std::copy(tmp->weights(), tmp->weights() + dim, local_weights);
+            std::copy(tmp.weights(), tmp.weights() + dim, local_weights);
 
             if(ADAM){
                 for (int d=0; d < dim;d++){
-                    float _t = tmp->getT(d);
-                    float Mom = tmp->adamAvgMom()[d];
-                    float Vel = tmp->adamAvgVel()[d];
+                    float _t = tmp.getT(d);
+                    float Mom = tmp.adamAvgMom()[d];
+                    float Vel = tmp.adamAvgVel()[d];
                     Mom = BETA1 * Mom + (1 - BETA1) * _t;
                     Vel = BETA2 * Vel + (1 - BETA2) * _t * _t;
                     local_weights[d] += ratio * tmplr * Mom / (sqrt(Vel) + EPS);
-                    tmp->adamAvgMom()[d] = Mom;
-                    tmp->adamAvgVel()[d] = Vel;
-                    tmp->setT(d, 0);
+                    tmp.adamAvgMom()[d] = Mom;
+                    tmp.adamAvgVel()[d] = Vel;
+                    tmp.setT(d, 0);
                 }
 
-                tmp->adamAvgMombias() = BETA1 * tmp->adamAvgMombias() + (1 - BETA1) * tmp->tbias();
-                tmp->adamAvgVelbias() = BETA2 * tmp->adamAvgVelbias() + (1 - BETA2) * tmp->tbias() * tmp->tbias();
-                tmp->bias() += ratio*tmplr * tmp->adamAvgMombias() / (sqrt(tmp->adamAvgVelbias()) + EPS);
-                tmp->tbias() = 0;
+                tmp.adamAvgMombias() = BETA1 * tmp.adamAvgMombias() + (1 - BETA1) * tmp.tbias();
+                tmp.adamAvgVelbias() = BETA2 * tmp.adamAvgVelbias() + (1 - BETA2) * tmp.tbias() * tmp.tbias();
+                tmp.bias() += ratio*tmplr * tmp.adamAvgMombias() / (sqrt(tmp.adamAvgVelbias()) + EPS);
+                tmp.tbias() = 0;
             }
             else
             {
-                std::copy(tmp->mirrorWeights(), tmp->mirrorWeights()+(tmp->dim()) , tmp->weights());
-                tmp->bias() = tmp->mirrorbias();
+                std::copy(tmp.mirrorWeights(), tmp.mirrorWeights()+(tmp.dim()) , tmp.weights());
+                tmp.bias() = tmp.mirrorbias();
             }
             if (tmpRehash) {
                 int *hashes;
@@ -275,7 +274,7 @@ int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths,
                 delete[] bucketIndices;
             }
 
-            std::copy(local_weights, local_weights + dim, tmp->weights());
+            std::copy(local_weights, local_weights + dim, tmp.weights());
             delete[] local_weights;
         }
     }

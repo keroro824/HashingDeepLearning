@@ -24,8 +24,8 @@ Layer::Layer(size_t noOfNodes, int previousLayerNumOfNodes, int layerID, NodeTyp
 ,_noOfActive(floor(noOfNodes * Sparsity))
 ,_randNode(noOfNodes)
 ,_hashTables(new LSH(K, L, RangePow))
+,_Nodes(noOfNodes)
 {
-    _Nodes = new Node[noOfNodes];
 
 // create a list of random nodes just in case not enough nodes from hashtable for active nodes.
     for (size_t n = 0; n < _noOfNodes; n++) {
@@ -156,14 +156,14 @@ void Layer::addtoHashTable(float* weights, int length, float bias, int ID)
 }
 
 
-Node* Layer::getNodebyID(size_t nodeID)
+Node &Layer::getNodebyID(size_t nodeID)
 {
     assert(("nodeID less than _noOfNodes" , nodeID < _noOfNodes));
-    return &_Nodes[nodeID];
+    return _Nodes[nodeID];
 }
 
 
-Node* Layer::getAllNodes()
+std::vector<Node> &Layer::getAllNodes()
 {
     return _Nodes;
 }
@@ -490,7 +490,6 @@ void Layer::saveWeights(string file)
 
 Layer::~Layer()
 {
-    delete [] _Nodes;
     delete [] _weights;
 
     delete _wtaHasher;
