@@ -139,7 +139,7 @@ void Layer::addtoHashTable(float* weights, int length, float bias, int ID)
     }else if (HashFunction==2) {
         hashes = _dwtaHasher->getHashEasy(weights, length, TOPK);
     }else if (HashFunction==3) {
-        hashes = _MinHasher->getHashEasy(_binids.data(), weights, length, TOPK);
+        hashes = _MinHasher->getHashEasy(_binids, weights, length, TOPK);
     }else if (HashFunction==4) {
         hashes = _srp->getHash(weights, length);
     }
@@ -232,7 +232,7 @@ int Layer::queryActiveNodeandComputeActivations(int** activenodesperlayer, float
                 hashes = _dwtaHasher->getHash(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex],
                                               lengths[layerIndex]);
             } else if (HashFunction == 3) {
-                hashes = _MinHasher->getHashEasy(_binids.data(), activeValuesperlayer[layerIndex], lengths[layerIndex], TOPK);
+                hashes = _MinHasher->getHashEasy(_binids, activeValuesperlayer[layerIndex], lengths[layerIndex], TOPK);
             } else if (HashFunction == 4) {
                 hashes = _srp->getHashSparse(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex], lengths[layerIndex]);
             }
@@ -300,7 +300,7 @@ int Layer::queryActiveNodeandComputeActivations(int** activenodesperlayer, float
                 hashes = _dwtaHasher->getHash(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex],
                                               lengths[layerIndex]);
             } else if (HashFunction == 3) {
-                hashes = _MinHasher->getHashEasy(_binids.data(), activeValuesperlayer[layerIndex], lengths[layerIndex], TOPK);
+                hashes = _MinHasher->getHashEasy(_binids, activeValuesperlayer[layerIndex], lengths[layerIndex], TOPK);
             } else if (HashFunction == 4) {
                 hashes = _srp->getHashSparse(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex], lengths[layerIndex]);
             }

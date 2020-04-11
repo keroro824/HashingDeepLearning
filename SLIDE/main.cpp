@@ -33,7 +33,7 @@ int totRecordsTest = 10000;
 float Lr = 0.0001;
 int Epoch = 5;
 int Stepsize = 20;
-int *sizesOfLayers;
+std::vector<int> sizesOfLayers;
 int numLayer = 3;
 string trainData = "";
 string testData = "";
@@ -191,7 +191,7 @@ void parseconfig(string filename)
         else if (trim(first) == "sizesOfLayers")
         {
             string str = trim(second).c_str();
-            sizesOfLayers = new int[numLayer];
+            sizesOfLayers.resize(numLayer);
             char *mystring = &str[0];
             char *pch;
             pch = strtok(mystring, ",");
