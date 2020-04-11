@@ -26,7 +26,7 @@ private:
     float* _weights;
     float* _adamAvgMom;
     float* _adamAvgVel;
-    float* _bias;
+    std::vector<float> _bias;
     std::vector<int> _binids;
 
 public:
