@@ -12,20 +12,22 @@
 using namespace std;
 
 
-Layer::Layer(size_t noOfNodes, int previousLayerNumOfNodes, int layerID, NodeType type, int batchsize,  int K, int L, int RangePow, float Sparsity) {
-    _layerID = layerID;
-    _noOfNodes = noOfNodes;
+Layer::Layer(size_t noOfNodes, int previousLayerNumOfNodes, int layerID, NodeType type, int batchsize,  int K, int L, int RangePow, float Sparsity)
+:_layerID(layerID)
+,_noOfNodes(noOfNodes)
+,_type(type)
+,_K(K)
+,_L(L)
+,_batchsize(batchsize)
+,_RangeRow(RangePow)
+,_previousLayerNumOfNodes(previousLayerNumOfNodes)
+,_noOfActive(floor(noOfNodes * Sparsity))
+,_randNode(noOfNodes)
+,_hashTables(new LSH(K, L, RangePow))
+{
     _Nodes = new Node[noOfNodes];
-    _type = type;
-    _noOfActive = floor(_noOfNodes * Sparsity);
-    _K = K;
-    _L = L;
-    _batchsize = batchsize;
-    _RangeRow = RangePow;
-    _previousLayerNumOfNodes = previousLayerNumOfNodes;
 
 // create a list of random nodes just in case not enough nodes from hashtable for active nodes.
-    _randNode.resize(_noOfNodes);
     for (size_t n = 0; n < _noOfNodes; n++) {
         _randNode[n] = n;
     }
@@ -33,7 +35,6 @@ Layer::Layer(size_t noOfNodes, int previousLayerNumOfNodes, int layerID, NodeTyp
     std::random_shuffle(_randNode.begin(), _randNode.end());
 
 //TODO: Initialize Hash Tables and add the nodes. Done by Beidi
-    _hashTables = new LSH(_K, _L, RangePow);
 
     if (HashFunction == 1) {
         _wtaHasher = new WtaHash(_K * _L, previousLayerNumOfNodes);
