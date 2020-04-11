@@ -8,10 +8,11 @@
 using namespace std;
 
 
-Network::Network(int *sizesOfLayers, NodeType *layersTypes, int noOfLayers, int batchSize, float lr, int inputdim,  int* K, int* L, int* RangePow, float* Sparsity, cnpy::npz_t arr) {
+Network::Network(int *sizesOfLayers, NodeType *layersTypes, int noOfLayers, int batchSize, float lr, int inputdim,  int* K, int* L, int* RangePow, float* Sparsity, cnpy::npz_t arr) 
+:_hiddenlayers(noOfLayers)
+{
 
     _numberOfLayers = noOfLayers;
-    _hiddenlayers = new Layer *[noOfLayers];
     _sizesOfLayers = sizesOfLayers;
     _layersTypes = layersTypes;
     _learningRate = lr;
@@ -223,7 +224,7 @@ int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths,
         }
         int ratio = 1;
 #pragma omp parallel for
-        for (size_t m = 0; m < _hiddenlayers[l]->_noOfNodes; m++)
+        for (size_t m = 0; m < _hiddenlayers[l]->noOfNodes(); m++)
         {
             Node *tmp = _hiddenlayers[l]->getNodebyID(m);
             int dim = tmp->dim();
@@ -260,7 +261,7 @@ int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths,
                 }else if (HashFunction==2){
                     hashes = _hiddenlayers[l]->_dwtaHasher->getHashEasy(local_weights, dim, TOPK);
                 }else if (HashFunction==3){
-                    hashes = _hiddenlayers[l]->_MinHasher->getHashEasy(_hiddenlayers[l]->_binids, local_weights, dim, TOPK);
+                    hashes = _hiddenlayers[l]->_MinHasher->getHashEasy(_hiddenlayers[l]->binids(), local_weights, dim, TOPK);
                 }else if (HashFunction==4){
                     hashes = _hiddenlayers[l]->_srp->getHash(local_weights, dim);
                 }
@@ -299,6 +300,5 @@ Network::~Network() {
     for (int i=0; i< _numberOfLayers; i++){
         delete _hiddenlayers[i];
     }
-    delete[] _hiddenlayers;
     delete[] _layersTypes;
 }

@@ -67,7 +67,7 @@ class Node
 {
 private:
 	int _activeInputs;
-    NodeType _type;
+  NodeType _type;
 	train* _train;
   int _currentBatchsize;
   size_t _layerNum, _IDinLayer;

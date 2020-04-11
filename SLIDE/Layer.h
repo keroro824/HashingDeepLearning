@@ -20,21 +20,25 @@ private:
     int _K, _L, _RangeRow, _previousLayerNumOfNodes, _batchsize;
     train* _train_array;
 
+    int _layerID, _noOfActive;
+    size_t _noOfNodes;
+    float* _weights;
+    float* _adamAvgMom;
+    float* _adamAvgVel;
+    float* _bias;
+    int * _binids;
 
 public:
-	int _layerID, _noOfActive;
-	size_t _noOfNodes;
-	float* _weights;
-	float* _adamAvgMom;
-	float* _adamAvgVel;
-	float* _bias;
-	LSH *_hashTables;
-	WtaHash *_wtaHasher;
-    DensifiedMinhash *_MinHasher;
-    SparseRandomProjection *_srp;
-    DensifiedWtaHash *_dwtaHasher;
-	int * _binids;
-	Layer(size_t _numNodex, int previousLayerNumOfNodes, int layerID, NodeType type, int batchsize, int K, int L, int RangePow, float Sparsity, float* weights=NULL, float* bias=NULL, float *adamAvgMom=NULL, float *adamAvgVel=NULL);
+  LSH *_hashTables;
+  WtaHash *_wtaHasher;
+  DensifiedMinhash *_MinHasher;
+  SparseRandomProjection *_srp;
+  DensifiedWtaHash *_dwtaHasher;
+
+  size_t noOfNodes() const { return _noOfNodes; }
+  const int *binids() const { return _binids; }
+
+  Layer(size_t _numNodex, int previousLayerNumOfNodes, int layerID, NodeType type, int batchsize, int K, int L, int RangePow, float Sparsity, float* weights=NULL, float* bias=NULL, float *adamAvgMom=NULL, float *adamAvgVel=NULL);
 	Node* getNodebyID(size_t nodeID);
 	Node* getAllNodes();
 	int getNodeCount();

@@ -1,6 +1,7 @@
 #pragma once
 #include "Layer.h"
 #include <chrono>
+#include <vector>
 #include "cnpy.h"
 #include <sys/mman.h>
 
@@ -9,7 +10,7 @@ using namespace std;
 class Network
 {
 private:
-	Layer** _hiddenlayers;
+	std::vector<Layer*> _hiddenlayers;
 	float _learningRate;
 	int _numberOfLayers;
 	int* _sizesOfLayers;

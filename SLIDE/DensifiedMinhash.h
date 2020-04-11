@@ -19,7 +19,7 @@ public:
     DensifiedMinhash(int numHashes, int noOfBitsToHash);
     int * getHash(int* indices, float* data, int* binids, int dataLen);
     int getRandDoubleHash(int binid, int count);
-    int * getHashEasy(int* binids, float* data, int dataLen, int topK);
+    int * getHashEasy(const int* binids, float* data, int dataLen, int topK);
     void getMap(int n, int* binid);
     ~DensifiedMinhash();
 };
