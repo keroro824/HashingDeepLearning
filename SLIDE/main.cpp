@@ -17,6 +17,7 @@
 #include<map>
 #include<string>
 #include "Config.h"
+#include "Util.h"
 
 std::vector<int> RangePow;
 std::vector<int> K;
@@ -230,7 +231,7 @@ void CreateData(std::ifstream &file,
                 int **records,
                 float **values,
                 std::vector<int> &sizes,
-                int **labels,
+                Vec2d<int> &labels,
                 std::vector<int> &labelsize
                 )
 {
@@ -268,7 +269,7 @@ void CreateData(std::ifstream &file,
     nonzeros += list.size();
     records[count] = new int[list.size()];
     values[count] = new float[list.size()];
-    labels[count] = new int[label.size()];
+    labels[count] = std::vector<int>(label.size());
     sizes[count] = list.size();
     labelsize[count] = label.size();
 
@@ -307,7 +308,7 @@ void EvalDataSVM(int numBatchesTest,  Network* _mynet, int iter){
         int **records = new int *[Batchsize];
         float **values = new float *[Batchsize];
         std::vector<int> sizes(Batchsize);
-        int **labels = new int *[Batchsize];
+        Vec2d<int> labels(Batchsize);
         std::vector<int> labelsize(Batchsize);
 
         CreateData(file, records, values, sizes, labels, labelsize);
@@ -324,7 +325,6 @@ void EvalDataSVM(int numBatchesTest,  Network* _mynet, int iter){
         totCorrect += correctPredict;
         std::cout <<" iter "<< i << ": " << totCorrect*1.0/(Batchsize*(i+1)) << " correct" << std::endl;
 
-        delete[] labels;
         for (int d = 0; d < Batchsize; d++) {
             delete[] records[d];
             delete[] values[d];
@@ -351,7 +351,7 @@ void ReadDataSVM(size_t numBatches,  Network* _mynet, int epoch){
         int **records = new int *[Batchsize];
         float **values = new float *[Batchsize];
         std::vector<int> sizes(Batchsize);
-        int **labels = new int *[Batchsize];
+        Vec2d<int> labels(Batchsize);
         std::vector<int> labelsize(Batchsize);
 
         CreateData(file, records, values, sizes, labels, labelsize);
@@ -384,11 +384,9 @@ void ReadDataSVM(size_t numBatches,  Network* _mynet, int epoch){
         for (int d = 0; d < Batchsize; d++) {
             delete[] records[d];
             delete[] values[d];
-            delete[] labels[d];
         }
         delete[] records;
         delete[] values;
-        delete[] labels;
 
     }
     file.close();

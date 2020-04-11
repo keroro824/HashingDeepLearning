@@ -22,8 +22,8 @@ private:
 public:
 	Network(const std::vector<int> &sizesOfLayers, const std::vector<NodeType> &layersTypes, int noOfLayers, int batchsize, float lr, int inputdim, const std::vector<int> &K, const std::vector<int> &L, const std::vector<int> &RangePow, const std::vector<float> &Sparsity, cnpy::npz_t arr);
 	Layer* getLayer(int LayerID);
-	int predictClass(int ** inputIndices, float ** inputValues, const std::vector<int> &length, int ** labels, const std::vector<int> &labelsize);
-	int ProcessInput(int** inputIndices, float** inputValues, const std::vector<int> &lengths, int ** label, const std::vector<int> &labelsize, int iter, bool rehash, bool rebuild);
+	int predictClass(int ** inputIndices, float ** inputValues, const std::vector<int> &length, const Vec2d<int> &labels, const std::vector<int> &labelsize);
+	int ProcessInput(int** inputIndices, float** inputValues, const std::vector<int> &lengths, const Vec2d<int> &label, const std::vector<int> &labelsize, int iter, bool rehash, bool rebuild);
 	void saveWeights(string file);
 	~Network();
 	void * operator new(size_t size){

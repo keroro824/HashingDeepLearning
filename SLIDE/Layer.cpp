@@ -206,7 +206,7 @@ float collision(int* hashes, int* table_hashes, int k, int l){
 }
 
 
-int Layer::queryActiveNodeandComputeActivations(int** activenodesperlayer, float** activeValuesperlayer, int* lengths, int layerIndex, int inputID, int* label, int labelsize, float Sparsity, int iter)
+int Layer::queryActiveNodeandComputeActivations(int** activenodesperlayer, float** activeValuesperlayer, int* lengths, int layerIndex, int inputID, const std::vector<int> &label, int labelsize, float Sparsity, int iter)
 {
     //LSH QueryLogic
 
@@ -421,7 +421,7 @@ int Layer::queryActiveNodeandComputeActivations(int** activenodesperlayer, float
                 float tmp = innerproduct(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex],
                                          lengths[layerIndex], _Nodes[s].weights());
                 tmp += _Nodes[s].bias();
-                if (find(label, label + labelsize, s) != label + labelsize) {
+                if (find(label.begin(), label.end(), s) != label.end()) {
                     sortW.push_back(make_pair(-1000000000, s));
                     what++;
                 }
@@ -434,7 +434,7 @@ int Layer::queryActiveNodeandComputeActivations(int** activenodesperlayer, float
 
             for (int i = 0; i < len; i++) {
                 activenodesperlayer[layerIndex + 1][i] = sortW[i].second;
-                if (find (label, label+labelsize, sortW[i].second)!= label+labelsize){
+                if (find (label.begin(), label.end(), sortW[i].second)!= label.end()){
                     in=1;
                 }
             }
