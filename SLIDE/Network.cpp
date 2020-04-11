@@ -232,7 +232,7 @@ int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths,
 
             if(ADAM){
                 for (int d=0; d < dim;d++){
-                    float _t = tmp->t()[d];
+                    float _t = tmp->getT(d);
                     float Mom = tmp->adamAvgMom()[d];
                     float Vel = tmp->adamAvgVel()[d];
                     Mom = BETA1 * Mom + (1 - BETA1) * _t;
@@ -240,7 +240,7 @@ int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths,
                     local_weights[d] += ratio * tmplr * Mom / (sqrt(Vel) + EPS);
                     tmp->adamAvgMom()[d] = Mom;
                     tmp->adamAvgVel()[d] = Vel;
-                    tmp->t()[d] = 0;
+                    tmp->setT(d, 0);
                 }
 
                 tmp->adamAvgMombias() = BETA1 * tmp->adamAvgMombias() + (1 - BETA1) * tmp->tbias();

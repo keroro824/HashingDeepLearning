@@ -22,8 +22,7 @@ Node::Node(int dim, int nodeID, int layerID, NodeType type, int batchsize, float
 	{
 		_adamAvgMom = adamAvgMom;
 		_adamAvgVel = adamAvgVel;
-		_t = new float[_dim]();
-
+		_t.resize(_dim);
 	}
 
 	_train = new train[_currentBatchsize];
@@ -47,8 +46,7 @@ void Node::Update(int dim, int nodeID, int layerID, NodeType type, int batchsize
     {
         _adamAvgMom = adamAvgMom;
         _adamAvgVel = adamAvgVel;
-        _t = new float[_dim]();
-
+        _t.resize(_dim);
     }
 
     _train = train_blob + nodeID * batchsize;
@@ -232,7 +230,6 @@ Node::~Node()
 	{
 		delete[] _adamAvgMom;
 		delete[] _adamAvgVel;
-		delete[] _t;
 	}
 }
 

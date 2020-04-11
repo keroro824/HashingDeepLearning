@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <iostream>
+#include <vector>
 #include <cmath>
 #include <linux/mman.h>
 #include <sys/mman.h>
@@ -81,11 +82,11 @@ private:
   float _adamAvgMombias = 0;
   float _adamAvgVelbias = 0;
 
-  float* _t; //for adam
-
   float _bias = 0;
   float _tbias = 0;
   float _mirrorbias = 0;
+
+  std::vector<float> _t; //for adam
 
 public:
 
@@ -100,12 +101,14 @@ public:
   float &adamAvgMombias() { return _adamAvgMombias; }
   float &adamAvgVelbias() { return _adamAvgVelbias; }
 
-  float *t() const { return _t; }
-
   float &bias() { return _bias; }
   float &tbias() { return _tbias; }
   const float &mirrorbias() const { return _mirrorbias;  }
 
+  float getT(size_t idx) const { return _t[idx]; }
+  void setT(size_t idx, float val) { _t[idx] = val; }
+
+  ////////////////////
 	Node(){};
 	Node(int dim, int nodeID, int layerID, NodeType type, int batchsize, float *weights, float bias, float *adamAvgMom, float *adamAvgVel);
 	void Update(int dim, int nodeID, int layerID, NodeType type, int batchsize, float *weights, float bias, float *adamAvgMom, float *adamAvgVel, train* train_blob);
