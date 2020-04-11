@@ -7,6 +7,7 @@
 #include "DensifiedWtaHash.h"
 #include "cnpy.h"
 #include <sys/mman.h>
+#include <vector>
 
 using namespace std;
 
@@ -26,7 +27,7 @@ private:
     float* _adamAvgMom;
     float* _adamAvgVel;
     float* _bias;
-    int * _binids;
+    std::vector<int> _binids;
 
 public:
   LSH *_hashTables;
@@ -36,7 +37,7 @@ public:
   DensifiedWtaHash *_dwtaHasher;
 
   size_t noOfNodes() const { return _noOfNodes; }
-  const int *binids() const { return _binids; }
+  const int *binids() const { return _binids.data(); }
 
   Layer(size_t _numNodex, int previousLayerNumOfNodes, int layerID, NodeType type, int batchsize, int K, int L, int RangePow, float Sparsity, float* weights=NULL, float* bias=NULL, float *adamAvgMom=NULL, float *adamAvgVel=NULL);
 	Node* getNodebyID(size_t nodeID);
