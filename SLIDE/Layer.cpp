@@ -60,20 +60,20 @@ Layer::Layer(size_t noOfNodes, int previousLayerNumOfNodes, int layerID, NodeTyp
         }
         */
     }else{
-        _weights = new float[_noOfNodes * previousLayerNumOfNodes]();
+        _weights.resize(_noOfNodes * previousLayerNumOfNodes);
         _bias.resize(_noOfNodes);
         random_device rd;
         default_random_engine dre(rd());
         normal_distribution<float> distribution(0.0, 0.01);
 
-        generate(_weights, _weights + _noOfNodes * previousLayerNumOfNodes, [&] () { return distribution(dre); });
+        generate(_weights.begin(), _weights.end(), [&] () { return distribution(dre); });
         generate(_bias.data(), _bias.data() + _noOfNodes, [&] () { return distribution(dre); });
 
 
         if (ADAM)
         {
-            _adamAvgMom = new float[_noOfNodes * previousLayerNumOfNodes]();
-            _adamAvgVel = new float[_noOfNodes * previousLayerNumOfNodes]();
+            _adamAvgMom.resize(_noOfNodes * previousLayerNumOfNodes);
+            _adamAvgVel.resize(_noOfNodes * previousLayerNumOfNodes);
 
         }
     }
@@ -86,8 +86,8 @@ Layer::Layer(size_t noOfNodes, int previousLayerNumOfNodes, int layerID, NodeTyp
 #pragma omp parallel for
     for (size_t i = 0; i < noOfNodes; i++)
     {
-        _Nodes[i].Update(previousLayerNumOfNodes, i, _layerID, type, batchsize, _weights+previousLayerNumOfNodes*i,
-                _bias[i], _adamAvgMom+previousLayerNumOfNodes*i , _adamAvgVel+previousLayerNumOfNodes*i, _train_array);
+        _Nodes[i].Update(previousLayerNumOfNodes, i, _layerID, type, batchsize, _weights.data() + previousLayerNumOfNodes*i,
+                _bias[i], _adamAvgMom.data() + previousLayerNumOfNodes*i , _adamAvgVel.data() + previousLayerNumOfNodes*i, _train_array);
         addtoHashTable(_Nodes[i].weights(), previousLayerNumOfNodes, _Nodes[i].bias(), i);
     }
     auto t2 = std::chrono::high_resolution_clock::now();
@@ -471,17 +471,17 @@ int Layer::queryActiveNodeandComputeActivations(int** activenodesperlayer, float
 void Layer::saveWeights(string file)
 {
     if (_layerID==0) {
-        cnpy::npz_save(file, "w_layer_0", _weights, {_noOfNodes, _Nodes[0].dim()}, "w");
+        cnpy::npz_save(file, "w_layer_0", _weights.data(), {_noOfNodes, _Nodes[0].dim()}, "w");
         cnpy::npz_save(file, "b_layer_0", _bias.data(), {_noOfNodes}, "a");
-        cnpy::npz_save(file, "am_layer_0", _adamAvgMom, {_noOfNodes, _Nodes[0].dim()}, "a");
-        cnpy::npz_save(file, "av_layer_0", _adamAvgVel, {_noOfNodes, _Nodes[0].dim()}, "a");
+        cnpy::npz_save(file, "am_layer_0", _adamAvgMom.data(), {_noOfNodes, _Nodes[0].dim()}, "a");
+        cnpy::npz_save(file, "av_layer_0", _adamAvgVel.data(), {_noOfNodes, _Nodes[0].dim()}, "a");
         cout<<"save for layer 0"<<endl;
         cout<<_weights[0]<<" "<<_weights[1]<<endl;
     }else{
-        cnpy::npz_save(file, "w_layer_"+ to_string(_layerID), _weights, {_noOfNodes, _Nodes[0].dim()}, "a");
+        cnpy::npz_save(file, "w_layer_"+ to_string(_layerID), _weights.data(), {_noOfNodes, _Nodes[0].dim()}, "a");
         cnpy::npz_save(file, "b_layer_"+ to_string(_layerID), _bias.data(), {_noOfNodes}, "a");
-        cnpy::npz_save(file, "am_layer_"+ to_string(_layerID), _adamAvgMom, {_noOfNodes, _Nodes[0].dim()}, "a");
-        cnpy::npz_save(file, "av_layer_"+ to_string(_layerID), _adamAvgVel, {_noOfNodes, _Nodes[0].dim()}, "a");
+        cnpy::npz_save(file, "am_layer_"+ to_string(_layerID), _adamAvgMom.data(), {_noOfNodes, _Nodes[0].dim()}, "a");
+        cnpy::npz_save(file, "av_layer_"+ to_string(_layerID), _adamAvgVel.data(), {_noOfNodes, _Nodes[0].dim()}, "a");
         cout<<"save for layer "<<to_string(_layerID)<<endl;
         cout<<_weights[0]<<" "<<_weights[1]<<endl;
     }
@@ -490,8 +490,6 @@ void Layer::saveWeights(string file)
 
 Layer::~Layer()
 {
-    delete [] _weights;
-
     delete _wtaHasher;
     delete _dwtaHasher;
     delete _srp;
