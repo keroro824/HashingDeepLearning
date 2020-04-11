@@ -14,10 +14,10 @@ using namespace std;
 class Layer
 {
 private:
-	NodeType _type;
-	Node* _Nodes;
-  std::vector<int> _randNode;
-	float* _normalizationConstants;
+	  NodeType _type;
+	  Node* _Nodes;
+    std::vector<int> _randNode;
+    std::vector<float> _normalizationConstants;
     int _K, _L, _RangeRow, _previousLayerNumOfNodes, _batchsize;
     train* _train_array;
 

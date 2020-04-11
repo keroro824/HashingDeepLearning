@@ -95,7 +95,7 @@ Layer::Layer(size_t noOfNodes, int previousLayerNumOfNodes, int layerID, NodeTyp
 
     if (type == NodeType::Softmax)
     {
-        _normalizationConstants = new float[batchsize]();
+        _normalizationConstants.resize(batchsize);
     }
 }
 
@@ -489,14 +489,6 @@ void Layer::saveWeights(string file)
 
 Layer::~Layer()
 {
-
-    for (size_t i = 0; i < _noOfNodes; i++)
-    {
-        if (_type == NodeType::Softmax)
-        {
-            delete[] _normalizationConstants;
-        }
-    }
     delete [] _Nodes;
     delete [] _weights;
 
