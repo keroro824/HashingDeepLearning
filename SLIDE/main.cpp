@@ -21,7 +21,7 @@
 int *RangePow;
 int *K;
 int *L;
-float *Sparsity;
+std::vector<float> Sparsity;
 
 
 int Batchsize = 1000;
@@ -133,7 +133,7 @@ void parseconfig(string filename)
         else if (trim(first) == "Sparsity")
         {
             string str = trim(second).c_str();
-            Sparsity = new float[numLayer*2];
+            Sparsity.resize(numLayer*2);
             char *mystring = &str[0];
             char *pch;
             pch = strtok(mystring, ",");
@@ -411,7 +411,7 @@ int main(int argc, char* argv[])
     //***********************************
     int numBatches = totRecords/Batchsize;
     int numBatchesTest = totRecordsTest/Batchsize;
-    NodeType* layersTypes = new NodeType[numLayer];
+    std::vector<NodeType> layersTypes(numLayer);
 
     for (int i=0; i<numLayer-1; i++){
         layersTypes[i] = NodeType::ReLU;
@@ -451,7 +451,6 @@ int main(int argc, char* argv[])
     delete [] RangePow;
     delete [] K;
     delete [] L;
-    delete [] Sparsity;
 
     return 0;
 

@@ -44,7 +44,7 @@ public:
 	Node* getAllNodes();
 	int getNodeCount();
 	void addtoHashTable(float* weights, int length, float bias, int id);
-	float getNomalizationConstant(int inputID);
+	float getNomalizationConstant(int inputID) const;
 	int queryActiveNodeandComputeActivations(int** activenodesperlayer, float** activeValuesperlayer, int* inlenght, int layerID, int inputID,  int* label, int labelsize, float Sparsity, int iter);
     int queryActiveNodes(int** activenodesperlayer, float** activeValuesperlayer, int* inlenght, int layerID, int inputID,  int* label, int labelsize, float Sparsity, int iter);
     int computeActivations(int** activenodesperlayer, float** activeValuesperlayer, int* inlenght, int layerID, int inputID,  int* label, int labelsize, float Sparsity, int iter);

@@ -172,7 +172,7 @@ int Layer::getNodeCount()
     return _noOfNodes;
 }
 
-float Layer::getNomalizationConstant(int inputID)
+float Layer::getNomalizationConstant(int inputID) const
 {
     assert(("Error Call to Normalization Constant for non - softmax layer", _type == NodeType::Softmax));
     return _normalizationConstants[inputID];

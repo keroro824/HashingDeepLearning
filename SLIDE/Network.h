@@ -11,17 +11,16 @@ class Network
 {
 private:
 	std::vector<Layer*> _hiddenlayers;
-	float _learningRate;
-	int _numberOfLayers;
-  std::vector<int> _sizesOfLayers;
-	NodeType* _layersTypes;
-	float * _Sparsity;
-	//int* _inputIDs;
-	int  _currentBatchSize;
+	const float _learningRate;
+  const int _numberOfLayers;
+  const std::vector<int> _sizesOfLayers;
+  const std::vector<NodeType> _layersTypes;
+  const std::vector<float> _Sparsity;
+  const int  _currentBatchSize;
 
 
 public:
-	Network(const std::vector<int> &sizesOfLayers, NodeType* layersTypes, int noOfLayers, int batchsize, float lr, int inputdim, int* K, int* L, int* RangePow, float* Sparsity, cnpy::npz_t arr);
+	Network(const std::vector<int> &sizesOfLayers, const std::vector<NodeType> &layersTypes, int noOfLayers, int batchsize, float lr, int inputdim, int* K, int* L, int* RangePow, const std::vector<float> &Sparsity, cnpy::npz_t arr);
 	Layer* getLayer(int LayerID);
 	int predictClass(int ** inputIndices, float ** inputValues, int * length, int ** labels, int *labelsize);
 	int ProcessInput(int** inputIndices, float** inputValues, int* lengths, int ** label, int *labelsize, int iter, bool rehash, bool rebuild);
