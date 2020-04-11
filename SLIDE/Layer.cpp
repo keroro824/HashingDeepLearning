@@ -25,12 +25,12 @@ Layer::Layer(size_t noOfNodes, int previousLayerNumOfNodes, int layerID, NodeTyp
     _previousLayerNumOfNodes = previousLayerNumOfNodes;
 
 // create a list of random nodes just in case not enough nodes from hashtable for active nodes.
-    _randNode = new int[_noOfNodes];
+    _randNode.resize(_noOfNodes);
     for (size_t n = 0; n < _noOfNodes; n++) {
         _randNode[n] = n;
     }
 
-    std::random_shuffle(_randNode, _randNode + _noOfNodes);
+    std::random_shuffle(_randNode.begin(), _randNode.end());
 
 //TODO: Initialize Hash Tables and add the nodes. Done by Beidi
     _hashTables = new LSH(_K, _L, RangePow);
@@ -126,7 +126,7 @@ void Layer::updateTable()
 
 void Layer::updateRandomNodes()
 {
-    std::random_shuffle(_randNode, _randNode + _noOfNodes);
+    std::random_shuffle(_randNode.begin(), _randNode.end());
 }
 
 
@@ -504,6 +504,5 @@ Layer::~Layer()
     delete _dwtaHasher;
     delete _srp;
     delete _MinHasher;
-    delete [] _randNode;
     delete[] _train_array;
 }

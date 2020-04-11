@@ -16,7 +16,7 @@ class Layer
 private:
 	NodeType _type;
 	Node* _Nodes;
-	int * _randNode;
+  std::vector<int> _randNode;
 	float* _normalizationConstants;
     int _K, _L, _RangeRow, _previousLayerNumOfNodes, _batchsize;
     train* _train_array;
