@@ -12,7 +12,7 @@
 using namespace std;
 
 
-Layer::Layer(size_t noOfNodes, int previousLayerNumOfNodes, int layerID, NodeType type, int batchsize,  int K, int L, int RangePow, float Sparsity, float* weights, float* bias, float *adamAvgMom, float *adamAvgVel) {
+Layer::Layer(size_t noOfNodes, int previousLayerNumOfNodes, int layerID, NodeType type, int batchsize,  int K, int L, int RangePow, float Sparsity) {
     _layerID = layerID;
     _noOfNodes = noOfNodes;
     _Nodes = new Node[noOfNodes];
@@ -49,6 +49,7 @@ Layer::Layer(size_t noOfNodes, int previousLayerNumOfNodes, int layerID, NodeTyp
     }
 
     if (LOADWEIGHT) {
+        /*
         _weights = weights;
         _bias = bias;
 
@@ -56,7 +57,7 @@ Layer::Layer(size_t noOfNodes, int previousLayerNumOfNodes, int layerID, NodeTyp
             _adamAvgMom = adamAvgMom;
             _adamAvgVel = adamAvgVel;
         }
-
+        */
     }else{
         _weights = new float[_noOfNodes * previousLayerNumOfNodes]();
         _bias = new float[_noOfNodes];

@@ -39,7 +39,7 @@ public:
   size_t noOfNodes() const { return _noOfNodes; }
   const int *binids() const { return _binids.data(); }
 
-  Layer(size_t _numNodex, int previousLayerNumOfNodes, int layerID, NodeType type, int batchsize, int K, int L, int RangePow, float Sparsity, float* weights=NULL, float* bias=NULL, float *adamAvgMom=NULL, float *adamAvgVel=NULL);
+  Layer(size_t _numNodex, int previousLayerNumOfNodes, int layerID, NodeType type, int batchsize, int K, int L, int RangePow, float Sparsity);
 	Node* getNodebyID(size_t nodeID);
 	Node* getAllNodes();
 	int getNodeCount();

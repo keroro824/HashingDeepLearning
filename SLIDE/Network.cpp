@@ -22,6 +22,7 @@ Network::Network(int *sizesOfLayers, NodeType *layersTypes, int noOfLayers, int 
 
     for (int i = 0; i < noOfLayers; i++) {
         if (i != 0) {
+            /*
             cnpy::NpyArray weightArr, biasArr, adamArr, adamvArr;
             float* weight, *bias, *adamAvgMom, *adamAvgVel;
             if(LOADWEIGHT){
@@ -35,9 +36,10 @@ Network::Network(int *sizesOfLayers, NodeType *layersTypes, int noOfLayers, int 
                 adamvArr = arr["av_layer_"+to_string(i)];
                 adamAvgVel = adamvArr.data<float>();
             }
-            _hiddenlayers[i] = new Layer(sizesOfLayers[i], sizesOfLayers[i - 1], i, _layersTypes[i], _currentBatchSize,  K[i], L[i], RangePow[i], Sparsity[i], weight, bias, adamAvgMom, adamAvgVel);
+            */
+            _hiddenlayers[i] = new Layer(sizesOfLayers[i], sizesOfLayers[i - 1], i, _layersTypes[i], _currentBatchSize,  K[i], L[i], RangePow[i], Sparsity[i]);
         } else {
-
+            /*
             cnpy::NpyArray weightArr, biasArr, adamArr, adamvArr;
             float* weight, *bias, *adamAvgMom, *adamAvgVel;
             if(LOADWEIGHT){
@@ -51,7 +53,8 @@ Network::Network(int *sizesOfLayers, NodeType *layersTypes, int noOfLayers, int 
                 adamvArr = arr["av_layer_"+to_string(i)];
                 adamAvgVel = adamvArr.data<float>();
             }
-            _hiddenlayers[i] = new Layer(sizesOfLayers[i], inputdim, i, _layersTypes[i], _currentBatchSize, K[i], L[i], RangePow[i], Sparsity[i], weight, bias, adamAvgMom, adamAvgVel);
+            */
+            _hiddenlayers[i] = new Layer(sizesOfLayers[i], inputdim, i, _layersTypes[i], _currentBatchSize, K[i], L[i], RangePow[i], Sparsity[i]);
         }
     }
     cout << "after layer" << endl;
