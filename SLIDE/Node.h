@@ -76,22 +76,35 @@ private:
   float* _weights;
   float* _mirrorWeights;
 
+  float* _adamAvgMom;
+  float* _adamAvgVel;
+  float _adamAvgMombias = 0;
+  float _adamAvgVelbias = 0;
+
+  float* _t; //for adam
+
+  float _bias = 0;
+  float _tbias = 0;
+  float _mirrorbias = 0;
+
 public:
-	float* _adamAvgMom;
-	float* _adamAvgVel;
-	float* _t; //for adam
-	int* _update;
-	float _bias =0;
-	float _tbias = 0;
-	float _adamAvgMombias=0;
-	float _adamAvgVelbias=0;
-	float _mirrorbias =0;
 
   const size_t &dim() const { return _dim; }
   int *&indicesInTables() { return _indicesInTables; }
   int *&indicesInBuckets() { return _indicesInBuckets; }
   float *weights() const { return _weights; }
-  float *mirrorWeights() const { return _mirrorWeights; }
+  const float *mirrorWeights() const { return _mirrorWeights; }
+
+  float *adamAvgMom() const { return _adamAvgMom; }
+  float *adamAvgVel() const { return _adamAvgVel; }
+  float &adamAvgMombias() { return _adamAvgMombias; }
+  float &adamAvgVelbias() { return _adamAvgVelbias; }
+
+  float *t() const { return _t; }
+
+  float &bias() { return _bias; }
+  float &tbias() { return _tbias; }
+  const float &mirrorbias() const { return _mirrorbias;  }
 
 	Node(){};
 	Node(int dim, int nodeID, int layerID, NodeType type, int batchsize, float *weights, float bias, float *adamAvgMom, float *adamAvgVel);

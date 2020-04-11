@@ -232,26 +232,26 @@ int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths,
 
             if(ADAM){
                 for (int d=0; d < dim;d++){
-                    float _t = tmp->_t[d];
-                    float Mom = tmp->_adamAvgMom[d];
-                    float Vel = tmp->_adamAvgVel[d];
+                    float _t = tmp->t()[d];
+                    float Mom = tmp->adamAvgMom()[d];
+                    float Vel = tmp->adamAvgVel()[d];
                     Mom = BETA1 * Mom + (1 - BETA1) * _t;
                     Vel = BETA2 * Vel + (1 - BETA2) * _t * _t;
                     local_weights[d] += ratio * tmplr * Mom / (sqrt(Vel) + EPS);
-                    tmp->_adamAvgMom[d] = Mom;
-                    tmp->_adamAvgVel[d] = Vel;
-                    tmp->_t[d] = 0;
+                    tmp->adamAvgMom()[d] = Mom;
+                    tmp->adamAvgVel()[d] = Vel;
+                    tmp->t()[d] = 0;
                 }
 
-                tmp->_adamAvgMombias = BETA1 * tmp->_adamAvgMombias + (1 - BETA1) * tmp->_tbias;
-                tmp->_adamAvgVelbias = BETA2 * tmp->_adamAvgVelbias + (1 - BETA2) * tmp->_tbias * tmp->_tbias;
-                tmp->_bias += ratio*tmplr * tmp->_adamAvgMombias / (sqrt(tmp->_adamAvgVelbias) + EPS);
-                tmp->_tbias = 0;
+                tmp->adamAvgMombias() = BETA1 * tmp->adamAvgMombias() + (1 - BETA1) * tmp->tbias();
+                tmp->adamAvgVelbias() = BETA2 * tmp->adamAvgVelbias() + (1 - BETA2) * tmp->tbias() * tmp->tbias();
+                tmp->bias() += ratio*tmplr * tmp->adamAvgMombias() / (sqrt(tmp->adamAvgVelbias()) + EPS);
+                tmp->tbias() = 0;
             }
             else
             {
                 std::copy(tmp->mirrorWeights(), tmp->mirrorWeights()+(tmp->dim()) , tmp->weights());
-                tmp->_bias = tmp->_mirrorbias;
+                tmp->bias() = tmp->mirrorbias();
             }
             if (tmpRehash) {
                 int *hashes;

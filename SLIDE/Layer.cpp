@@ -86,7 +86,7 @@ Layer::Layer(size_t noOfNodes, int previousLayerNumOfNodes, int layerID, NodeTyp
     {
         _Nodes[i].Update(previousLayerNumOfNodes, i, _layerID, type, batchsize, _weights+previousLayerNumOfNodes*i,
                 _bias[i], _adamAvgMom+previousLayerNumOfNodes*i , _adamAvgVel+previousLayerNumOfNodes*i, _train_array);
-        addtoHashTable(_Nodes[i].weights(), previousLayerNumOfNodes, _Nodes[i]._bias, i);
+        addtoHashTable(_Nodes[i].weights(), previousLayerNumOfNodes, _Nodes[i].bias(), i);
     }
     auto t2 = std::chrono::high_resolution_clock::now();
     auto timeDiffInMiliseconds = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
@@ -418,7 +418,7 @@ int Layer::queryActiveNodeandComputeActivations(int** activenodesperlayer, float
             for (size_t s = 0; s < _noOfNodes; s++) {
                 float tmp = innerproduct(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex],
                                          lengths[layerIndex], _Nodes[s].weights());
-                tmp += _Nodes[s]._bias;
+                tmp += _Nodes[s].bias();
                 if (find(label, label + labelsize, s) != label + labelsize) {
                     sortW.push_back(make_pair(-1000000000, s));
                     what++;
