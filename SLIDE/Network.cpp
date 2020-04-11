@@ -8,7 +8,7 @@
 using namespace std;
 
 
-Network::Network(const std::vector<int> &sizesOfLayers, const std::vector<NodeType> &layersTypes, int noOfLayers, int batchSize, float lr, int inputdim,  int* K, int* L, int* RangePow, const std::vector<float> &Sparsity, cnpy::npz_t arr)
+Network::Network(const std::vector<int> &sizesOfLayers, const std::vector<NodeType> &layersTypes, int noOfLayers, int batchSize, float lr, int inputdim, const std::vector<int> &K, const std::vector<int> &L, const std::vector<int> &RangePow, const std::vector<float> &Sparsity, cnpy::npz_t arr)
 :_hiddenlayers(noOfLayers)
 ,_sizesOfLayers(sizesOfLayers)
 ,_layersTypes(layersTypes)

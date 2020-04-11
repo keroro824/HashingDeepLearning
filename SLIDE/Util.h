@@ -59,7 +59,14 @@ inline std::vector<T> Tokenize(const std::string &input
   return Scan<T>(stringVector);
 }
 
-///////////////////////////////////
+////////////////////////////////////////////////////////
+template<typename T> 
+using Vec2d = std::vector< std::vector<T> >;
+
+template<typename T>
+using Vec3d = std::vector < std::vector< std::vector<T> > >;
+
+////////////////////////////////////////////////////////
 template<typename T>
 class SubVectorConst
 {
@@ -98,7 +105,7 @@ public:
   virtual const T *data() const { return _vecConst->data() + _startIdx; }
 };
 
-///////////////////////////////////
+////////////////////////////////////////////////////////
 template<typename T>
 class SubVector : public SubVectorConst<T>
 {

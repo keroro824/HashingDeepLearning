@@ -18,9 +18,9 @@
 #include<string>
 #include "Config.h"
 
-int *RangePow;
-int *K;
-int *L;
+std::vector<int> RangePow;
+std::vector<int> K;
+std::vector<int> L;
 std::vector<float> Sparsity;
 
 
@@ -91,7 +91,7 @@ void parseconfig(string filename)
         if (trim(first) == "RangePow")
         {
             string str = trim(second).c_str();
-            RangePow = new int[numLayer];
+            RangePow.resize(numLayer);
             char *mystring = &str[0];
             char *pch;
             pch = strtok(mystring, ",");
@@ -105,7 +105,7 @@ void parseconfig(string filename)
         else if (trim(first) == "K")
         {
             string str = trim(second).c_str();
-            K = new int[numLayer];
+            K.resize(numLayer);
             char *mystring = &str[0];
             char *pch;
             pch = strtok(mystring, ",");
@@ -119,7 +119,7 @@ void parseconfig(string filename)
         else if (trim(first) == "L")
         {
             string str = trim(second).c_str();
-            L = new int[numLayer];
+            L.resize(numLayer);
             char *mystring = &str[0];
             char *pch;
             pch = strtok(mystring, ",");
@@ -444,10 +444,6 @@ int main(int argc, char* argv[])
         _mynet->saveWeights(savedWeights);
 
     }
-
-    delete [] RangePow;
-    delete [] K;
-    delete [] L;
 
     return 0;
 
