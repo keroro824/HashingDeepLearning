@@ -10,31 +10,7 @@
 
 using namespace std;
 
-Node::Node(int dim, int nodeID, int layerID, NodeType type, int batchsize, float *weights, float bias, float *adamAvgMom, float *adamAvgVel)
-{
-	_dim = dim;
-	_IDinLayer = nodeID;
-	_type = type;
-	_layerNum = layerID;
-    _currentBatchsize = batchsize;
-
-	if (ADAM)
-	{
-		_adamAvgMom = adamAvgMom;
-		_adamAvgVel = adamAvgVel;
-		_t.resize(_dim);
-	}
-
-	_train = new train[_currentBatchsize];
-	_activeInputs = 0;
-
-    _weights = weights;
-    _bias = bias;
-	_mirrorbias = _bias;
-
-}
-
-void Node::Update(int dim, int nodeID, int layerID, NodeType type, int batchsize, float *allWeights, float bias, float *allAdamAvgMom, float *allAdamAvgVel, train* train_blob)
+void Node::Update(int dim, int nodeID, int layerID, NodeType type, int batchsize, std::vector<float> &allWeights, float bias, std::vector<float> &allAdamAvgMom, std::vector<float> &allAdamAvgVel, std::vector<train> &train_blob)
 {
     _dim = dim;
     _IDinLayer = nodeID;
@@ -44,21 +20,21 @@ void Node::Update(int dim, int nodeID, int layerID, NodeType type, int batchsize
 
     if (ADAM)
     {
-        _adamAvgMom = allAdamAvgMom + dim * nodeID;
-        _adamAvgVel = allAdamAvgVel + dim * nodeID;
+        _adamAvgMom = SubVector<float>(allAdamAvgMom, nodeID * dim, dim);
+        _adamAvgVel = SubVector<float>(allAdamAvgVel, nodeID * dim, dim);
         _t.resize(_dim);
     }
 
-    _train = train_blob + nodeID * batchsize;
     _activeInputs = 0;
 
-    _weights = allWeights + dim * nodeID;
+    _train = SubVector<train>(train_blob, nodeID * batchsize, batchsize);
+    _weights = SubVector<float>(allWeights, nodeID * dim, dim);
     _bias = bias;
     _mirrorbias = _bias;
 
 }
 
-float Node::getLastActivation(int inputID)
+float Node::getLastActivation(int inputID) const
 {
 	if(_train[inputID]._ActiveinputIds != 1)
 		return 0.0;
@@ -222,15 +198,8 @@ void Node::SetlastActivation(int inputID, float realActivation)
 
 Node::~Node()
 {
-
 	delete[] _indicesInTables;
 	delete[] _indicesInBuckets;
-
-	if (ADAM)
-	{
-		delete[] _adamAvgMom;
-		delete[] _adamAvgVel;
-	}
 }
 
 

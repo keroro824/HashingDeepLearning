@@ -7,7 +7,7 @@
 #include <linux/mman.h>
 #include <sys/mman.h>
 #include <asm-generic/mman-common.h>
-
+#include "Util.h"
 
 using namespace std;
 
@@ -68,17 +68,17 @@ class Node
 private:
 	int _activeInputs;
   NodeType _type;
-	train* _train;
+  SubVector<train> _train;
   int _currentBatchsize;
   size_t _layerNum, _IDinLayer;
   size_t _dim;
   int* _indicesInTables;
   int* _indicesInBuckets;
-  float* _weights;
+  SubVector<float> _weights;
   float* _mirrorWeights;
 
-  float* _adamAvgMom;
-  float* _adamAvgVel;
+  SubVector<float> _adamAvgMom;
+  SubVector<float> _adamAvgVel;
   float _adamAvgMombias = 0;
   float _adamAvgVelbias = 0;
 
@@ -93,11 +93,11 @@ public:
   const size_t &dim() const { return _dim; }
   int *&indicesInTables() { return _indicesInTables; }
   int *&indicesInBuckets() { return _indicesInBuckets; }
-  float *weights() const { return _weights; }
+  float *weights() { return _weights.data(); }
   const float *mirrorWeights() const { return _mirrorWeights; } // not adam
 
-  float *adamAvgMom() const { return _adamAvgMom; }
-  float *adamAvgVel() const { return _adamAvgVel; }
+  float *adamAvgMom() { return _adamAvgMom.data(); }
+  float *adamAvgVel() { return _adamAvgVel.data(); }
   float &adamAvgMombias() { return _adamAvgMombias; }
   float &adamAvgVelbias() { return _adamAvgVelbias; }
 
@@ -110,9 +110,8 @@ public:
 
   ////////////////////
 	Node(){};
-	Node(int dim, int nodeID, int layerID, NodeType type, int batchsize, float *weights, float bias, float *adamAvgMom, float *adamAvgVel);
-	void Update(int dim, int nodeID, int layerID, NodeType type, int batchsize, float *allWeights, float bias, float *allAdamAvgMom, float *allAdamAvgVel, train* train_blob);
-	float getLastActivation(int inputID);
+	void Update(int dim, int nodeID, int layerID, NodeType type, int batchsize, std::vector<float> &allWeights, float bias, std::vector<float> &allAdamAvgMom, std::vector<float> &allAdamAvgVel, std::vector<train> &train_blob);
+	float getLastActivation(int inputID) const;
 	void incrementDelta(int inputID, float incrementValue);
 	float getActivation(int* indices, float* values, int length, int inputID);
 	bool getInputActive(int inputID);
