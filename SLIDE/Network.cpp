@@ -68,7 +68,7 @@ Layer *Network::getLayer(int LayerID) {
 }
 
 
-int Network::predictClass(int **inputIndices, float **inputValues, int *length, int **labels, int *labelsize) {
+int Network::predictClass(int **inputIndices, float **inputValues, const std::vector<int> &length, int **labels, const std::vector<int> &labelsize) {
     int correctPred = 0;
 
     auto t1 = std::chrono::high_resolution_clock::now();
@@ -120,7 +120,7 @@ int Network::predictClass(int **inputIndices, float **inputValues, int *length, 
 }
 
 
-int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths, int **labels, int *labelsize, int iter, bool rehash, bool rebuild) {
+int Network::ProcessInput(int **inputIndices, float **inputValues, const std::vector<int> &lengths, int **labels, const std::vector<int> &labelsize, int iter, bool rehash, bool rebuild) {
 
     float logloss = 0.0;
     int* avg_retrieval = new int[_numberOfLayers]();

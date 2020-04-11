@@ -229,9 +229,9 @@ void parseconfig(string filename)
 void CreateData(std::ifstream &file,
                 int **records,
                 float **values,
-                int *sizes,
+                std::vector<int> &sizes,
                 int **labels,
-                int *labelsize
+                std::vector<int> &labelsize
                 )
 {
   int nonzeros = 0;
@@ -306,9 +306,9 @@ void EvalDataSVM(int numBatchesTest,  Network* _mynet, int iter){
     for (int i = 0; i < numBatchesTest; i++) {
         int **records = new int *[Batchsize];
         float **values = new float *[Batchsize];
-        int *sizes = new int[Batchsize];
+        std::vector<int> sizes(Batchsize);
         int **labels = new int *[Batchsize];
-        int *labelsize = new int[Batchsize];
+        std::vector<int> labelsize(Batchsize);
 
         CreateData(file, records, values, sizes, labels, labelsize);
 
@@ -324,7 +324,6 @@ void EvalDataSVM(int numBatchesTest,  Network* _mynet, int iter){
         totCorrect += correctPredict;
         std::cout <<" iter "<< i << ": " << totCorrect*1.0/(Batchsize*(i+1)) << " correct" << std::endl;
 
-        delete[] sizes;
         delete[] labels;
         for (int d = 0; d < Batchsize; d++) {
             delete[] records[d];
@@ -351,9 +350,9 @@ void ReadDataSVM(size_t numBatches,  Network* _mynet, int epoch){
         }
         int **records = new int *[Batchsize];
         float **values = new float *[Batchsize];
-        int *sizes = new int[Batchsize];
+        std::vector<int> sizes(Batchsize);
         int **labels = new int *[Batchsize];
-        int *labelsize = new int[Batchsize];
+        std::vector<int> labelsize(Batchsize);
 
         CreateData(file, records, values, sizes, labels, labelsize);
 
@@ -381,8 +380,6 @@ void ReadDataSVM(size_t numBatches,  Network* _mynet, int epoch){
 
         int timeDiffInMiliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
         globalTime+= timeDiffInMiliseconds;
-
-        delete[] sizes;
 
         for (int d = 0; d < Batchsize; d++) {
             delete[] records[d];
