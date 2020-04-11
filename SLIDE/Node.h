@@ -67,16 +67,16 @@ class Node
 private:
 	int _activeInputs;
     NodeType _type;
-
+	train* _train;
+  int _currentBatchsize;
+  size_t _layerNum, _IDinLayer;
+  size_t _dim;
+  int* _indicesInTables;
+  int* _indicesInBuckets;
+  float* _weights;
+  float* _mirrorWeights;
 
 public:
-	train* _train;
-    int _currentBatchsize;
-    size_t _dim, _layerNum, _IDinLayer;
-	int* _indicesInTables;
-	int* _indicesInBuckets;
-	float* _weights;
-	float* _mirrorWeights;
 	float* _adamAvgMom;
 	float* _adamAvgVel;
 	float* _t; //for adam
@@ -86,6 +86,12 @@ public:
 	float _adamAvgMombias=0;
 	float _adamAvgVelbias=0;
 	float _mirrorbias =0;
+
+  const size_t &dim() const { return _dim; }
+  int *&indicesInTables() { return _indicesInTables; }
+  int *&indicesInBuckets() { return _indicesInBuckets; }
+  float *weights() const { return _weights; }
+  float *mirrorWeights() const { return _mirrorWeights; }
 
 	Node(){};
 	Node(int dim, int nodeID, int layerID, NodeType type, int batchsize, float *weights, float bias, float *adamAvgMom, float *adamAvgVel);

@@ -226,9 +226,9 @@ int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths,
         for (size_t m = 0; m < _hiddenlayers[l]->_noOfNodes; m++)
         {
             Node *tmp = _hiddenlayers[l]->getNodebyID(m);
-            int dim = tmp->_dim;
+            int dim = tmp->dim();
             float* local_weights = new float[dim];
-            std::copy(tmp->_weights, tmp->_weights + dim, local_weights);
+            std::copy(tmp->weights(), tmp->weights() + dim, local_weights);
 
             if(ADAM){
                 for (int d=0; d < dim;d++){
@@ -250,7 +250,7 @@ int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths,
             }
             else
             {
-                std::copy(tmp->_mirrorWeights, tmp->_mirrorWeights+(tmp->_dim) , tmp->_weights);
+                std::copy(tmp->mirrorWeights(), tmp->mirrorWeights()+(tmp->dim()) , tmp->weights());
                 tmp->_bias = tmp->_mirrorbias;
             }
             if (tmpRehash) {
@@ -273,7 +273,7 @@ int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths,
                 delete[] bucketIndices;
             }
 
-            std::copy(local_weights, local_weights + dim, tmp->_weights);
+            std::copy(local_weights, local_weights + dim, tmp->weights());
             delete[] local_weights;
         }
     }
