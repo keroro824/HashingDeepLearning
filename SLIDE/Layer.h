@@ -37,7 +37,7 @@ public:
   DensifiedWtaHash *_dwtaHasher;
 
   size_t noOfNodes() const { return _noOfNodes; }
-  const int *binids() const { return _binids.data(); }
+  const std::vector<int> &binids() const { return _binids; }
 
   Layer(size_t _numNodex, int previousLayerNumOfNodes, int layerID, NodeType type, int batchsize, int K, int L, int RangePow, float Sparsity);
 	Node* getNodebyID(size_t nodeID);
