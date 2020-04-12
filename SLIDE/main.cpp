@@ -228,8 +228,8 @@ void parseconfig(string filename)
 }
 
 void CreateData(std::ifstream &file,
-                std::vector<int*> &records,
-                std::vector<float*> &values,
+                Vec2d<int> &records,
+                Vec2d<float> &values,
                 std::vector<int> &sizes,
                 Vec2d<int> &labels,
                 std::vector<int> &labelsize
@@ -267,8 +267,8 @@ void CreateData(std::ifstream &file,
     }
 
     nonzeros += list.size();
-    records[count] = new int[list.size()];
-    values[count] = new float[list.size()];
+    records[count].resize(list.size());
+    values[count].resize(list.size());
     labels[count] = std::vector<int>(label.size());
     sizes[count] = list.size();
     labelsize[count] = label.size();
@@ -305,8 +305,8 @@ void EvalDataSVM(int numBatchesTest,  Network* _mynet, int iter){
 
     ofstream outputFile(logFile,  std::ios_base::app);
     for (int i = 0; i < numBatchesTest; i++) {
-        std::vector<int*> records(Batchsize);
-        std::vector<float*> values(Batchsize);
+        Vec2d<int> records(Batchsize);
+        Vec2d<float> values(Batchsize);
         std::vector<int> sizes(Batchsize);
         Vec2d<int> labels(Batchsize);
         std::vector<int> labelsize(Batchsize);
@@ -324,11 +324,6 @@ void EvalDataSVM(int numBatchesTest,  Network* _mynet, int iter){
         auto correctPredict = _mynet->predictClass(records, values, sizes, labels, labelsize);
         totCorrect += correctPredict;
         std::cout <<" iter "<< i << ": " << totCorrect*1.0/(Batchsize*(i+1)) << " correct" << std::endl;
-
-        for (int d = 0; d < Batchsize; d++) {
-            delete[] records[d];
-            delete[] values[d];
-        }
     }
     file.close();
     cout << "over all " << totCorrect * 1.0 / (numBatchesTest*Batchsize) << endl;
@@ -345,8 +340,8 @@ void ReadDataSVM(size_t numBatches,  Network* _mynet, int epoch){
         if((i+epoch*numBatches)%Stepsize==0) {
             EvalDataSVM(20, _mynet, epoch*numBatches+i);
         }
-        std::vector<int*> records(Batchsize);
-        std::vector<float*> values(Batchsize);
+        Vec2d<int> records(Batchsize);
+        Vec2d<float> values(Batchsize);
         std::vector<int> sizes(Batchsize);
         Vec2d<int> labels(Batchsize);
         std::vector<int> labelsize(Batchsize);
@@ -377,12 +372,6 @@ void ReadDataSVM(size_t numBatches,  Network* _mynet, int epoch){
 
         int timeDiffInMiliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
         globalTime+= timeDiffInMiliseconds;
-
-        for (int d = 0; d < Batchsize; d++) {
-            delete[] records[d];
-            delete[] values[d];
-        }
-
     }
     file.close();
 

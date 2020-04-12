@@ -68,7 +68,7 @@ Layer *Network::getLayer(int LayerID) {
 }
 
 
-int Network::predictClass(const std::vector<int*> &inputIndices, const std::vector<float*> &inputValues, const std::vector<int> &length, const Vec2d<int> &labels, const std::vector<int> &labelsize) {
+int Network::predictClass(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, const std::vector<int> &length, const Vec2d<int> &labels, const std::vector<int> &labelsize) {
     int correctPred = 0;
 
     auto t1 = std::chrono::high_resolution_clock::now();
@@ -78,8 +78,8 @@ int Network::predictClass(const std::vector<int*> &inputIndices, const std::vect
         float **activeValuesperlayer = new float *[_numberOfLayers + 1]();
         std::vector<int> sizes(_numberOfLayers + 1);
 
-        activenodesperlayer[0] = inputIndices[i];
-        activeValuesperlayer[0] = inputValues[i];
+        activenodesperlayer[0] = inputIndices[i].data();
+        activeValuesperlayer[0] = inputValues[i].data();
         sizes[0] = length[i];
 
         //inference
@@ -119,7 +119,7 @@ int Network::predictClass(const std::vector<int*> &inputIndices, const std::vect
 }
 
 
-int Network::ProcessInput(const std::vector<int*> &inputIndices, const std::vector<float*> &inputValues, const std::vector<int> &lengths, const Vec2d<int> &labels, const std::vector<int> &labelsize, int iter, bool rehash, bool rebuild) {
+int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, const std::vector<int> &lengths, const Vec2d<int> &labels, const std::vector<int> &labelsize, int iter, bool rehash, bool rebuild) {
 
     float logloss = 0.0;
     int* avg_retrieval = new int[_numberOfLayers]();
@@ -154,8 +154,8 @@ int Network::ProcessInput(const std::vector<int*> &inputIndices, const std::vect
         activeNodesPerBatch[i] = activenodesperlayer;
         activeValuesPerBatch[i] = activeValuesperlayer;
 
-        activenodesperlayer[0] = inputIndices[i];  // inputs parsed from training data file
-        activeValuesperlayer[0] = inputValues[i];
+        activenodesperlayer[0] = inputIndices[i].data();  // inputs parsed from training data file
+        activeValuesperlayer[0] = inputValues[i].data();
         sizes[0] = lengths[i];
         int in;
         //auto t1 = std::chrono::high_resolution_clock::now();
@@ -180,7 +180,7 @@ int Network::ProcessInput(const std::vector<int*> &inputIndices, const std::vect
                 if (j != 0) {
                     node.backPropagate(prev_layer->getAllNodes(), activeNodesPerBatch[i][j], sizesPerBatch[i][j], tmplr, i);
                 } else {
-                    node.backPropagateFirstLayer(inputIndices[i], inputValues[i], lengths[i], tmplr, i);
+                    node.backPropagateFirstLayer(inputIndices[i].data(), inputValues[i].data(), lengths[i], tmplr, i);
                 }
             }
         }
