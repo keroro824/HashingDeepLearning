@@ -76,7 +76,7 @@ int Network::predictClass(const std::vector<int*> &inputIndices, const std::vect
     for (int i = 0; i < _currentBatchSize; i++) {
         int **activenodesperlayer = new int *[_numberOfLayers + 1]();
         float **activeValuesperlayer = new float *[_numberOfLayers + 1]();
-        int *sizes = new int[_numberOfLayers + 1]();
+        std::vector<int> sizes(_numberOfLayers + 1);
 
         activenodesperlayer[0] = inputIndices[i];
         activeValuesperlayer[0] = inputValues[i];
@@ -104,7 +104,6 @@ int Network::predictClass(const std::vector<int*> &inputIndices, const std::vect
             correctPred++;
         }
 
-        delete[] sizes;
         for (int j = 1; j < _numberOfLayers + 1; j++) {
             delete[] activenodesperlayer[j];
             delete[] activeValuesperlayer[j];
@@ -143,16 +142,17 @@ int Network::ProcessInput(const std::vector<int*> &inputIndices, const std::vect
 
     int*** activeNodesPerBatch = new int**[_currentBatchSize];
     float*** activeValuesPerBatch = new float**[_currentBatchSize];
-    int** sizesPerBatch = new int*[_currentBatchSize];
+    Vec2d<int> sizesPerBatch(_currentBatchSize);
 #pragma omp parallel for
     for (int i = 0; i < _currentBatchSize; i++) {
         int **activenodesperlayer = new int *[_numberOfLayers + 1]();
         float **activeValuesperlayer = new float *[_numberOfLayers + 1]();
-        int *sizes = new int[_numberOfLayers + 1]();
+        
+        std::vector<int> &sizes = sizesPerBatch[i];
+        sizes.resize(_numberOfLayers + 1);
 
         activeNodesPerBatch[i] = activenodesperlayer;
         activeValuesPerBatch[i] = activeValuesperlayer;
-        sizesPerBatch[i] = sizes;
 
         activenodesperlayer[0] = inputIndices[i];  // inputs parsed from training data file
         activeValuesperlayer[0] = inputValues[i];
@@ -187,7 +187,6 @@ int Network::ProcessInput(const std::vector<int*> &inputIndices, const std::vect
     }
     for (int i = 0; i < _currentBatchSize; i++) {
         //Free memory to avoid leaks
-        delete[] sizesPerBatch[i];
         for (int j = 1; j < _numberOfLayers + 1; j++) {
             delete[] activeNodesPerBatch[i][j];
             delete[] activeValuesPerBatch[i][j];
@@ -198,8 +197,6 @@ int Network::ProcessInput(const std::vector<int*> &inputIndices, const std::vect
 
     delete[] activeNodesPerBatch;
     delete[] activeValuesPerBatch;
-    delete[] sizesPerBatch;
-
 
     auto t1 = std::chrono::high_resolution_clock::now();
     bool tmpRehash;
