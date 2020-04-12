@@ -228,8 +228,8 @@ void parseconfig(string filename)
 }
 
 void CreateData(std::ifstream &file,
-                int **records,
-                float **values,
+                std::vector<int*> &records,
+                std::vector<float*> &values,
                 std::vector<int> &sizes,
                 Vec2d<int> &labels,
                 std::vector<int> &labelsize
@@ -305,8 +305,8 @@ void EvalDataSVM(int numBatchesTest,  Network* _mynet, int iter){
 
     ofstream outputFile(logFile,  std::ios_base::app);
     for (int i = 0; i < numBatchesTest; i++) {
-        int **records = new int *[Batchsize];
-        float **values = new float *[Batchsize];
+        std::vector<int*> records(Batchsize);
+        std::vector<float*> values(Batchsize);
         std::vector<int> sizes(Batchsize);
         Vec2d<int> labels(Batchsize);
         std::vector<int> labelsize(Batchsize);
@@ -329,9 +329,6 @@ void EvalDataSVM(int numBatchesTest,  Network* _mynet, int iter){
             delete[] records[d];
             delete[] values[d];
         }
-        delete[] records;
-        delete[] values;
-
     }
     file.close();
     cout << "over all " << totCorrect * 1.0 / (numBatchesTest*Batchsize) << endl;
@@ -348,8 +345,8 @@ void ReadDataSVM(size_t numBatches,  Network* _mynet, int epoch){
         if((i+epoch*numBatches)%Stepsize==0) {
             EvalDataSVM(20, _mynet, epoch*numBatches+i);
         }
-        int **records = new int *[Batchsize];
-        float **values = new float *[Batchsize];
+        std::vector<int*> records(Batchsize);
+        std::vector<float*> values(Batchsize);
         std::vector<int> sizes(Batchsize);
         Vec2d<int> labels(Batchsize);
         std::vector<int> labelsize(Batchsize);
@@ -385,8 +382,6 @@ void ReadDataSVM(size_t numBatches,  Network* _mynet, int epoch){
             delete[] records[d];
             delete[] values[d];
         }
-        delete[] records;
-        delete[] values;
 
     }
     file.close();
