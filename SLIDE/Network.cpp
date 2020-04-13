@@ -239,7 +239,7 @@ int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, c
                 if(HashFunction==1) {
                     hashes = _hiddenlayers[l]->_wtaHasher->getHash(local_weights);
                 }else if (HashFunction==2){
-                    hashes = _hiddenlayers[l]->_dwtaHasher->getHashEasy(local_weights.data(), dim, TOPK);
+                    hashes = _hiddenlayers[l]->_dwtaHasher->getHashEasy(local_weights, dim, TOPK);
                 }else if (HashFunction==3){
                     hashes = _hiddenlayers[l]->_MinHasher->getHashEasy(_hiddenlayers[l]->binids(), local_weights.data(), dim, TOPK);
                 }else if (HashFunction==4){
