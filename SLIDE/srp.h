@@ -7,7 +7,7 @@ class SparseRandomProjection
 private:
 	size_t _dim;
 	size_t _numhashes, _samSize;
-	short ** _randBits;
+  Vec2d<short> _randBits;
 	Vec2d<int> _indices;
 public:
 	SparseRandomProjection(size_t dimention, size_t numOfHashes, int ratio);

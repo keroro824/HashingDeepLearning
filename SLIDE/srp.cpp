@@ -16,12 +16,12 @@ SparseRandomProjection::SparseRandomProjection(size_t dimension, size_t numOfHas
     }
 
     srand(time(0));
-    _randBits = new short *[_numhashes];
+    _randBits.resize(_numhashes);
     _indices.resize(_numhashes);
 
     for (size_t i = 0; i < _numhashes; i++) {
         random_shuffle(a, a+_dim);
-        _randBits[i] = new short[_samSize];
+        _randBits[i].resize(_samSize);
         _indices[i].resize(_samSize);
         for (size_t j = 0; j < _samSize; j++) {
             _indices[i][j] = a[j];
@@ -99,8 +99,4 @@ std::vector<int> SparseRandomProjection::getHashSparse(const std::vector<int> &i
 
 
 SparseRandomProjection::~SparseRandomProjection() {
-    for (size_t i = 0; i < _numhashes; i++) {
-        delete[]   _randBits[i];
-    }
-    delete[]   _randBits;
 }
