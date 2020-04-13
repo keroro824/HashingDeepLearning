@@ -136,7 +136,7 @@ void Layer::addtoHashTable(SubVector<float> &weights, int length, float bias, in
     //LSH logic
     int *hashes;
     if(HashFunction==1) {
-        hashes = _wtaHasher->getHash(weights.data());
+        hashes = _wtaHasher->getHash(weights);
     }else if (HashFunction==2) {
         hashes = _dwtaHasher->getHashEasy(weights.data(), length, TOPK);
     }else if (HashFunction==3) {
@@ -228,7 +228,7 @@ int Layer::queryActiveNodeandComputeActivations(Vec2d<int> &activenodesperlayer,
         if (Mode==1) {
             int *hashes;
             if (HashFunction == 1) {
-                hashes = _wtaHasher->getHash(activeValuesperlayer[layerIndex].data());
+                hashes = _wtaHasher->getHash(activeValuesperlayer[layerIndex]);
             } else if (HashFunction == 2) {
                 hashes = _dwtaHasher->getHash(activenodesperlayer[layerIndex].data(), activeValuesperlayer[layerIndex].data(),
                                               lengths[layerIndex]);
@@ -296,7 +296,7 @@ int Layer::queryActiveNodeandComputeActivations(Vec2d<int> &activenodesperlayer,
         if (Mode==4) {
             int *hashes;
             if (HashFunction == 1) {
-                hashes = _wtaHasher->getHash(activeValuesperlayer[layerIndex].data());
+                hashes = _wtaHasher->getHash(activeValuesperlayer[layerIndex]);
             } else if (HashFunction == 2) {
                 hashes = _dwtaHasher->getHash(activenodesperlayer[layerIndex].data(), activeValuesperlayer[layerIndex].data(),
                                               lengths[layerIndex]);

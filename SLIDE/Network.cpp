@@ -237,7 +237,7 @@ int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, c
             if (tmpRehash) {
                 int *hashes;
                 if(HashFunction==1) {
-                    hashes = _hiddenlayers[l]->_wtaHasher->getHash(local_weights.data());
+                    hashes = _hiddenlayers[l]->_wtaHasher->getHash(local_weights);
                 }else if (HashFunction==2){
                     hashes = _hiddenlayers[l]->_dwtaHasher->getHashEasy(local_weights.data(), dim, TOPK);
                 }else if (HashFunction==3){
