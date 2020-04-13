@@ -74,12 +74,12 @@ int Network::predictClass(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, c
     auto t1 = std::chrono::high_resolution_clock::now();
     #pragma omp parallel for reduction(+:correctPred)
     for (int i = 0; i < _currentBatchSize; i++) {
-        std::vector<int*> activenodesperlayer(_numberOfLayers + 1);
-        std::vector<float*> activeValuesperlayer(_numberOfLayers + 1);
+        Vec2d<int> activenodesperlayer(_numberOfLayers + 1);
+        Vec2d<float> activeValuesperlayer(_numberOfLayers + 1);
         std::vector<int> sizes(_numberOfLayers + 1);
 
-        activenodesperlayer[0] = inputIndices[i].data();
-        activeValuesperlayer[0] = inputValues[i].data();
+        activenodesperlayer[0] = inputIndices[i];
+        activeValuesperlayer[0] = inputValues[i];
         sizes[0] = length[i];
 
         //inference
@@ -102,11 +102,6 @@ int Network::predictClass(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, c
 
         if (std::find (labels[i].begin(), labels[i].end(), predict_class)!= labels[i].end()) {
             correctPred++;
-        }
-
-        for (int j = 1; j < _numberOfLayers + 1; j++) {
-            delete[] activenodesperlayer[j];
-            delete[] activeValuesperlayer[j];
         }
     }
     auto t2 = std::chrono::high_resolution_clock::now();
@@ -138,24 +133,24 @@ int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, c
 //        tmplr *= pow(0.9, iter/10.0);
     }
 
-    Vec2d<int*> activeNodesPerBatch(_currentBatchSize);
-    Vec2d<float*> activeValuesPerBatch(_currentBatchSize);
+    Vec3d<int> activeNodesPerBatch(_currentBatchSize);
+    Vec3d<float> activeValuesPerBatch(_currentBatchSize);
     Vec2d<int> sizesPerBatch(_currentBatchSize);
 #pragma omp parallel for
     for (int i = 0; i < _currentBatchSize; i++) {
         
-      std::vector<int*> &activenodesperlayer = activeNodesPerBatch[i];
+      Vec2d<int> &activenodesperlayer = activeNodesPerBatch[i];
       activenodesperlayer.resize(_numberOfLayers + 1);
         
-      std::vector<float*> &activeValuesperlayer = activeValuesPerBatch[i];
+      Vec2d<float> &activeValuesperlayer = activeValuesPerBatch[i];
       activeValuesperlayer.resize(_numberOfLayers + 1);
 
         std::vector<int> &sizes = sizesPerBatch[i];
         sizes.resize(_numberOfLayers + 1);
 
 
-        activenodesperlayer[0] = inputIndices[i].data();  // inputs parsed from training data file
-        activeValuesperlayer[0] = inputValues[i].data();
+        activenodesperlayer[0] = inputIndices[i];  // inputs parsed from training data file
+        activeValuesperlayer[0] = inputValues[i];
         sizes[0] = lengths[i];
         int in;
         //auto t1 = std::chrono::high_resolution_clock::now();
@@ -178,18 +173,11 @@ int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, c
                     node.ComputeExtaStatsForSoftMax(layer->getNomalizationConstant(i), i, labels[i], labelsize[i]);
                 }
                 if (j != 0) {
-                    node.backPropagate(prev_layer->getAllNodes(), activeNodesPerBatch[i][j], sizesPerBatch[i][j], tmplr, i);
+                    node.backPropagate(prev_layer->getAllNodes(), activeNodesPerBatch[i][j].data(), sizesPerBatch[i][j], tmplr, i);
                 } else {
                     node.backPropagateFirstLayer(inputIndices[i], inputValues[i], lengths[i], tmplr, i);
                 }
             }
-        }
-    }
-    for (int i = 0; i < _currentBatchSize; i++) {
-        //Free memory to avoid leaks
-        for (int j = 1; j < _numberOfLayers + 1; j++) {
-            delete[] activeNodesPerBatch[i][j];
-            delete[] activeValuesPerBatch[i][j];
         }
     }
 
