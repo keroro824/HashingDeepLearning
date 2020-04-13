@@ -67,7 +67,7 @@ Layer::Layer(size_t noOfNodes, int previousLayerNumOfNodes, int layerID, NodeTyp
         normal_distribution<float> distribution(0.0, 0.01);
 
         generate(_weights.begin(), _weights.end(), [&] () { return distribution(dre); });
-        generate(_bias.data(), _bias.data() + _noOfNodes, [&] () { return distribution(dre); });
+        generate(_bias.begin(), _bias.end(), [&] () { return distribution(dre); });
 
 
         if (ADAM)
@@ -450,7 +450,7 @@ int Layer::queryActiveNodeandComputeActivations(Vec2d<int> &activenodesperlayer,
     // find activation for all ACTIVE nodes in layer
     for (int i = 0; i < len; i++)
     {
-        activeValuesperlayer[layerIndex + 1][i] = _Nodes[activenodesperlayer[layerIndex + 1][i]].getActivation(activenodesperlayer[layerIndex].data(), activeValuesperlayer[layerIndex].data(), lengths[layerIndex], inputID);
+        activeValuesperlayer[layerIndex + 1][i] = _Nodes[activenodesperlayer[layerIndex + 1][i]].getActivation(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex], lengths[layerIndex], inputID);
         if(_type == NodeType::Softmax && activeValuesperlayer[layerIndex + 1][i] > maxValue){
             maxValue = activeValuesperlayer[layerIndex + 1][i];
         }

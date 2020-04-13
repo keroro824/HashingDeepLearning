@@ -113,7 +113,7 @@ public:
 	void Update(int dim, int nodeID, int layerID, NodeType type, int batchsize, std::vector<float> &allWeights, float bias, std::vector<float> &allAdamAvgMom, std::vector<float> &allAdamAvgVel, std::vector<train> &train_blob);
 	float getLastActivation(int inputID) const;
 	void incrementDelta(int inputID, float incrementValue);
-	float getActivation(int* indices, float* values, int length, int inputID);
+	float getActivation(const std::vector<int> &indices, const std::vector<float> &values, int length, int inputID);
 	bool getInputActive(int inputID);
 	bool getActiveInputs(void);
 	void SetlastActivation(int inputID, float realActivation);

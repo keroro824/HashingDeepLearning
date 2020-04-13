@@ -59,7 +59,7 @@ bool Node::getActiveInputs(void)
     return _activeInputs > 0;
 }
 
-float Node::getActivation(int* indices, float* values, int length, int inputID)
+float Node::getActivation(const std::vector<int> &indices, const std::vector<float> &values, int length, int inputID)
 {
 	assert(("Input ID more than Batch Size", inputID <= _currentBatchsize));
 
