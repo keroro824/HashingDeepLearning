@@ -131,18 +131,18 @@ void Layer::updateRandomNodes()
 }
 
 
-void Layer::addtoHashTable(float* weights, int length, float bias, int ID)
+void Layer::addtoHashTable(SubVector<float> &weights, int length, float bias, int ID)
 {
     //LSH logic
     int *hashes;
     if(HashFunction==1) {
-        hashes = _wtaHasher->getHash(weights);
+        hashes = _wtaHasher->getHash(weights.data());
     }else if (HashFunction==2) {
-        hashes = _dwtaHasher->getHashEasy(weights, length, TOPK);
+        hashes = _dwtaHasher->getHashEasy(weights.data(), length, TOPK);
     }else if (HashFunction==3) {
-        hashes = _MinHasher->getHashEasy(_binids, weights, length, TOPK);
+        hashes = _MinHasher->getHashEasy(_binids, weights.data(), length, TOPK);
     }else if (HashFunction==4) {
-        hashes = _srp->getHash(weights, length);
+        hashes = _srp->getHash(weights.data(), length);
     }
 
     int * hashIndices = _hashTables->hashesToIndex(hashes);
@@ -419,7 +419,7 @@ int Layer::queryActiveNodeandComputeActivations(Vec2d<int> &activenodesperlayer,
 
             for (size_t s = 0; s < _noOfNodes; s++) {
                 float tmp = innerproduct(activenodesperlayer[layerIndex].data(), activeValuesperlayer[layerIndex].data(),
-                                         lengths[layerIndex], _Nodes[s].weights());
+                                         lengths[layerIndex], _Nodes[s].weights().data());
                 tmp += _Nodes[s].bias();
                 if (find(label.begin(), label.end(), s) != label.end()) {
                     sortW.push_back(make_pair(-1000000000, s));

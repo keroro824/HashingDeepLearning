@@ -209,7 +209,7 @@ int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, c
             Node &tmp = _hiddenlayers[l]->getNodebyID(m);
             int dim = tmp.dim();
             std::vector<float> local_weights(dim);
-            std::copy(tmp.weights(), tmp.weights() + dim, local_weights.begin());
+            std::copy(tmp.weights().data(), tmp.weights().data() + dim, local_weights.begin());
 
             if(ADAM){
                 for (int d=0; d < dim;d++){
@@ -231,7 +231,7 @@ int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, c
             }
             else
             {
-                std::copy(tmp.mirrorWeights(), tmp.mirrorWeights()+(tmp.dim()) , tmp.weights());
+                std::copy(tmp.mirrorWeights(), tmp.mirrorWeights()+(tmp.dim()) , tmp.weights().data());
                 tmp.bias() = tmp.mirrorbias();
             }
             if (tmpRehash) {
@@ -254,7 +254,7 @@ int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, c
                 delete[] bucketIndices;
             }
 
-            std::copy(local_weights.begin(), local_weights.end(), tmp.weights());
+            std::copy(local_weights.begin(), local_weights.end(), tmp.weights().data());
         }
     }
 
