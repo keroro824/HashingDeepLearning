@@ -180,7 +180,7 @@ int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, c
                 if (j != 0) {
                     node.backPropagate(prev_layer->getAllNodes(), activeNodesPerBatch[i][j], sizesPerBatch[i][j], tmplr, i);
                 } else {
-                    node.backPropagateFirstLayer(inputIndices[i].data(), inputValues[i].data(), lengths[i], tmplr, i);
+                    node.backPropagateFirstLayer(inputIndices[i], inputValues[i], lengths[i], tmplr, i);
                 }
             }
         }

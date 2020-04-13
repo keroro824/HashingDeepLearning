@@ -157,7 +157,7 @@ void Node::backPropagate(std::vector<Node> &previousNodes, int* previousLayerAct
 }
 
 
-void Node::backPropagateFirstLayer(int* nnzindices, float* nnzvalues, int nnzSize, float learningRate, int inputID)
+void Node::backPropagateFirstLayer(const std::vector<int> &nnzindices, const std::vector<float> &nnzvalues, int nnzSize, float learningRate, int inputID)
 {
 	assert(("Input Not Active but still called !! BUG", _train[inputID]._ActiveinputIds == 1));
 	for (int i = 0; i < nnzSize; i++)

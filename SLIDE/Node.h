@@ -119,7 +119,7 @@ public:
 	void SetlastActivation(int inputID, float realActivation);
 	void ComputeExtaStatsForSoftMax(float normalizationConstant, int inputID, const std::vector<int> &label, int labelsize);
 	void backPropagate(std::vector<Node> &previousNodes, int* previousLayerActiveNodeIds, int previousLayerActiveNodeSize, float learningRate, int inputID);
-	void backPropagateFirstLayer(int* nnzindices, float* nnzvalues, int nnzSize, float learningRate, int inputID);
+	void backPropagateFirstLayer(const std::vector<int> &nnzindices, const std::vector<float> &nnzvalues, int nnzSize, float learningRate, int inputID);
 	~Node();
 
     void * operator new(size_t size){
