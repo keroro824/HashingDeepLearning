@@ -23,7 +23,7 @@ Layer::Layer(size_t noOfNodes, int previousLayerNumOfNodes, int layerID, NodeTyp
 ,_previousLayerNumOfNodes(previousLayerNumOfNodes)
 ,_noOfActive(floor(noOfNodes * Sparsity))
 ,_randNode(noOfNodes)
-,_hashTables(new LSH(K, L, RangePow))
+,_hashTables(K, L, RangePow)
 ,_Nodes(noOfNodes)
 {
 
@@ -145,8 +145,8 @@ void Layer::addtoHashTable(SubVector<float> &weights, int length, float bias, in
         hashes = _srp->getHash(weights, length);
     }
 
-    int * hashIndices = _hashTables->hashesToIndex(hashes);
-    int * bucketIndices = _hashTables->add(hashIndices, ID+1);
+    int * hashIndices = _hashTables.hashesToIndex(hashes);
+    int * bucketIndices = _hashTables.add(hashIndices, ID+1);
 
     _Nodes[ID].indicesInTables() = hashIndices;
     _Nodes[ID].indicesInBuckets() = bucketIndices;
@@ -237,8 +237,8 @@ int Layer::queryActiveNodeandComputeActivations(Vec2d<int> &activenodesperlayer,
             } else if (HashFunction == 4) {
                 hashes = _srp->getHashSparse(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex], lengths[layerIndex]);
             }
-            int *hashIndices = _hashTables->hashesToIndex(hashes);
-            int **actives = _hashTables->retrieveRaw(hashIndices);
+            int *hashIndices = _hashTables.hashesToIndex(hashes);
+            int **actives = _hashTables.retrieveRaw(hashIndices);
 
             // Get candidates from hashtable
             auto t00 = std::chrono::high_resolution_clock::now();
@@ -305,8 +305,8 @@ int Layer::queryActiveNodeandComputeActivations(Vec2d<int> &activenodesperlayer,
             } else if (HashFunction == 4) {
                 hashes = _srp->getHashSparse(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex], lengths[layerIndex]);
             }
-            int *hashIndices = _hashTables->hashesToIndex(hashes);
-            int **actives = _hashTables->retrieveRaw(hashIndices);
+            int *hashIndices = _hashTables.hashesToIndex(hashes);
+            int **actives = _hashTables.retrieveRaw(hashIndices);
             // we now have a sparse array of indices of active nodes
 
             // Get candidates from hashtable

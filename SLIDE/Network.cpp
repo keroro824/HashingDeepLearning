@@ -115,11 +115,7 @@ int Network::predictClass(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, c
 int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, const std::vector<int> &lengths, const Vec2d<int> &labels, const std::vector<int> &labelsize, int iter, bool rehash, bool rebuild) {
 
     float logloss = 0.0;
-    int* avg_retrieval = new int[_numberOfLayers]();
-
-    for (int j = 0; j < _numberOfLayers; j++)
-        avg_retrieval[j] = 0;
-
+    std::vector<int> avg_retrieval(_numberOfLayers, 0);
 
     if(iter%6946==6945 ){
         //_learningRate *= 0.5;
@@ -197,7 +193,7 @@ int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, c
             tmpRebuild=false;
         }
         if (tmpRehash) {
-            _hiddenlayers[l]->_hashTables->clear();
+            _hiddenlayers[l]->hashTables().clear();
         }
         if (tmpRebuild){
             _hiddenlayers[l]->updateTable();
@@ -246,8 +242,8 @@ int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, c
                     hashes = _hiddenlayers[l]->_srp->getHash(local_weights, dim);
                 }
 
-                int *hashIndices = _hiddenlayers[l]->_hashTables->hashesToIndex(hashes);
-                int * bucketIndices = _hiddenlayers[l]->_hashTables->add(hashIndices, m+1);
+                int *hashIndices = _hiddenlayers[l]->hashTables().hashesToIndex(hashes);
+                int * bucketIndices = _hiddenlayers[l]->hashTables().add(hashIndices, m+1);
 
                 delete[] hashes;
                 delete[] hashIndices;

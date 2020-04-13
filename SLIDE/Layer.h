@@ -28,14 +28,15 @@ private:
     std::vector<float> _adamAvgVel;
     std::vector<float> _bias;
     std::vector<int> _binids;
+    LSH _hashTables;
 
 public:
-  LSH *_hashTables;
   WtaHash *_wtaHasher;
   DensifiedMinhash *_MinHasher;
   SparseRandomProjection *_srp;
   DensifiedWtaHash *_dwtaHasher;
 
+  LSH & hashTables() { return _hashTables; }
   size_t noOfNodes() const { return _noOfNodes; }
   const std::vector<int> &binids() const { return _binids; }
 
