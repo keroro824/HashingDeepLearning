@@ -13,7 +13,8 @@
 class DensifiedMinhash
 {
 private:
-    int *_randHash, _randa, _numhashes, _rangePow,_lognumhash;
+    int _randa, _numhashes, _rangePow,_lognumhash;
+    std::vector<int> _randHash;
 public:
     DensifiedMinhash(int numHashes, int noOfBitsToHash);
     std::vector<int> getHash(const std::vector<int> &indices, const std::vector<float> &data, const std::vector<int> &binids, int dataLen);

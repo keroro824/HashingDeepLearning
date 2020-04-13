@@ -10,7 +10,7 @@ SparseRandomProjection::SparseRandomProjection(size_t dimension, size_t numOfHas
     _numhashes = numOfHashes;
     _samSize = ceil(1.0*_dim / ratio);
 
-    int *a = new int[_dim];
+    std::vector<int> a(_dim);
     for (size_t i = 0; i < _dim; i++) {
         a[i] = i;
     }
@@ -20,7 +20,7 @@ SparseRandomProjection::SparseRandomProjection(size_t dimension, size_t numOfHas
     _indices.resize(_numhashes);
 
     for (size_t i = 0; i < _numhashes; i++) {
-        random_shuffle(a, a+_dim);
+        random_shuffle(a.begin(), a.end());
         _randBits[i].resize(_samSize);
         _indices[i].resize(_samSize);
         for (size_t j = 0; j < _samSize; j++) {
@@ -34,7 +34,6 @@ SparseRandomProjection::SparseRandomProjection(size_t dimension, size_t numOfHas
         }
         std::sort(_indices[i].begin(), _indices[i].end());
     }
-    delete [] a;
 }
 
 

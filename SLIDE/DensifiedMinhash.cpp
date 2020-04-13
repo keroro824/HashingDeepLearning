@@ -17,6 +17,7 @@ struct cmp {
 };
 
 DensifiedMinhash::DensifiedMinhash(int numHashes, int noOfBitsToHash)
+  :_randHash(2)
 {
 
     _numhashes = numHashes;
@@ -31,7 +32,7 @@ DensifiedMinhash::DensifiedMinhash(int numHashes, int noOfBitsToHash)
     _randa = dis(gen);
     if (_randa % 2 == 0)
         _randa++;
-    _randHash = new int[2];
+    
     _randHash[0] = dis(gen);
     if (_randHash[0] % 2 == 0)
         _randHash[0]++;
@@ -191,5 +192,4 @@ int DensifiedMinhash::getRandDoubleHash(int binid, int count) {
 
 DensifiedMinhash::~DensifiedMinhash()
 {
-    delete[] _randHash;
 }

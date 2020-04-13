@@ -16,7 +16,8 @@
 class DensifiedWtaHash
 {
 private:
-    int *_randHash, _randa, _numhashes, _rangePow,_lognumhash, *_indices, *_pos, _permute;
+    int _randa, _numhashes, _rangePow,_lognumhash, _permute;
+    std::vector<int> _randHash, _indices, _pos;
 public:
     DensifiedWtaHash(int numHashes, int noOfBitsToHash);
     std::vector<int> getHash(const std::vector<int> &indices, const std::vector<float> &data, int dataLen);

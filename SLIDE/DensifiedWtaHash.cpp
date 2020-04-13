@@ -11,6 +11,7 @@ using namespace std;
 
 
 DensifiedWtaHash::DensifiedWtaHash(int numHashes, int noOfBitsToHash)
+:_randHash(2)
 {
 
     _numhashes = numHashes;
@@ -21,22 +22,21 @@ DensifiedWtaHash::DensifiedWtaHash(int numHashes, int noOfBitsToHash)
 
     _permute = ceil(_numhashes * binsize * 1.0 / noOfBitsToHash);
 
-    int* n_array = new int[_rangePow];
-    _indices = new int[_rangePow * _permute];
-    _pos = new int[_rangePow * _permute];
+    std::vector<int> n_array(_rangePow);
+    _indices.resize(_rangePow * _permute);
+    _pos.resize(_rangePow * _permute);
 
     for (int i = 0; i < _rangePow; i++) {
         n_array[i] = i;
     }
 
     for (int p = 0; p < _permute ;p++) {
-        std::shuffle(n_array, n_array + _rangePow, rd);
+        std::shuffle(n_array.begin(), n_array.end(), rd);
         for (int j = 0; j < _rangePow; j++) {
             _indices[p * _rangePow + n_array[j]] = (p * _rangePow + j) / binsize;
             _pos[p * _rangePow + n_array[j]] = (p * _rangePow + j)%binsize;
         }
     }
-    delete [] n_array;
 
     _lognumhash = log2(numHashes);
     std::uniform_int_distribution<> dis(1, INT_MAX);
@@ -44,7 +44,7 @@ DensifiedWtaHash::DensifiedWtaHash(int numHashes, int noOfBitsToHash)
     _randa = dis(gen);
     if (_randa % 2 == 0)
         _randa++;
-    _randHash = new int[2];
+
     _randHash[0] = dis(gen);
     if (_randHash[0] % 2 == 0)
         _randHash[0]++;
@@ -174,6 +174,4 @@ int DensifiedWtaHash::getRandDoubleHash(int binid, int count) {
 
 DensifiedWtaHash::~DensifiedWtaHash()
 {
-    delete[] _randHash;
-    delete[] _indices;
 }
