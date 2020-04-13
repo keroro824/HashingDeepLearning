@@ -70,7 +70,7 @@ private:
   int _currentBatchsize;
   size_t _layerNum, _IDinLayer;
   size_t _dim;
-  int* _indicesInTables;
+  std::vector<int> _indicesInTables;
   int* _indicesInBuckets;
   SubVector<float> _weights;
   float* _mirrorWeights;
@@ -89,7 +89,7 @@ private:
 public:
 
   const size_t &dim() const { return _dim; }
-  int *&indicesInTables() { return _indicesInTables; }
+  std::vector<int> &indicesInTables() { return _indicesInTables; }
   int *&indicesInBuckets() { return _indicesInBuckets; }
   
   const SubVector<float> &weights() const { return _weights; }

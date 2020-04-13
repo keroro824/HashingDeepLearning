@@ -62,10 +62,10 @@ void LSH::count()
 }
 
 
-int* LSH::hashesToIndex(const std::vector<int> &hashes)
+std::vector<int> LSH::hashesToIndex(const std::vector<int> &hashes)
 {
 
-	int * indices = new int[_L];
+  std::vector<int> indices(_L);
 	for (int i = 0; i < _L; i++)
 	{
 		unsigned int index = 0;
