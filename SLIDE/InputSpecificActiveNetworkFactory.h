@@ -1,6 +1,5 @@
 #pragma once
 #include "InputSpecificActiveNetwork.h"
-using namespace std;
 
 class InputSpecificActiveNetworkFactory
 {

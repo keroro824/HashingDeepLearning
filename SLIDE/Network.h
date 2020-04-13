@@ -5,8 +5,6 @@
 #include "cnpy.h"
 #include <sys/mman.h>
 
-using namespace std;
-
 class Network
 {
 private:
@@ -24,10 +22,10 @@ public:
 	Layer* getLayer(int LayerID);
 	int predictClass(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, const std::vector<int> &length, const Vec2d<int> &labels, const std::vector<int> &labelsize);
 	int ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, const std::vector<int> &lengths, const Vec2d<int> &label, const std::vector<int> &labelsize, int iter, bool rehash, bool rebuild);
-	void saveWeights(string file);
+	void saveWeights(std::string file);
 	~Network();
 	void * operator new(size_t size){
-	    cout << "new Network" << endl;
+      std::cout << "new Network" << std::endl;
 	    void* ptr = mmap(NULL, size,
 	        PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB,
 	        -1, 0);

@@ -9,8 +9,6 @@
 #include <sys/mman.h>
 #include <vector>
 
-using namespace std;
-
 class Layer
 {
 private:
@@ -50,14 +48,14 @@ public:
     int queryActiveNodes(int** activenodesperlayer, float** activeValuesperlayer, int* inlenght, int layerID, int inputID,  int* label, int labelsize, float Sparsity, int iter);
     int computeActivations(int** activenodesperlayer, float** activeValuesperlayer, int* inlenght, int layerID, int inputID,  int* label, int labelsize, float Sparsity, int iter);
     int computeSoftmax(int** activenodesperlayer, float** activeValuesperlayer, int* inlenght, int layerID, int inputID,  int* label, int labelsize, float Sparsity, int iter);
-	void saveWeights(string file);
+	void saveWeights(std::string file);
 	void updateTable();
 	void updateRandomNodes();
 
 	~Layer();
 
     void * operator new(size_t size){
-        cout << "new Layer" << endl;
+      std::cout << "new Layer" << std::endl;
         void* ptr = mmap(NULL, size,
             PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB,
             -1, 0);

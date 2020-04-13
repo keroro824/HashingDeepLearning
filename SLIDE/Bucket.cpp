@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Bucket.h"
 
+using namespace std;
 
 Bucket::Bucket()
 {

@@ -19,6 +19,8 @@
 #include "Config.h"
 #include "Util.h"
 
+using namespace std;
+
 std::vector<int> RangePow;
 std::vector<int> K;
 std::vector<int> L;
@@ -41,7 +43,6 @@ string testData = "";
 string Weights = "";
 string savedWeights = "";
 string logFile = "";
-using namespace std;
 int globalTime = 0;
 
 #define ALL(c) c.begin(), c.end()
@@ -401,6 +402,15 @@ int main(int argc, char* argv[])
     if (LOADWEIGHT) {
         arr = cnpy::npz_load(Weights);
     }
+    /*
+    {
+      cerr << "main1" << endl;
+      Network *_mynet = new Network(sizesOfLayers, layersTypes, numLayer, Batchsize, Lr, InputDim, K, L, RangePow, Sparsity, arr);
+      cerr << "main2" << endl;
+      delete _mynet;
+      cerr << "main3" << endl;
+    }
+    */
     auto t1 = std::chrono::high_resolution_clock::now();
     Network *_mynet = new Network(sizesOfLayers, layersTypes, numLayer, Batchsize, Lr, InputDim, K, L, RangePow, Sparsity, arr);
     auto t2 = std::chrono::high_resolution_clock::now();

@@ -9,8 +9,6 @@
 #include <asm-generic/mman-common.h>
 #include "Util.h"
 
-using namespace std;
-
 enum NodeType
 { ReLU, Softmax};
 
