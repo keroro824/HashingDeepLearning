@@ -173,7 +173,7 @@ int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, c
                     node.ComputeExtaStatsForSoftMax(layer->getNomalizationConstant(i), i, labels[i], labelsize[i]);
                 }
                 if (j != 0) {
-                    node.backPropagate(prev_layer->getAllNodes(), activeNodesPerBatch[i][j].data(), sizesPerBatch[i][j], tmplr, i);
+                    node.backPropagate(prev_layer->getAllNodes(), activeNodesPerBatch[i][j], sizesPerBatch[i][j], tmplr, i);
                 } else {
                     node.backPropagateFirstLayer(inputIndices[i], inputValues[i], lengths[i], tmplr, i);
                 }

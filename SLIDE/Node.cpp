@@ -117,7 +117,7 @@ void Node::ComputeExtaStatsForSoftMax(float normalizationConstant, int inputID, 
 }
 
 
-void Node::backPropagate(std::vector<Node> &previousNodes, int* previousLayerActiveNodeIds, int previousLayerActiveNodeSize, float learningRate, int inputID)
+void Node::backPropagate(std::vector<Node> &previousNodes, const std::vector<int> &previousLayerActiveNodeIds, int previousLayerActiveNodeSize, float learningRate, int inputID)
 {
 	assert(("Input Not Active but still called !! BUG", _train[inputID]._ActiveinputIds == 1));
 	for (int i = 0; i < previousLayerActiveNodeSize; i++)
