@@ -145,7 +145,7 @@ void Layer::addtoHashTable(SubVector<float> &weights, int length, float bias, in
         hashes = _srp->getHash(weights, length);
     }
 
-    int * hashIndices = _hashTables.hashesToIndex(hashes.data());
+    int * hashIndices = _hashTables.hashesToIndex(hashes);
     int * bucketIndices = _hashTables.add(hashIndices, ID+1);
 
     _Nodes[ID].indicesInTables() = hashIndices;
@@ -235,7 +235,7 @@ int Layer::queryActiveNodeandComputeActivations(Vec2d<int> &activenodesperlayer,
             } else if (HashFunction == 4) {
                 hashes = _srp->getHashSparse(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex], lengths[layerIndex]);
             }
-            int *hashIndices = _hashTables.hashesToIndex(hashes.data());
+            int *hashIndices = _hashTables.hashesToIndex(hashes);
             int **actives = _hashTables.retrieveRaw(hashIndices);
 
             // Get candidates from hashtable
@@ -302,7 +302,7 @@ int Layer::queryActiveNodeandComputeActivations(Vec2d<int> &activenodesperlayer,
             } else if (HashFunction == 4) {
                 hashes = _srp->getHashSparse(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex], lengths[layerIndex]);
             }
-            int *hashIndices = _hashTables.hashesToIndex(hashes.data());
+            int *hashIndices = _hashTables.hashesToIndex(hashes);
             int **actives = _hashTables.retrieveRaw(hashIndices);
             // we now have a sparse array of indices of active nodes
 

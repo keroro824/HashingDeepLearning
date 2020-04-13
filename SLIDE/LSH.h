@@ -16,7 +16,7 @@ public:
 	void clear();
 	int* add(int *indices, int id);
 	int add(int indices, int tableId, int id);
-	int * hashesToIndex(int * hashes);
+	int * hashesToIndex(const std::vector<int> &hashes);
 	int** retrieveRaw(int *indices);
 	int retrieve(int table, int indices, int bucket);
 	void count();
