@@ -55,7 +55,7 @@ DensifiedWtaHash::DensifiedWtaHash(int numHashes, int noOfBitsToHash)
 }
 
 
-int * DensifiedWtaHash::getHashEasy(float* data, int dataLen, int topk)
+int * DensifiedWtaHash::getHashEasy(const float* data, int dataLen, int topk)
 {
     // binsize is the number of times the range is larger than the total number of hashes we need.
 
@@ -109,7 +109,7 @@ int * DensifiedWtaHash::getHashEasy(float* data, int dataLen, int topk)
     return hashArray;
 }
 
-int* DensifiedWtaHash::getHash(int* indices, float* data, int dataLen)
+int* DensifiedWtaHash::getHash(const int* indices, const float* data, int dataLen)
 {
     int *hashes = new int[_numhashes];
     float *values = new float[_numhashes];

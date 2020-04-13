@@ -38,7 +38,7 @@ SparseRandomProjection::SparseRandomProjection(size_t dimension, size_t numOfHas
 }
 
 
-int *SparseRandomProjection::getHash(float *vector, int length) {
+int *SparseRandomProjection::getHash(const float *vector, int length) {
     // length should be = to _dim
     int *hashes = new int[_numhashes];
 
@@ -59,7 +59,7 @@ int *SparseRandomProjection::getHash(float *vector, int length) {
 }
 
 
-int *SparseRandomProjection::getHashSparse(int* indices, float *values, size_t length) {
+int *SparseRandomProjection::getHashSparse(const int* indices, const float *values, size_t length) {
     int *hashes = new int[_numhashes];
 
     for (size_t p = 0; p < _numhashes; p++) {

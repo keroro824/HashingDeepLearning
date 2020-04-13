@@ -11,7 +11,7 @@ private:
 	int ** _indices;
 public:
 	SparseRandomProjection(size_t dimention, size_t numOfHashes, int ratio);
-	int * getHash(float * vector, int length);
-	int * getHashSparse(int* indices, float *values, size_t length);
+	int * getHash(const float * vector, int length);
+	int * getHashSparse(const int* indices, const float *values, size_t length);
 	~SparseRandomProjection();
 };
