@@ -22,14 +22,14 @@ WtaHash::WtaHash(int numHashes, int noOfBitsToHash)
     int permute = ceil(_numhashes*binsize*1.0/noOfBitsToHash);
 
     int* n_array = new int[_rangePow];
-    _indices = new int[_rangePow*permute];
+    _indices.resize(_rangePow*permute);
 
     for (int i = 0; i < _rangePow; i++) {
         n_array[i] = i;
     }
     for (int p=0; p<permute ;p++) {
         std::shuffle(n_array, n_array+_rangePow, rd);
-        std::copy ( n_array, n_array+_rangePow, _indices+(p*_rangePow) );
+        std::copy ( n_array, n_array+_rangePow, _indices.begin()+(p*_rangePow) );
     }
     delete [] n_array;
 }

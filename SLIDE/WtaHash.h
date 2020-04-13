@@ -17,7 +17,8 @@
 class WtaHash
 {
 private:
-    int *_indices, _numhashes, _rangePow;
+    int _numhashes, _rangePow;
+    std::vector<int> _indices;
 public:
     WtaHash(int numHashes, int noOfBitsToHash);
     std::vector<int> getHash(const std::vector<float> &data);
