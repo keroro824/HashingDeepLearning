@@ -93,7 +93,10 @@ public:
   const size_t &dim() const { return _dim; }
   int *&indicesInTables() { return _indicesInTables; }
   int *&indicesInBuckets() { return _indicesInBuckets; }
+  
+  const SubVector<float> &weights() const { return _weights; }
   SubVector<float> &weights() { return _weights; }
+
   const float *mirrorWeights() const { return _mirrorWeights; } // not adam
 
   float *adamAvgMom() { return _adamAvgMom.data(); }
