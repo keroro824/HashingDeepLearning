@@ -208,8 +208,8 @@ int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, c
         {
             Node &tmp = _hiddenlayers[l]->getNodebyID(m);
             int dim = tmp.dim();
-            float* local_weights = new float[dim];
-            std::copy(tmp.weights(), tmp.weights() + dim, local_weights);
+            std::vector<float> local_weights(dim);
+            std::copy(tmp.weights(), tmp.weights() + dim, local_weights.begin());
 
             if(ADAM){
                 for (int d=0; d < dim;d++){
@@ -237,13 +237,13 @@ int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, c
             if (tmpRehash) {
                 int *hashes;
                 if(HashFunction==1) {
-                    hashes = _hiddenlayers[l]->_wtaHasher->getHash(local_weights);
+                    hashes = _hiddenlayers[l]->_wtaHasher->getHash(local_weights.data());
                 }else if (HashFunction==2){
-                    hashes = _hiddenlayers[l]->_dwtaHasher->getHashEasy(local_weights, dim, TOPK);
+                    hashes = _hiddenlayers[l]->_dwtaHasher->getHashEasy(local_weights.data(), dim, TOPK);
                 }else if (HashFunction==3){
-                    hashes = _hiddenlayers[l]->_MinHasher->getHashEasy(_hiddenlayers[l]->binids(), local_weights, dim, TOPK);
+                    hashes = _hiddenlayers[l]->_MinHasher->getHashEasy(_hiddenlayers[l]->binids(), local_weights.data(), dim, TOPK);
                 }else if (HashFunction==4){
-                    hashes = _hiddenlayers[l]->_srp->getHash(local_weights, dim);
+                    hashes = _hiddenlayers[l]->_srp->getHash(local_weights.data(), dim);
                 }
 
                 int *hashIndices = _hiddenlayers[l]->_hashTables->hashesToIndex(hashes);
@@ -254,8 +254,7 @@ int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, c
                 delete[] bucketIndices;
             }
 
-            std::copy(local_weights, local_weights + dim, tmp.weights());
-            delete[] local_weights;
+            std::copy(local_weights.begin(), local_weights.end(), tmp.weights());
         }
     }
 
