@@ -8,7 +8,7 @@ private:
 	size_t _dim;
 	size_t _numhashes, _samSize;
 	short ** _randBits;
-	int ** _indices;
+	Vec2d<int> _indices;
 public:
 	SparseRandomProjection(size_t dimention, size_t numOfHashes, int ratio);
   std::vector<int> getHash(const std::vector<float> &vector, int length);
