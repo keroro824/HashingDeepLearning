@@ -8,7 +8,7 @@ private:
 	int _K;
 	int _L;
 	int _RangePow;
-	int *rand1;
+	std::vector<int> _rand1;
 
 
 public:

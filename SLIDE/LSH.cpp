@@ -8,6 +8,7 @@
 using namespace std;
 
 LSH::LSH(int K, int L, int RangePow)
+:_rand1(K*L)
 {
 	_K = K;
 	_L = L;
@@ -20,8 +21,6 @@ LSH::LSH(int K, int L, int RangePow)
 		_bucket[i] = new Bucket[1 << _RangePow];
 	}
 
-	rand1 = new int[_K*_L];
-
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<> dis(1, INT_MAX);
@@ -29,9 +28,9 @@ LSH::LSH(int K, int L, int RangePow)
 //#pragma omp parallel for
 	for (int i = 0; i < _K*_L; i++)
 	{
-		rand1[i] = dis(gen);
-		if (rand1[i] % 2 == 0)
-			rand1[i]++;
+		_rand1[i] = dis(gen);
+		if (_rand1[i] % 2 == 0)
+			_rand1[i]++;
 	}
 }
 
@@ -82,10 +81,10 @@ int* LSH::hashesToIndex(const std::vector<int> &hashes)
                 index += h<<((_K-1-j)*(int)floor(log(binsize)));
 
             }else {
-                unsigned int h = rand1[_K*i + j];
-                h *= rand1[_K * i + j];
+                unsigned int h = _rand1[_K*i + j];
+                h *= _rand1[_K * i + j];
                 h ^= h >> 13;
-                h ^= rand1[_K * i + j];
+                h ^= _rand1[_K * i + j];
                 index += h * hashes[_K * i + j];
             }
 		}
@@ -140,7 +139,6 @@ int LSH::retrieve(int table, int indices, int bucket)
 
 LSH::~LSH()
 {
-	delete [] rand1;
 	 for (int i = 0; i < _L; i++)
 	 {
 	 	delete[] _bucket[i];
