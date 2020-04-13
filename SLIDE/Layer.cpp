@@ -44,7 +44,7 @@ Layer::Layer(size_t noOfNodes, int previousLayerNumOfNodes, int layerID, NodeTyp
     } else if (HashFunction == 3) {
         _binids.resize(previousLayerNumOfNodes);
         _MinHasher = new DensifiedMinhash(_K * _L, previousLayerNumOfNodes);
-        _MinHasher->getMap(previousLayerNumOfNodes, _binids.data());
+        _MinHasher->getMap(previousLayerNumOfNodes, _binids);
     } else if (HashFunction == 4) {
         _srp = new SparseRandomProjection(previousLayerNumOfNodes, _K * _L, Ratio);
     }
@@ -116,7 +116,7 @@ void Layer::updateTable()
          delete _MinHasher;
         _binids.resize(_previousLayerNumOfNodes);
         _MinHasher = new DensifiedMinhash(_K * _L, _previousLayerNumOfNodes);
-        _MinHasher->getMap(_previousLayerNumOfNodes, _binids.data());
+        _MinHasher->getMap(_previousLayerNumOfNodes, _binids);
     } else if (HashFunction == 4) {
 
         _srp = new SparseRandomProjection(_previousLayerNumOfNodes, _K * _L, Ratio);
