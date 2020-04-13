@@ -61,10 +61,14 @@ void DensifiedMinhash::getMap(int n, std::vector<int> &binids)
 
 }
 
-
-int * DensifiedMinhash::getHashEasy(const std::vector<int> &binids, const float* data, int dataLen, int topK)
+int * DensifiedMinhash::getHashEasy(const std::vector<int> &binids, const std::vector<float> &data, int dataLen, int topK)
 {
+  SubVectorConst<float> dataSub(data, 0, data.size());
+  return getHashEasy(binids, dataSub, dataLen, topK);
+}
 
+int * DensifiedMinhash::getHashEasy(const std::vector<int> &binids, const SubVectorConst<float> &data, int dataLen, int topK)
+{
     // binsize is the number of times the range is larger than the total number of hashes we need.
 // read the data and add it to priority queue O(dlogk approx 7d) with index as key and values as priority value, get topk index O(1) and apply minhash on retuned index.
 
@@ -132,7 +136,7 @@ int * DensifiedMinhash::getHashEasy(const std::vector<int> &binids, const float*
 }
 
 
-int * DensifiedMinhash::getHash(const int* indices, const float* data, const std::vector<int> &binids, int dataLen)
+int * DensifiedMinhash::getHash(const std::vector<int> &indices, const std::vector<float> &data, const std::vector<int> &binids, int dataLen)
 {
     int *hashes = new int[_numhashes];
     int *hashArray = new int[_numhashes];
