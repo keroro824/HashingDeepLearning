@@ -231,7 +231,7 @@ int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, c
                 tmp.bias() = tmp.mirrorbias();
             }
             if (tmpRehash) {
-                int *hashes;
+                std::vector<int> hashes;
                 if(HashFunction==1) {
                     hashes = _hiddenlayers[l]->_wtaHasher->getHash(local_weights);
                 }else if (HashFunction==2){
@@ -242,10 +242,9 @@ int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, c
                     hashes = _hiddenlayers[l]->_srp->getHash(local_weights, dim);
                 }
 
-                int *hashIndices = _hiddenlayers[l]->hashTables().hashesToIndex(hashes);
+                int *hashIndices = _hiddenlayers[l]->hashTables().hashesToIndex(hashes.data());
                 int * bucketIndices = _hiddenlayers[l]->hashTables().add(hashIndices, m+1);
 
-                delete[] hashes;
                 delete[] hashIndices;
                 delete[] bucketIndices;
             }

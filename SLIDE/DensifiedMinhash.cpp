@@ -61,13 +61,13 @@ void DensifiedMinhash::getMap(int n, std::vector<int> &binids)
 
 }
 
-int * DensifiedMinhash::getHashEasy(const std::vector<int> &binids, const std::vector<float> &data, int dataLen, int topK)
+std::vector<int> DensifiedMinhash::getHashEasy(const std::vector<int> &binids, const std::vector<float> &data, int dataLen, int topK)
 {
   SubVectorConst<float> dataSub(data, 0, data.size());
   return getHashEasy(binids, dataSub, dataLen, topK);
 }
 
-int * DensifiedMinhash::getHashEasy(const std::vector<int> &binids, const SubVectorConst<float> &data, int dataLen, int topK)
+std::vector<int> DensifiedMinhash::getHashEasy(const std::vector<int> &binids, const SubVectorConst<float> &data, int dataLen, int topK)
 {
     // binsize is the number of times the range is larger than the total number of hashes we need.
 // read the data and add it to priority queue O(dlogk approx 7d) with index as key and values as priority value, get topk index O(1) and apply minhash on retuned index.
@@ -87,9 +87,8 @@ int * DensifiedMinhash::getHashEasy(const std::vector<int> &binids, const SubVec
 
 
 
-    int *hashes = new int[_numhashes];
-    //float *values = new float[_numhashes];
-    int *hashArray = new int[_numhashes];
+    std::vector<int> hashes(_numhashes);
+    std::vector<int> hashArray(_numhashes);
 
     for (int i = 0; i < _numhashes; i++)
     {
@@ -131,15 +130,14 @@ int * DensifiedMinhash::getHashEasy(const std::vector<int> &binids, const SubVec
         }
         hashArray[i] = next;
     }
-    delete[] hashes;
     return hashArray;
 }
 
 
-int * DensifiedMinhash::getHash(const std::vector<int> &indices, const std::vector<float> &data, const std::vector<int> &binids, int dataLen)
+std::vector<int> DensifiedMinhash::getHash(const std::vector<int> &indices, const std::vector<float> &data, const std::vector<int> &binids, int dataLen)
 {
-    int *hashes = new int[_numhashes];
-    int *hashArray = new int[_numhashes];
+  std::vector<int> hashes(_numhashes);
+  std::vector<int> hashArray(_numhashes);
 
     for (int i = 0; i < _numhashes; i++)
     {
@@ -181,8 +179,6 @@ int * DensifiedMinhash::getHash(const std::vector<int> &indices, const std::vect
         }
         hashArray[i] = next;
     }
-    delete[] hashes;
-    //   delete[] values;
     return hashArray;
 }
 

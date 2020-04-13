@@ -38,16 +38,16 @@ SparseRandomProjection::SparseRandomProjection(size_t dimension, size_t numOfHas
 }
 
 
-int *SparseRandomProjection::getHash(const std::vector<float> &vector, int length) 
+std::vector<int> SparseRandomProjection::getHash(const std::vector<float> &vector, int length)
 {
   SubVectorConst<float> dataSub(vector, 0, vector.size());
   return getHash(vector, length);
 }
 
-int * SparseRandomProjection::getHash(const SubVectorConst<float> &vector, int length)
+std::vector<int> SparseRandomProjection::getHash(const SubVectorConst<float> &vector, int length)
 {
     // length should be = to _dim
-    int *hashes = new int[_numhashes];
+    std::vector<int> hashes(_numhashes);
 
  // #pragma omp parallel for
     for (size_t i = 0; i < _numhashes; i++) {
@@ -66,8 +66,8 @@ int * SparseRandomProjection::getHash(const SubVectorConst<float> &vector, int l
 }
 
 
-int *SparseRandomProjection::getHashSparse(const std::vector<int> &indices, const std::vector<float> &values, size_t length) {
-    int *hashes = new int[_numhashes];
+std::vector<int> SparseRandomProjection::getHashSparse(const std::vector<int> &indices, const std::vector<float> &values, size_t length) {
+  std::vector<int> hashes(_numhashes);
 
     for (size_t p = 0; p < _numhashes; p++) {
         double s = 0;

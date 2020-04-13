@@ -20,7 +20,7 @@ private:
     int *_indices, _numhashes, _rangePow;
 public:
     WtaHash(int numHashes, int noOfBitsToHash);
-    int * getHash(const std::vector<float> &data);
-    int * getHash(const SubVectorConst<float> &data);
+    std::vector<int> getHash(const std::vector<float> &data);
+    std::vector<int> getHash(const SubVectorConst<float> &data);
     ~WtaHash();
 };

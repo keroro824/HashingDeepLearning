@@ -134,7 +134,7 @@ void Layer::updateRandomNodes()
 void Layer::addtoHashTable(SubVector<float> &weights, int length, float bias, int ID)
 {
     //LSH logic
-    int *hashes;
+    std::vector<int> hashes;
     if(HashFunction==1) {
         hashes = _wtaHasher->getHash(weights);
     }else if (HashFunction==2) {
@@ -145,13 +145,11 @@ void Layer::addtoHashTable(SubVector<float> &weights, int length, float bias, in
         hashes = _srp->getHash(weights, length);
     }
 
-    int * hashIndices = _hashTables.hashesToIndex(hashes);
+    int * hashIndices = _hashTables.hashesToIndex(hashes.data());
     int * bucketIndices = _hashTables.add(hashIndices, ID+1);
 
     _Nodes[ID].indicesInTables() = hashIndices;
     _Nodes[ID].indicesInBuckets() = bucketIndices;
-
-    delete [] hashes;
 
 }
 
@@ -226,7 +224,7 @@ int Layer::queryActiveNodeandComputeActivations(Vec2d<int> &activenodesperlayer,
     else
     {
         if (Mode==1) {
-            int *hashes;
+            std::vector<int> hashes;
             if (HashFunction == 1) {
                 hashes = _wtaHasher->getHash(activeValuesperlayer[layerIndex]);
             } else if (HashFunction == 2) {
@@ -237,7 +235,7 @@ int Layer::queryActiveNodeandComputeActivations(Vec2d<int> &activenodesperlayer,
             } else if (HashFunction == 4) {
                 hashes = _srp->getHashSparse(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex], lengths[layerIndex]);
             }
-            int *hashIndices = _hashTables.hashesToIndex(hashes);
+            int *hashIndices = _hashTables.hashesToIndex(hashes.data());
             int **actives = _hashTables.retrieveRaw(hashIndices);
 
             // Get candidates from hashtable
@@ -288,13 +286,12 @@ int Layer::queryActiveNodeandComputeActivations(Vec2d<int> &activenodesperlayer,
             auto t33 = std::chrono::high_resolution_clock::now();
             in = len;
 
-            delete[] hashes;
             delete[] hashIndices;
             delete[] actives;
 
         }
         if (Mode==4) {
-            int *hashes;
+            std::vector<int> hashes;
             if (HashFunction == 1) {
                 hashes = _wtaHasher->getHash(activeValuesperlayer[layerIndex]);
             } else if (HashFunction == 2) {
@@ -305,7 +302,7 @@ int Layer::queryActiveNodeandComputeActivations(Vec2d<int> &activenodesperlayer,
             } else if (HashFunction == 4) {
                 hashes = _srp->getHashSparse(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex], lengths[layerIndex]);
             }
-            int *hashIndices = _hashTables.hashesToIndex(hashes);
+            int *hashIndices = _hashTables.hashesToIndex(hashes.data());
             int **actives = _hashTables.retrieveRaw(hashIndices);
             // we now have a sparse array of indices of active nodes
 
@@ -370,7 +367,6 @@ int Layer::queryActiveNodeandComputeActivations(Vec2d<int> &activenodesperlayer,
                 i++;
             }
 
-            delete[] hashes;
             delete[] hashIndices;
             delete[] actives;
 
