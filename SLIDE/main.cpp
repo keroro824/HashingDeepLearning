@@ -297,7 +297,7 @@ void CreateData(std::ifstream &file,
   }
 }
 
-void EvalDataSVM(int numBatchesTest,  Network* _mynet, int iter){
+void EvalDataSVM(int numBatchesTest,  Network &_mynet, int iter){
     int totCorrect = 0;
     std::ifstream file(testData);
     string str;
@@ -322,7 +322,7 @@ void EvalDataSVM(int numBatchesTest,  Network* _mynet, int iter){
         }
 
         std::cout << Batchsize << " records, with "<< num_features << " features and " << num_labels << " labels" << std::endl;
-        auto correctPredict = _mynet->predictClass(records, values, sizes, labels, labelsize);
+        auto correctPredict = _mynet.predictClass(records, values, sizes, labels, labelsize);
         totCorrect += correctPredict;
         std::cout <<" iter "<< i << ": " << totCorrect*1.0/(Batchsize*(i+1)) << " correct" << std::endl;
     }
@@ -332,7 +332,7 @@ void EvalDataSVM(int numBatchesTest,  Network* _mynet, int iter){
 
 }
 
-void ReadDataSVM(size_t numBatches,  Network* _mynet, int epoch){
+void ReadDataSVM(size_t numBatches,  Network &_mynet, int epoch){
     std::ifstream file(trainData);
     std::string str;
     //skipe header
@@ -366,7 +366,7 @@ void ReadDataSVM(size_t numBatches,  Network* _mynet, int epoch){
         auto t1 = std::chrono::high_resolution_clock::now();
 
         // logloss
-        _mynet->ProcessInput(records, values, sizes, labels, labelsize, epoch * numBatches + i,
+        _mynet.ProcessInput(records, values, sizes, labels, labelsize, epoch * numBatches + i,
                                             rehash, rebuild);
 
         auto t2 = std::chrono::high_resolution_clock::now();
@@ -405,14 +405,12 @@ int main(int argc, char* argv[])
     /*
     {
       cerr << "main1" << endl;
-      Network *_mynet = new Network(sizesOfLayers, layersTypes, numLayer, Batchsize, Lr, InputDim, K, L, RangePow, Sparsity, arr);
-      cerr << "main2" << endl;
-      delete _mynet;
+      Network _mynet(sizesOfLayers, layersTypes, numLayer, Batchsize, Lr, InputDim, K, L, RangePow, Sparsity, arr);
       cerr << "main3" << endl;
     }
     */
     auto t1 = std::chrono::high_resolution_clock::now();
-    Network *_mynet = new Network(sizesOfLayers, layersTypes, numLayer, Batchsize, Lr, InputDim, K, L, RangePow, Sparsity, arr);
+    Network _mynet(sizesOfLayers, layersTypes, numLayer, Batchsize, Lr, InputDim, K, L, RangePow, Sparsity, arr);
     auto t2 = std::chrono::high_resolution_clock::now();
     float timeDiffInMiliseconds = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
     std::cout << "Network Initialization takes " << timeDiffInMiliseconds/1000 << " milliseconds" << std::endl;
@@ -433,7 +431,7 @@ int main(int argc, char* argv[])
         }else{
             EvalDataSVM(50, _mynet, (e+1)*numBatches);
         }
-        _mynet->saveWeights(savedWeights);
+        _mynet.saveWeights(savedWeights);
 
     }
 
