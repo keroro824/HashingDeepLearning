@@ -49,16 +49,6 @@ void Node::incrementDelta(int inputID, float incrementValue)
 	    _train[inputID]._lastDeltaforBPs += incrementValue;
 }
 
-bool Node::getInputActive(int inputID)
-{
-    return _train[inputID]._ActiveinputIds == 1;
-}
-
-bool Node::getActiveInputs(void)
-{
-    return _activeInputs > 0;
-}
-
 float Node::getActivation(const std::vector<int> &indices, const std::vector<float> &values, int length, int inputID)
 {
 	assert(("Input ID more than Batch Size", inputID <= _currentBatchsize));

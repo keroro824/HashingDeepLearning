@@ -80,7 +80,7 @@ private:
 
   float _bias = 0;
   float _tbias = 0;
-  float _mirrorbias = 0;
+  float _mirrorbias = 0; // not adam
 
   std::vector<float> _t; //for adam
 
@@ -111,8 +111,6 @@ public:
 	float getLastActivation(int inputID) const;
 	void incrementDelta(int inputID, float incrementValue);
 	float getActivation(const std::vector<int> &indices, const std::vector<float> &values, int length, int inputID);
-	bool getInputActive(int inputID);
-	bool getActiveInputs(void);
 	void SetlastActivation(int inputID, float realActivation);
 	void ComputeExtaStatsForSoftMax(float normalizationConstant, int inputID, const std::vector<int> &label, int labelsize);
 	void backPropagate(std::vector<Node> &previousNodes, const std::vector<int> &previousLayerActiveNodeIds, int previousLayerActiveNodeSize, float learningRate, int inputID);
