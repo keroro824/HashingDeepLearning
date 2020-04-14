@@ -232,7 +232,7 @@ int Layer::queryActiveNodeandComputeActivations(Vec2d<int> &activenodesperlayer,
                 hashes = _srp->getHashSparse(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex], lengths[layerIndex]);
             }
             std::vector<int> hashIndices = _hashTables.hashesToIndex(hashes);
-            std::vector<int*> actives = _hashTables.retrieveRaw(hashIndices);
+            std::vector<const int*> actives = _hashTables.retrieveRaw(hashIndices);
 
             // Get candidates from hashtable
             auto t00 = std::chrono::high_resolution_clock::now();
@@ -295,7 +295,7 @@ int Layer::queryActiveNodeandComputeActivations(Vec2d<int> &activenodesperlayer,
                 hashes = _srp->getHashSparse(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex], lengths[layerIndex]);
             }
             std::vector<int> hashIndices = _hashTables.hashesToIndex(hashes);
-            std::vector<int*> actives = _hashTables.retrieveRaw(hashIndices);
+            std::vector<const int*> actives = _hashTables.retrieveRaw(hashIndices);
             // we now have a sparse array of indices of active nodes
 
             // Get candidates from hashtable
