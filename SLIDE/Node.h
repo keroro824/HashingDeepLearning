@@ -93,8 +93,8 @@ public:
 
   const float *mirrorWeights() const { return _mirrorWeights; } // not adam
 
-  float *adamAvgMom() { return _adamAvgMom.data(); }
-  float *adamAvgVel() { return _adamAvgVel.data(); }
+  SubVector<float> &adamAvgMom() { return _adamAvgMom; }
+  SubVector<float> &adamAvgVel() { return _adamAvgVel; }
   float &adamAvgMombias() { return _adamAvgMombias; }
   float &adamAvgVelbias() { return _adamAvgVelbias; }
 
