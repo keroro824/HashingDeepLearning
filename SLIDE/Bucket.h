@@ -14,8 +14,7 @@ public:
 	Bucket();
 	void add(int id);
 	int * getAll();
-	int getTotalCounts();
-	int getSize();
+	int getSize() const { return _counts; }
 	~Bucket();
 };
 

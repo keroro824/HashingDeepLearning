@@ -14,19 +14,6 @@ Bucket::~Bucket()
 {
 }
 
-
-int Bucket::getTotalCounts()
-{
-    return _counts;
-}
-
-
-int Bucket::getSize()
-{
-    return _counts;
-}
-
-
 void Bucket::add(int id) {
 
     //FIFO
