@@ -57,3 +57,6 @@ cmake ..
 make
 ./runme ../SLIDE/Config_amz.csv
 ```
+
+### Forks
+[GoSLIDE](https://github.com/nlpodyssey/goslide): A Go port of the SLIDE algorithm.
