@@ -195,7 +195,7 @@ float collision(int* hashes, int* table_hashes, int k, int l){
 }
 
 
-int Layer::queryActiveNodeandComputeActivations(Vec2d<int> &activenodesperlayer, Vec2d<float> &activeValuesperlayer, std::vector<int> &lengths, int layerIndex, int inputID, const std::vector<int> &label, int labelsize, float Sparsity, int iter)
+int Layer::queryActiveNodeandComputeActivations(Vec2d<int> &activenodesperlayer, Vec2d<float> &activeValuesperlayer, std::vector<int> &lengths, int layerIndex, int inputID, const std::vector<int> &label, float Sparsity, int iter, bool train)
 {
     //LSH QueryLogic
 
@@ -234,8 +234,8 @@ int Layer::queryActiveNodeandComputeActivations(Vec2d<int> &activenodesperlayer,
             std::map<int, size_t> counts;
             // Make sure that the true label node is in candidates
             if (_type == NodeType::Softmax) {
-                if (labelsize > 0) {
-                    for (int i=0; i<labelsize ;i++){
+                if (train) {
+                    for (int i=0; i<label.size() ;i++){
                         counts[label[i]] = _L;
                     }
                 }
@@ -294,8 +294,8 @@ int Layer::queryActiveNodeandComputeActivations(Vec2d<int> &activenodesperlayer,
             // Get candidates from hashtable
             std::map<int, size_t> counts;
             // Make sure that the true label node is in candidates
-            if (_type == NodeType::Softmax && labelsize > 0) {
-                for (int i = 0; i < labelsize ;i++){
+            if (_type == NodeType::Softmax && train) {
+                for (int i = 0; i < label.size(); i++){
                     counts[label[i]] = _L;
                 }
             }
@@ -361,12 +361,12 @@ int Layer::queryActiveNodeandComputeActivations(Vec2d<int> &activenodesperlayer,
             bitset <MAPLEN> bs;
             int tmpsize = 0;
             if (_type == NodeType::Softmax) {
-                if (labelsize > 0) {
-                    for (int i=0; i<labelsize ;i++){
+                if (train) {
+                    for (int i=0; i<label.size() ;i++){
                         activenodesperlayer[layerIndex + 1][i] = label[i];
                         bs[label[i]] = 1;
                     }
-                    tmpsize = labelsize;
+                    tmpsize = label.size();
                 }
             }
 

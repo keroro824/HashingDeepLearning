@@ -68,7 +68,7 @@ Layer *Network::getLayer(int LayerID) {
 }
 
 
-int Network::predictClass(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, const std::vector<int> &length, const Vec2d<int> &labels, const std::vector<int> &labelsize) {
+int Network::predictClass(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, const std::vector<int> &length, const Vec2d<int> &labels) {
     int correctPred = 0;
 
     auto t1 = std::chrono::high_resolution_clock::now();
@@ -84,8 +84,7 @@ int Network::predictClass(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, c
 
         //inference
         for (int j = 0; j < _numberOfLayers; j++) {
-            _hiddenlayers[j]->queryActiveNodeandComputeActivations(activenodesperlayer, activeValuesperlayer, sizes, j, i, labels[i], 0,
-                    _Sparsity[_numberOfLayers+j], -1);
+            _hiddenlayers[j]->queryActiveNodeandComputeActivations(activenodesperlayer, activeValuesperlayer, sizes, j, i, labels[i], _Sparsity[_numberOfLayers+j], -1, false);
         }
 
         //compute softmax
@@ -112,7 +111,7 @@ int Network::predictClass(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, c
 }
 
 
-int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, const std::vector<int> &lengths, const Vec2d<int> &labels, const std::vector<int> &labelsize, int iter, bool rehash, bool rebuild) {
+int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, const std::vector<int> &lengths, const Vec2d<int> &labels, int iter, bool rehash, bool rebuild) {
 
     float logloss = 0.0;
     std::vector<int> avg_retrieval(_numberOfLayers, 0);
@@ -151,8 +150,7 @@ int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, c
         int in;
         //auto t1 = std::chrono::high_resolution_clock::now();
         for (int j = 0; j < _numberOfLayers; j++) {
-            in = _hiddenlayers[j]->queryActiveNodeandComputeActivations(activenodesperlayer, activeValuesperlayer, sizes, j, i, labels[i], labelsize[i],
-                    _Sparsity[j], iter*_currentBatchSize+i);
+            in = _hiddenlayers[j]->queryActiveNodeandComputeActivations(activenodesperlayer, activeValuesperlayer, sizes, j, i, labels[i], _Sparsity[j], iter*_currentBatchSize+i, true);
             avg_retrieval[j] += in;
         }
 
@@ -166,7 +164,7 @@ int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, c
                 Node &node = layer->getNodebyID(activeNodesPerBatch[i][j + 1][k]);
                 if (j == _numberOfLayers - 1) {
                     //TODO: Compute Extra stats: labels[i];
-                    node.ComputeExtaStatsForSoftMax(layer->getNomalizationConstant(i), i, labels[i], labelsize[i]);
+                    node.ComputeExtaStatsForSoftMax(layer->getNomalizationConstant(i), i, labels[i]);
                 }
                 if (j != 0) {
                     node.backPropagate(prev_layer->getAllNodes(), activeNodesPerBatch[i][j], sizesPerBatch[i][j], tmplr, i);

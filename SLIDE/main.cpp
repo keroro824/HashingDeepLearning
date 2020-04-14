@@ -232,9 +232,7 @@ void CreateData(std::ifstream &file,
                 Vec2d<int> &records,
                 Vec2d<float> &values,
                 std::vector<int> &sizes,
-                Vec2d<int> &labels,
-                std::vector<int> &labelsize
-                )
+                Vec2d<int> &labels)
 {
   int nonzeros = 0;
   int count = 0;
@@ -272,7 +270,6 @@ void CreateData(std::ifstream &file,
     values[count].resize(list.size());
     labels[count] = std::vector<int>(label.size());
     sizes[count] = list.size();
-    labelsize[count] = label.size();
 
     int currcount = 0;
     vector<string>::iterator it;
@@ -310,19 +307,18 @@ void EvalDataSVM(int numBatchesTest,  Network &_mynet, int iter){
         Vec2d<float> values(Batchsize);
         std::vector<int> sizes(Batchsize);
         Vec2d<int> labels(Batchsize);
-        std::vector<int> labelsize(Batchsize);
 
-        CreateData(file, records, values, sizes, labels, labelsize);
+        CreateData(file, records, values, sizes, labels);
 
         int num_features = 0, num_labels = 0;
         for (int i = 0; i < Batchsize; i++)
         {
             num_features += sizes[i];
-            num_labels += labelsize[i];
+            num_labels += labels[i].size();
         }
 
         std::cout << Batchsize << " records, with "<< num_features << " features and " << num_labels << " labels" << std::endl;
-        auto correctPredict = _mynet.predictClass(records, values, sizes, labels, labelsize);
+        auto correctPredict = _mynet.predictClass(records, values, sizes, labels);
         totCorrect += correctPredict;
         std::cout <<" iter "<< i << ": " << totCorrect*1.0/(Batchsize*(i+1)) << " correct" << std::endl;
     }
@@ -345,9 +341,8 @@ void ReadDataSVM(size_t numBatches,  Network &_mynet, int epoch){
         Vec2d<float> values(Batchsize);
         std::vector<int> sizes(Batchsize);
         Vec2d<int> labels(Batchsize);
-        std::vector<int> labelsize(Batchsize);
 
-        CreateData(file, records, values, sizes, labels, labelsize);
+        CreateData(file, records, values, sizes, labels);
 
         bool rehash = false;
         bool rebuild = false;
@@ -366,7 +361,7 @@ void ReadDataSVM(size_t numBatches,  Network &_mynet, int epoch){
         auto t1 = std::chrono::high_resolution_clock::now();
 
         // logloss
-        _mynet.ProcessInput(records, values, sizes, labels, labelsize, epoch * numBatches + i,
+        _mynet.ProcessInput(records, values, sizes, labels, epoch * numBatches + i,
                                             rehash, rebuild);
 
         auto t2 = std::chrono::high_resolution_clock::now();
