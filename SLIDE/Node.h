@@ -71,7 +71,7 @@ private:
   size_t _layerNum, _IDinLayer;
   size_t _dim;
   std::vector<int> _indicesInTables;
-  int* _indicesInBuckets;
+  std::vector<int> _indicesInBuckets;
   SubVector<float> _weights;
   float* _mirrorWeights;
 
@@ -90,7 +90,7 @@ public:
 
   const size_t &dim() const { return _dim; }
   std::vector<int> &indicesInTables() { return _indicesInTables; }
-  int *&indicesInBuckets() { return _indicesInBuckets; }
+  std::vector<int> &indicesInBuckets() { return _indicesInBuckets; }
   
   const SubVector<float> &weights() const { return _weights; }
   SubVector<float> &weights() { return _weights; }
