@@ -4,15 +4,14 @@
 using namespace std;
 
 Bucket::Bucket()
+:isInit(-1)
+,arr(BUCKETSIZE)
 {
-    isInit = -1;
-    arr = new int[BUCKETSIZE]();
 }
 
 
 Bucket::~Bucket()
 {
-    delete[] arr;
 }
 
 
@@ -35,7 +34,7 @@ int Bucket::add(int id) {
         isInit += 1;
         int index = _counts & (BUCKETSIZE - 1);
         _counts++;
-        arr[index] = id;
+        arr.at(index) = id;
         return index;
     }
     //Reservoir Sampling
@@ -45,13 +44,13 @@ int Bucket::add(int id) {
             int randnum = rand() % (_counts) + 1;
             if (randnum == 2) {
                 int randind = rand() % BUCKETSIZE;
-                arr[randind] = id;
+                arr.at(randind) = id;
                 return randind;
             } else {
                 return -1;
             }
         } else {
-            arr[index] = id;
+            arr.at(index) = id;
             int returnIndex = index;
             index++;
             return returnIndex;
@@ -64,7 +63,7 @@ int Bucket::retrieve(int indice)
 {
     if (indice >= BUCKETSIZE)
         return -1;
-    return arr[indice];
+    return arr.at(indice);
 }
 
 
@@ -73,7 +72,7 @@ int * Bucket::getAll()
     if (isInit == -1)
         return NULL;
     if(_counts<BUCKETSIZE){
-        arr[_counts]=-1;
+        arr.at(_counts)=-1;
     }
-    return arr;
+    return arr.data();
 }

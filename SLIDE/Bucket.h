@@ -1,10 +1,11 @@
 #pragma once
 #include "Config.h"
+#include <vector>
 
 class Bucket
 {
 private:
-	int *arr;
+  std::vector<int> arr;
 	int isInit = -1;
 	int index = 0;
 	int _counts = 0;
