@@ -169,7 +169,7 @@ float Layer::getNomalizationConstant(int inputID) const
 }
 
 
-float innerproduct(int* index1, float* value1, int len1, float* value2){
+float innerproduct(const int* index1, const float* value1, int len1, const float* value2){
     float total = 0;
     for (int i=0; i<len1; i++){
         total+=value1[i]*value2[index1[i]];
@@ -447,7 +447,7 @@ int Layer::queryActiveNodeandComputeActivations(Vec2d<int> &activenodesperlayer,
     return in;
 }
 
-void Layer::saveWeights(string file)
+void Layer::saveWeights(const string &file)
 {
     if (_layerID==0) {
         cnpy::npz_save(file, "w_layer_0", _weights.data(), {_noOfNodes, _Nodes[0].dim()}, "w");
