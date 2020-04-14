@@ -34,13 +34,13 @@ WtaHash::WtaHash(int numHashes, int noOfBitsToHash)
 }
 
 
-std::vector<int> WtaHash::getHash(const std::vector<float> &data)
+std::vector<int> WtaHash::getHash(const std::vector<float> &data) const
 {
   SubVectorConst<float> dataSub(data, 0, data.size());
   return getHash(dataSub);
 }
 
-std::vector<int> WtaHash::getHash(const SubVectorConst<float> &data)
+std::vector<int> WtaHash::getHash(const SubVectorConst<float> &data) const
 {
     // binsize is the number of times the range is larger than the total number of hashes we need.
 

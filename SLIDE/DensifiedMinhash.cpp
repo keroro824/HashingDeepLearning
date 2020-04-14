@@ -43,7 +43,7 @@ DensifiedMinhash::DensifiedMinhash(int numHashes, int noOfBitsToHash)
 }
 
 
-void DensifiedMinhash::getMap(int n, std::vector<int> &binids)
+void DensifiedMinhash::getMap(int n, std::vector<int> &binids) const
 {
     int range = 1 << _rangePow;
     // binsize is the number of times the range is larger than the total number of hashes we need.
@@ -62,13 +62,13 @@ void DensifiedMinhash::getMap(int n, std::vector<int> &binids)
 
 }
 
-std::vector<int> DensifiedMinhash::getHashEasy(const std::vector<int> &binids, const std::vector<float> &data, int dataLen, int topK)
+std::vector<int> DensifiedMinhash::getHashEasy(const std::vector<int> &binids, const std::vector<float> &data, int dataLen, int topK) const
 {
   SubVectorConst<float> dataSub(data, 0, data.size());
   return getHashEasy(binids, dataSub, dataLen, topK);
 }
 
-std::vector<int> DensifiedMinhash::getHashEasy(const std::vector<int> &binids, const SubVectorConst<float> &data, int dataLen, int topK)
+std::vector<int> DensifiedMinhash::getHashEasy(const std::vector<int> &binids, const SubVectorConst<float> &data, int dataLen, int topK) const
 {
     // binsize is the number of times the range is larger than the total number of hashes we need.
 // read the data and add it to priority queue O(dlogk approx 7d) with index as key and values as priority value, get topk index O(1) and apply minhash on retuned index.
@@ -135,7 +135,7 @@ std::vector<int> DensifiedMinhash::getHashEasy(const std::vector<int> &binids, c
 }
 
 
-std::vector<int> DensifiedMinhash::getHash(const std::vector<int> &indices, const std::vector<float> &data, const std::vector<int> &binids, int dataLen)
+std::vector<int> DensifiedMinhash::getHash(const std::vector<int> &indices, const std::vector<float> &data, const std::vector<int> &binids, int dataLen) const
 {
   std::vector<int> hashes(_numhashes);
   std::vector<int> hashArray(_numhashes);
@@ -184,7 +184,8 @@ std::vector<int> DensifiedMinhash::getHash(const std::vector<int> &indices, cons
 }
 
 
-int DensifiedMinhash::getRandDoubleHash(int binid, int count) {
+int DensifiedMinhash::getRandDoubleHash(int binid, int count)  const 
+{
     unsigned int tohash = ((binid + 1) << 6) + count;
     return (_randHash[0] * tohash << 3) >> (32 - _lognumhash); // _lognumhash needs to be ceiled.
 }
