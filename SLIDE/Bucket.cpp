@@ -27,7 +27,7 @@ int Bucket::getSize()
 }
 
 
-int Bucket::add(int id) {
+void Bucket::add(int id) {
 
     //FIFO
     if (FIFO) {
@@ -35,7 +35,7 @@ int Bucket::add(int id) {
         int index = _counts & (BUCKETSIZE - 1);
         _counts++;
         arr.at(index) = id;
-        return index;
+        //return index;
     }
     //Reservoir Sampling
     else {
@@ -45,15 +45,15 @@ int Bucket::add(int id) {
             if (randnum == 2) {
                 int randind = rand() % BUCKETSIZE;
                 arr.at(randind) = id;
-                return randind;
+                //return randind;
             } else {
-                return -1;
+                //return -1;
             }
         } else {
             arr.at(index) = id;
             int returnIndex = index;
             index++;
-            return returnIndex;
+            //return returnIndex;
         }
     }
 }

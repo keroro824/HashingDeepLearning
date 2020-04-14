@@ -98,15 +98,12 @@ std::vector<int> LSH::hashesToIndex(const std::vector<int> &hashes)
 }
 
 
-std::vector<int> LSH::add(const std::vector<int> &indices, int id)
+void LSH::add(const std::vector<int> &indices, int id)
 {
-	std::vector<int> secondIndices(_L);
 	for (int i = 0; i < _L; i++)
 	{
-		secondIndices[i] = _bucket[i][indices[i]].add(id);
+		_bucket[i][indices[i]].add(id);
 	}
-
-	return secondIndices;
 }
 
 

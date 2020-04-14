@@ -146,11 +146,7 @@ void Layer::addtoHashTable(SubVector<float> &weights, int length, float bias, in
     }
 
     std::vector<int> hashIndices = _hashTables.hashesToIndex(hashes);
-    std::vector<int> bucketIndices = _hashTables.add(hashIndices, ID+1);
-
-    _Nodes[ID].indicesInTables() = hashIndices;
-    _Nodes[ID].indicesInBuckets() = bucketIndices;
-
+    _hashTables.add(hashIndices, ID+1);
 }
 
 

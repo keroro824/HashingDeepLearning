@@ -12,7 +12,7 @@ private:
 	
 public:
 	Bucket();
-	int add(int id);
+	void add(int id);
 	int * getAll();
 	int getTotalCounts();
 	int getSize();
