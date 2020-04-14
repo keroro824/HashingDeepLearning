@@ -236,7 +236,7 @@ int Layer::queryActiveNodeandComputeActivations(Vec2d<int> &activenodesperlayer,
                 hashes = _srp->getHashSparse(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex], lengths[layerIndex]);
             }
             std::vector<int> hashIndices = _hashTables.hashesToIndex(hashes);
-            int **actives = _hashTables.retrieveRaw(hashIndices.data());
+            std::vector<int*> actives = _hashTables.retrieveRaw(hashIndices.data());
 
             // Get candidates from hashtable
             auto t00 = std::chrono::high_resolution_clock::now();
@@ -285,9 +285,6 @@ int Layer::queryActiveNodeandComputeActivations(Vec2d<int> &activenodesperlayer,
             }
             auto t33 = std::chrono::high_resolution_clock::now();
             in = len;
-
-            delete[] actives;
-
         }
         if (Mode==4) {
             std::vector<int> hashes;
@@ -302,7 +299,7 @@ int Layer::queryActiveNodeandComputeActivations(Vec2d<int> &activenodesperlayer,
                 hashes = _srp->getHashSparse(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex], lengths[layerIndex]);
             }
             std::vector<int> hashIndices = _hashTables.hashesToIndex(hashes);
-            int **actives = _hashTables.retrieveRaw(hashIndices.data());
+            std::vector<int*> actives = _hashTables.retrieveRaw(hashIndices.data());
             // we now have a sparse array of indices of active nodes
 
             // Get candidates from hashtable
@@ -365,9 +362,6 @@ int Layer::queryActiveNodeandComputeActivations(Vec2d<int> &activenodesperlayer,
                 activenodesperlayer[layerIndex + 1][i] = x.first;
                 i++;
             }
-
-            delete[] actives;
-
         }
         else if (Mode == 2 & _type== NodeType::Softmax) {
             len = floor(_noOfNodes * Sparsity);
