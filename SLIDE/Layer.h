@@ -41,7 +41,6 @@ public:
   Layer(size_t _numNodex, int previousLayerNumOfNodes, int layerID, NodeType type, int batchsize, int K, int L, int RangePow, float Sparsity);
 	Node &getNodebyID(size_t nodeID);
   std::vector<Node> &getAllNodes();
-	int getNodeCount();
 	void addtoHashTable(SubVector<float> &weights, int length, float bias, int id);
 	float getNomalizationConstant(int inputID) const;
 	int queryActiveNodeandComputeActivations(Vec2d<int> &activenodesperlayer, Vec2d<float> &activeValuesperlayer, std::vector<int> &inlenght, int layerID, int inputID,  const std::vector<int> &label, int labelsize, float Sparsity, int iter);
