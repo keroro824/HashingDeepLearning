@@ -37,7 +37,6 @@
     <ClInclude Include="Config.h" />
     <ClInclude Include="DensifiedMinhash.h" />
     <ClInclude Include="DensifiedWtaHash.h" />
-    <ClInclude Include="InputSpecificActiveNetworkFactory.h" />
     <ClInclude Include="Layer.h" />
     <ClInclude Include="LSH.h" />
     <ClInclude Include="MurmurHash.h" />
