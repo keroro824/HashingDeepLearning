@@ -9,16 +9,16 @@ using namespace std;
 
 LSH::LSH(int K, int L, int RangePow)
 :_rand1(K*L)
+,_bucket(L)
 {
 	_K = K;
 	_L = L;
 	_RangePow = RangePow;
-	_bucket = new Bucket*[L];
 
 //#pragma omp parallel for
 	for (int i = 0; i < L; i++)
 	{
-		_bucket[i] = new Bucket[1 << _RangePow];
+		_bucket[i].resize(1 << _RangePow);
 	}
 
 	std::random_device rd;
@@ -39,8 +39,8 @@ void LSH::clear()
 {
     for (int i = 0; i < _L; i++)
     {
-    	delete[] _bucket[i];
-    	_bucket[i] = new Bucket[1 << _RangePow];
+    	_bucket[i].clear();
+    	_bucket[i].resize(1 << _RangePow);
 
     }
 }
@@ -139,9 +139,4 @@ int LSH::retrieve(int table, int indices, int bucket)
 
 LSH::~LSH()
 {
-	 for (int i = 0; i < _L; i++)
-	 {
-	 	delete[] _bucket[i];
-	 }
-	 delete[] _bucket;
 }

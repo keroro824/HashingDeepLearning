@@ -1,10 +1,11 @@
 #pragma once
 #include "Bucket.h"
+#include "Util.h"
 #include <random>
 
 class LSH {
 private:
-	Bucket ** _bucket;
+	Vec2d<Bucket> _bucket;
 	int _K;
 	int _L;
 	int _RangePow;
