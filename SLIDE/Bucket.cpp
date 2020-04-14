@@ -45,7 +45,7 @@ void Bucket::add(int id) {
     }
 }
 
-int * Bucket::getAll()
+const int * Bucket::getAll()
 {
     if (isInit == -1)
         return NULL;

@@ -13,7 +13,7 @@ private:
 public:
 	Bucket();
 	void add(int id);
-	int * getAll();
+	const int * getAll();
 	int getSize() const { return _counts; }
 	~Bucket();
 };
