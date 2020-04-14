@@ -131,12 +131,6 @@ int** LSH::retrieveRaw(int *indices)
 	return rawResults;
 }
 
-
-int LSH::retrieve(int table, int indices, int bucket)
-{
-	return _bucket[table][indices].retrieve(bucket);
-}
-
 LSH::~LSH()
 {
 }

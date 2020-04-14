@@ -13,7 +13,6 @@ private:
 public:
 	Bucket();
 	int add(int id);
-	int retrieve(int index);
 	int * getAll();
 	int getTotalCounts();
 	int getSize();

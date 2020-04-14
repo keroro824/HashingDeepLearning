@@ -58,15 +58,6 @@ int Bucket::add(int id) {
     }
 }
 
-
-int Bucket::retrieve(int indice)
-{
-    if (indice >= BUCKETSIZE)
-        return -1;
-    return arr.at(indice);
-}
-
-
 int * Bucket::getAll()
 {
     if (isInit == -1)
