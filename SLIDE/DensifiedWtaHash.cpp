@@ -79,7 +79,7 @@ std::vector<int> DensifiedWtaHash::getHashEasy(const SubVectorConst<float> &data
         for (int i = 0; i < data.size(); i++) {
             int inner_index = bin_index + i;
             int binid = _indices[inner_index];
-            float loc_data = data[i];
+            float loc_data = data.get(i);
             if(binid < _numhashes && values[binid] < loc_data) {
                 values[binid] = loc_data;
                 hashes[binid] = _pos[inner_index];

@@ -77,12 +77,12 @@ std::vector<int> DensifiedMinhash::getHashEasy(const std::vector<int> &binids, c
 
     for (int i = 0; i < topK; i++)
     {
-        pq.push(std::make_pair(i,data[i]));
+        pq.push(std::make_pair(i,data.get(i)));
     }
 
     for (int i = topK; i < data.size(); i++)
     {
-        pq.push(std::make_pair(i,data[i]));
+        pq.push(std::make_pair(i,data.get(i)));
         pq.pop();
     }
 

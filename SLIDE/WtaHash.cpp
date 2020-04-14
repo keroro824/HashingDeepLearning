@@ -57,8 +57,8 @@ std::vector<int> WtaHash::getHash(const SubVectorConst<float> &data) const
     for (int i = 0; i < _numhashes; i++)
     {
         for (int j=0; j< binsize; j++){
-            if (values[i] < data[_indices[i*binsize+j]]) {
-                values[i] = data[i*binsize+j];
+            if (values[i] < data.get(_indices[i*binsize+j])) {
+                values[i] = data.get(i*binsize+j);
                 hashes[i] = _indices[i*binsize+j];
             }
         }
