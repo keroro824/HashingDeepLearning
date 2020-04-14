@@ -68,7 +68,7 @@ Layer *Network::getLayer(int LayerID) {
 }
 
 
-int Network::predictClass(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, const std::vector<int> &length, const Vec2d<int> &labels) {
+int Network::predictClass(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, const Vec2d<int> &labels) {
     int correctPred = 0;
 
     auto t1 = std::chrono::high_resolution_clock::now();
@@ -80,7 +80,7 @@ int Network::predictClass(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, c
 
         activenodesperlayer[0] = inputIndices[i];
         activeValuesperlayer[0] = inputValues[i];
-        sizes[0] = length[i];
+        sizes[0] = inputIndices[i].size();
 
         //inference
         for (int j = 0; j < _numberOfLayers; j++) {
@@ -111,7 +111,7 @@ int Network::predictClass(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, c
 }
 
 
-int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, const std::vector<int> &lengths, const Vec2d<int> &labels, int iter, bool rehash, bool rebuild) {
+int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, const Vec2d<int> &labels, int iter, bool rehash, bool rebuild) {
 
     float logloss = 0.0;
     std::vector<int> avg_retrieval(_numberOfLayers, 0);
@@ -146,7 +146,7 @@ int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, c
 
         activenodesperlayer[0] = inputIndices[i];  // inputs parsed from training data file
         activeValuesperlayer[0] = inputValues[i];
-        sizes[0] = lengths[i];
+        sizes[0] = inputIndices[i].size();
         int in;
         //auto t1 = std::chrono::high_resolution_clock::now();
         for (int j = 0; j < _numberOfLayers; j++) {
@@ -169,7 +169,7 @@ int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, c
                 if (j != 0) {
                     node.backPropagate(prev_layer->getAllNodes(), activeNodesPerBatch[i][j], sizesPerBatch[i][j], tmplr, i);
                 } else {
-                    node.backPropagateFirstLayer(inputIndices[i], inputValues[i], lengths[i], tmplr, i);
+                    node.backPropagateFirstLayer(inputIndices[i], inputValues[i], inputIndices[i].size(), tmplr, i);
                 }
             }
         }
