@@ -62,7 +62,7 @@ void LSH::count()
 }
 
 
-std::vector<int> LSH::hashesToIndex(const std::vector<int> &hashes)
+std::vector<int> LSH::hashesToIndex(const std::vector<int> &hashes) const
 {
 
   std::vector<int> indices(_L);
