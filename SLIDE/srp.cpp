@@ -37,13 +37,13 @@ SparseRandomProjection::SparseRandomProjection(size_t dimension, size_t numOfHas
 }
 
 
-std::vector<int> SparseRandomProjection::getHash(const std::vector<float> &vector, int length) const
+std::vector<int> SparseRandomProjection::getHash(const std::vector<float> &vector) const
 {
   SubVectorConst<float> dataSub(vector, 0, vector.size());
-  return getHash(vector, length);
+  return getHash(vector);
 }
 
-std::vector<int> SparseRandomProjection::getHash(const SubVectorConst<float> &vector, int length) const
+std::vector<int> SparseRandomProjection::getHash(const SubVectorConst<float> &vector) const
 {
     // length should be = to _dim
     std::vector<int> hashes(_numhashes);
@@ -65,7 +65,7 @@ std::vector<int> SparseRandomProjection::getHash(const SubVectorConst<float> &ve
 }
 
 
-std::vector<int> SparseRandomProjection::getHashSparse(const std::vector<int> &indices, const std::vector<float> &values, size_t length) const
+std::vector<int> SparseRandomProjection::getHashSparse(const std::vector<int> &indices, const std::vector<float> &values) const
 {
   std::vector<int> hashes(_numhashes);
 
@@ -73,7 +73,7 @@ std::vector<int> SparseRandomProjection::getHashSparse(const std::vector<int> &i
         double s = 0;
         size_t i = 0;
         size_t j = 0;
-        while (i < length & j < _samSize) {
+        while (i < values.size() & j < _samSize) {
             if (indices[i] == _indices[p][j]) {
                 float v = values[i];
                 if (_randBits[p][j] >= 0) {

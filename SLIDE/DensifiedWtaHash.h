@@ -20,9 +20,9 @@ private:
     std::vector<int> _randHash, _indices, _pos;
 public:
     DensifiedWtaHash(int numHashes, int noOfBitsToHash);
-    std::vector<int> getHash(const std::vector<int> &indices, const std::vector<float> &data, int dataLen) const;
+    std::vector<int> getHash(const std::vector<int> &indices, const std::vector<float> &data) const;
     int getRandDoubleHash(int binid, int count) const;
-    std::vector<int> getHashEasy(const std::vector<float> &data, int dataLen, int topK) const;
-    std::vector<int> getHashEasy(const SubVectorConst<float> &data, int dataLen, int topK) const;
+    std::vector<int> getHashEasy(const std::vector<float> &data, int topK) const;
+    std::vector<int> getHashEasy(const SubVectorConst<float> &data, int topK) const;
     ~DensifiedWtaHash();
 };

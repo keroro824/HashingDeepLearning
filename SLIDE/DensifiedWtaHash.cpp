@@ -55,16 +55,15 @@ DensifiedWtaHash::DensifiedWtaHash(int numHashes, int noOfBitsToHash)
 }
 
 
-std::vector<int> DensifiedWtaHash::getHashEasy(const std::vector<float> &data, int dataLen, int topK) const
+std::vector<int> DensifiedWtaHash::getHashEasy(const std::vector<float> &data, int topK) const
 {
   SubVectorConst<float> dataSub(data, 0, data.size());
-  return getHashEasy(dataSub, dataLen, topK);
+  return getHashEasy(dataSub, topK);
 }
 
-std::vector<int> DensifiedWtaHash::getHashEasy(const SubVectorConst<float> &data, int dataLen, int topK) const
+std::vector<int> DensifiedWtaHash::getHashEasy(const SubVectorConst<float> &data, int topK) const
 {
-    // binsize is the number of times the range is larger than the total number of hashes we need.
-
+  // binsize is the number of times the range is larger than the total number of hashes we need.
   std::vector<int> hashes(_numhashes);
   std::vector<float> values(_numhashes);
   std::vector<int> hashArray(_numhashes);
@@ -77,7 +76,7 @@ std::vector<int> DensifiedWtaHash::getHashEasy(const SubVectorConst<float> &data
 
     for (int p=0; p< _permute; p++) {
         int bin_index = p * _rangePow;
-        for (int i = 0; i < dataLen; i++) {
+        for (int i = 0; i < data.size(); i++) {
             int inner_index = bin_index + i;
             int binid = _indices[inner_index];
             float loc_data = data[i];
@@ -113,7 +112,7 @@ std::vector<int> DensifiedWtaHash::getHashEasy(const SubVectorConst<float> &data
     return hashArray;
 }
 
-std::vector<int> DensifiedWtaHash::getHash(const std::vector<int> &indices, const std::vector<float> &data, int dataLen) const
+std::vector<int> DensifiedWtaHash::getHash(const std::vector<int> &indices, const std::vector<float> &data) const
 {
   std::vector<int> hashes(_numhashes);
   std::vector<float> values(_numhashes);
@@ -128,7 +127,7 @@ std::vector<int> DensifiedWtaHash::getHash(const std::vector<int> &indices, cons
 
     //
     for (int p = 0; p < _permute; p++) {
-        for (int i = 0; i < dataLen; i++) {
+        for (int i = 0; i < data.size(); i++) {
             int binid = _indices[p * _rangePow + indices[i]];
             if(binid < _numhashes) {
                 if (values[binid] < data[i]) {

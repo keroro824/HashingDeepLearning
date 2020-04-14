@@ -97,10 +97,7 @@ public:
     return (*_vecConst)[_startIdx + idx];
   }
 
-  virtual const T &AAA(size_t idx) const
-  {
-    return operator[](idx);
-  }
+  size_t size() const { return _size; }
 
   virtual const T *data() const { return _vecConst->data() + _startIdx; }
 };

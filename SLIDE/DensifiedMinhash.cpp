@@ -62,13 +62,13 @@ void DensifiedMinhash::getMap(int n, std::vector<int> &binids) const
 
 }
 
-std::vector<int> DensifiedMinhash::getHashEasy(const std::vector<int> &binids, const std::vector<float> &data, int dataLen, int topK) const
+std::vector<int> DensifiedMinhash::getHashEasy(const std::vector<int> &binids, const std::vector<float> &data, int topK) const
 {
   SubVectorConst<float> dataSub(data, 0, data.size());
-  return getHashEasy(binids, dataSub, dataLen, topK);
+  return getHashEasy(binids, dataSub, topK);
 }
 
-std::vector<int> DensifiedMinhash::getHashEasy(const std::vector<int> &binids, const SubVectorConst<float> &data, int dataLen, int topK) const
+std::vector<int> DensifiedMinhash::getHashEasy(const std::vector<int> &binids, const SubVectorConst<float> &data, int topK) const
 {
     // binsize is the number of times the range is larger than the total number of hashes we need.
 // read the data and add it to priority queue O(dlogk approx 7d) with index as key and values as priority value, get topk index O(1) and apply minhash on retuned index.
@@ -80,7 +80,7 @@ std::vector<int> DensifiedMinhash::getHashEasy(const std::vector<int> &binids, c
         pq.push(std::make_pair(i,data[i]));
     }
 
-    for (int i = topK; i < dataLen; i++)
+    for (int i = topK; i < data.size(); i++)
     {
         pq.push(std::make_pair(i,data[i]));
         pq.pop();
@@ -135,7 +135,7 @@ std::vector<int> DensifiedMinhash::getHashEasy(const std::vector<int> &binids, c
 }
 
 
-std::vector<int> DensifiedMinhash::getHash(const std::vector<int> &indices, const std::vector<float> &data, const std::vector<int> &binids, int dataLen) const
+std::vector<int> DensifiedMinhash::getHash(const std::vector<int> &indices, const std::vector<float> &data, const std::vector<int> &binids) const
 {
   std::vector<int> hashes(_numhashes);
   std::vector<int> hashArray(_numhashes);
@@ -144,12 +144,12 @@ std::vector<int> DensifiedMinhash::getHash(const std::vector<int> &indices, cons
     {
         hashes[i] = INT_MIN;
     }
-
+    /*
     if (dataLen<0){
 
     }
-
-    for (int i = 0; i < dataLen; i++)
+    */
+    for (int i = 0; i < data.size(); i++)
     {
         int binid = binids[indices[i]];
 

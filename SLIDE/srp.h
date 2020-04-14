@@ -11,8 +11,8 @@ private:
 	Vec2d<int> _indices;
 public:
 	SparseRandomProjection(size_t dimention, size_t numOfHashes, int ratio);
-  std::vector<int> getHash(const std::vector<float> &vector, int length) const;
-  std::vector<int> getHash(const SubVectorConst<float> &vector, int length) const;
-  std::vector<int> getHashSparse(const std::vector<int> &indices, const std::vector<float> &values, size_t length) const;
+  std::vector<int> getHash(const std::vector<float> &vector) const;
+  std::vector<int> getHash(const SubVectorConst<float> &vector) const;
+  std::vector<int> getHashSparse(const std::vector<int> &indices, const std::vector<float> &values) const;
 	~SparseRandomProjection();
 };

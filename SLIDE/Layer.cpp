@@ -88,7 +88,7 @@ Layer::Layer(size_t noOfNodes, int previousLayerNumOfNodes, int layerID, NodeTyp
     {
         _Nodes[i].Update(previousLayerNumOfNodes, i, _layerID, type, batchsize, _weights,
                 _bias[i], _adamAvgMom, _adamAvgVel, _train_array);
-        addtoHashTable(_Nodes[i].weights(), previousLayerNumOfNodes, _Nodes[i].bias(), i);
+        addtoHashTable(_Nodes[i].weights(), _Nodes[i].bias(), i);
     }
     auto t2 = std::chrono::high_resolution_clock::now();
     auto timeDiffInMiliseconds = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
@@ -131,18 +131,18 @@ void Layer::updateRandomNodes()
 }
 
 
-void Layer::addtoHashTable(SubVector<float> &weights, int length, float bias, int ID)
+void Layer::addtoHashTable(SubVector<float> &weights, float bias, int ID)
 {
     //LSH logic
     std::vector<int> hashes;
     if(HashFunction==1) {
         hashes = _wtaHasher->getHash(weights);
     }else if (HashFunction==2) {
-        hashes = _dwtaHasher->getHashEasy(weights, length, TOPK);
+        hashes = _dwtaHasher->getHashEasy(weights, TOPK);
     }else if (HashFunction==3) {
-        hashes = _MinHasher->getHashEasy(_binids, weights, length, TOPK);
+        hashes = _MinHasher->getHashEasy(_binids, weights, TOPK);
     }else if (HashFunction==4) {
-        hashes = _srp->getHash(weights, length);
+        hashes = _srp->getHash(weights);
     }
 
     std::vector<int> hashIndices = _hashTables.hashesToIndex(hashes);
@@ -219,12 +219,11 @@ int Layer::queryActiveNodeandComputeActivations(Vec2d<int> &activenodesperlayer,
             if (HashFunction == 1) {
                 hashes = _wtaHasher->getHash(activeValuesperlayer[layerIndex]);
             } else if (HashFunction == 2) {
-                hashes = _dwtaHasher->getHash(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex],
-                                              lengths[layerIndex]);
+                hashes = _dwtaHasher->getHash(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex]);
             } else if (HashFunction == 3) {
-                hashes = _MinHasher->getHashEasy(_binids, activeValuesperlayer[layerIndex], lengths[layerIndex], TOPK);
+                hashes = _MinHasher->getHashEasy(_binids, activeValuesperlayer[layerIndex], TOPK);
             } else if (HashFunction == 4) {
-                hashes = _srp->getHashSparse(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex], lengths[layerIndex]);
+                hashes = _srp->getHashSparse(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex]);
             }
             std::vector<int> hashIndices = _hashTables.hashesToIndex(hashes);
             std::vector<const int*> actives = _hashTables.retrieveRaw(hashIndices);
@@ -282,12 +281,11 @@ int Layer::queryActiveNodeandComputeActivations(Vec2d<int> &activenodesperlayer,
             if (HashFunction == 1) {
                 hashes = _wtaHasher->getHash(activeValuesperlayer[layerIndex]);
             } else if (HashFunction == 2) {
-                hashes = _dwtaHasher->getHash(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex],
-                                              lengths[layerIndex]);
+                hashes = _dwtaHasher->getHash(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex]);
             } else if (HashFunction == 3) {
-                hashes = _MinHasher->getHashEasy(_binids, activeValuesperlayer[layerIndex], lengths[layerIndex], TOPK);
+                hashes = _MinHasher->getHashEasy(_binids, activeValuesperlayer[layerIndex], TOPK);
             } else if (HashFunction == 4) {
-                hashes = _srp->getHashSparse(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex], lengths[layerIndex]);
+                hashes = _srp->getHashSparse(activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex]);
             }
             std::vector<int> hashIndices = _hashTables.hashesToIndex(hashes);
             std::vector<const int*> actives = _hashTables.retrieveRaw(hashIndices);
