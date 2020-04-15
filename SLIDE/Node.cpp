@@ -30,12 +30,12 @@ Node::Node(int dim, int nodeID, int layerID, NodeType type, int batchsize, float
 	_activeInputs = 0;
 
     _weights = weights;
-    _bias = bias;
-	_mirrorbias = _bias;
+    //_bias = bias;
+	//_mirrorbias = _bias;
 
 }
 
-void Node::Update(int dim, int nodeID, int layerID, NodeType type, int batchsize, float *weights, float bias, float *adamAvgMom, float *adamAvgVel, train* train_blob)
+void Node::Update(int dim, int nodeID, int layerID, NodeType type, int batchsize, float *weights, float &bias, float *adamAvgMom, float *adamAvgVel, train* train_blob)
 {
     _dim = dim;
     _IDinLayer = nodeID;
@@ -55,8 +55,8 @@ void Node::Update(int dim, int nodeID, int layerID, NodeType type, int batchsize
     _activeInputs = 0;
 
     _weights = weights;
-    _bias = bias;
-    _mirrorbias = _bias;
+    _bias = &bias;
+    _mirrorbias = *_bias;
 
 }
 
@@ -100,7 +100,7 @@ float Node::getActivation(int* indices, float* values, int length, int inputID)
 	{
 	    _train[inputID]._lastActivations += _weights[indices[i]] * values[i];
 	}
-	_train[inputID]._lastActivations += _bias;
+	_train[inputID]._lastActivations += (*_bias);
 
 	switch (_type)
 	{

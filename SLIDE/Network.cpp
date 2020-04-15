@@ -245,13 +245,13 @@ int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths,
 
                 tmp->_adamAvgMombias = BETA1 * tmp->_adamAvgMombias + (1 - BETA1) * tmp->_tbias;
                 tmp->_adamAvgVelbias = BETA2 * tmp->_adamAvgVelbias + (1 - BETA2) * tmp->_tbias * tmp->_tbias;
-                tmp->_bias += ratio*tmplr * tmp->_adamAvgMombias / (sqrt(tmp->_adamAvgVelbias) + EPS);
+                *tmp->_bias += ratio*tmplr * tmp->_adamAvgMombias / (sqrt(tmp->_adamAvgVelbias) + EPS);
                 tmp->_tbias = 0;
             }
             else
             {
                 std::copy(tmp->_mirrorWeights, tmp->_mirrorWeights+(tmp->_dim) , tmp->_weights);
-                tmp->_bias = tmp->_mirrorbias;
+                *tmp->_bias = tmp->_mirrorbias;
             }
             if (tmpRehash) {
                 int *hashes;
