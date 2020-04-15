@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 #include <string>
 #include <vector>
 #include <sstream>
@@ -57,6 +58,16 @@ inline std::vector<T> Tokenize(const std::string &input
 {
   std::vector<std::string> stringVector = Tokenize(input, delimiters);
   return Scan<T>(stringVector);
+}
+
+////////////////////////////////////////////////////////
+template<typename T>
+void Print(std::vector<T> &vec)
+{
+  for (size_t i = 0; i < vec.size(); ++i) {
+    std::cerr << vec[i] << " "; // << std::endl;
+  }
+  std::cerr << std::endl;
 }
 
 ////////////////////////////////////////////////////////

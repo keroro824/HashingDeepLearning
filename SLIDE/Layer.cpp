@@ -60,15 +60,15 @@ Layer::Layer(size_t noOfNodes, int previousLayerNumOfNodes, int layerID, NodeTyp
         }
         */
     }else{
-        _weights.resize(_noOfNodes * previousLayerNumOfNodes);
-        _bias.resize(_noOfNodes);
+        _weights.resize(_noOfNodes * previousLayerNumOfNodes, 1);
+        _bias.resize(_noOfNodes, 1);
         random_device rd;
         default_random_engine dre(rd());
         normal_distribution<float> distribution(0.0, 0.01);
 
         generate(_weights.begin(), _weights.end(), [&] () { return distribution(dre); });
         generate(_bias.begin(), _bias.end(), [&] () { return distribution(dre); });
-
+        //Print(_bias);
 
         if (ADAM)
         {
