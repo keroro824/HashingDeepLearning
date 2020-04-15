@@ -6,7 +6,6 @@
 #include "LSH.h"
 #include "DensifiedWtaHash.h"
 #include "cnpy.h"
-#include <sys/mman.h>
 #include <vector>
 
 class Layer

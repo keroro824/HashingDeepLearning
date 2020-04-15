@@ -3,7 +3,6 @@
 #include <chrono>
 #include <vector>
 #include "cnpy.h"
-#include <sys/mman.h>
 
 class Network
 {

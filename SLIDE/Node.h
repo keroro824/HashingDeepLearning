@@ -4,9 +4,6 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
-#include <linux/mman.h>
-#include <sys/mman.h>
-#include <asm-generic/mman-common.h>
 #include "Util.h"
 
 enum NodeType
