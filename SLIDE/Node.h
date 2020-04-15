@@ -17,48 +17,6 @@ struct train {
     float _lastActivations;
     float _lastGradients;
     int _ActiveinputIds;
-
-    void * operator new(size_t size){
-        void* ptr = mmap(NULL, size,
-            PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB,
-            -1, 0);
-        if (ptr == MAP_FAILED){
-            ptr = mmap(NULL, size,
-                PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS,
-                -1, 0);
-        }
-        if (ptr == MAP_FAILED){
-            std::cout << "mmap failed at train." << std::endl;
-        }
-        return ptr;
-    }
-    void* operator new (std::size_t size, const std::nothrow_t& nothrow_value){return operator new (size);};
-    void* operator new (std::size_t size, void* ptr){return operator new (size);};
-    void* operator new[] (std::size_t size){
-        void* ptr = mmap(NULL, size,
-            PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB | MAP_HUGE_1GB,
-            -1, 0);
-        if (ptr == MAP_FAILED){
-            ptr = mmap(NULL, size,
-                PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS,
-                -1, 0);
-        }
-        if (ptr == MAP_FAILED){
-            std::cout << "mmap fail! No train array!" << std::endl;
-        }
-        return ptr;
-    }
-    void* operator new[] (std::size_t size, const std::nothrow_t& nothrow_value){return operator new (size);};
-    void* operator new[] (std::size_t size, void* ptr){return operator new (size);};
-
-    void operator delete(void * ptr){munmap(ptr, sizeof(train));};
-    void operator delete (void* ptr, const std::nothrow_t& nothrow_constant){munmap(ptr, sizeof(train));};
-    void operator delete (void* ptr, void* voidptr2){};
-    // TODO: The size to be munmap'd should be the entire array, not just a single object
-    void operator delete[](void * ptr){munmap(ptr, sizeof(train));};
-    void operator delete[] (void* ptr, const std::nothrow_t& nothrow_constant){munmap(ptr, sizeof(train));};
-    void operator delete[] (void* ptr, void* voidptr2){};
-
 } __attribute__ ((aligned (64)));
 
 class Node
@@ -116,49 +74,6 @@ public:
 	void backPropagate(std::vector<Node> &previousNodes, const std::vector<int> &previousLayerActiveNodeIds, int previousLayerActiveNodeSize, float learningRate, int inputID);
 	void backPropagateFirstLayer(const std::vector<int> &nnzindices, const std::vector<float> &nnzvalues, int nnzSize, float learningRate, int inputID);
 	~Node();
-
-    void * operator new(size_t size){
-        std::cout << "new Node" << std::endl;
-        void* ptr = mmap(NULL, size,
-            PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB | MAP_HUGE_1GB,
-            -1, 0);
-        if (ptr == MAP_FAILED){
-            ptr = mmap(NULL, size,
-                PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS,
-                -1, 0);
-        }
-        if (ptr == MAP_FAILED){
-            std::cout << "mmap failed at Node." << std::endl;
-        }
-        return ptr;
-    }
-    void* operator new (std::size_t size, const std::nothrow_t& nothrow_value){return operator new (size);};
-    void* operator new (std::size_t size, void* ptr){return operator new (size);};
-    void* operator new[] (std::size_t size){
-        std::cout << "new Node array" << std::endl;
-        void* ptr = mmap(NULL, size,
-            PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB | MAP_HUGE_1GB,
-            -1, 0);
-        if (ptr == MAP_FAILED){
-            ptr = mmap(NULL, size,
-                PROT_READ | PROT_EXEC | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS,
-                -1, 0);
-        }
-        if (ptr == MAP_FAILED){
-            std::cout << "mmap failed at Node array." << std::endl;
-        }
-        return ptr;
-    }
-    void* operator new[] (std::size_t size, const std::nothrow_t& nothrow_value){return operator new (size);};
-    void* operator new[] (std::size_t size, void* ptr){return operator new (size);};
-
-    void operator delete(void * ptr){munmap(ptr, sizeof(Node));};
-    void operator delete (void* ptr, const std::nothrow_t& nothrow_constant){munmap(ptr, sizeof(Node));};
-    void operator delete (void* ptr, void* voidptr2){};
-    // TODO: should munmap the size of the entire array, not a single Node
-    void operator delete[](void * ptr){munmap(ptr, sizeof(Node));};
-    void operator delete[] (void* ptr, const std::nothrow_t& nothrow_constant){munmap(ptr, sizeof(Node));};
-    void operator delete[] (void* ptr, void* voidptr2){};
 
 	//only for debugging
 	float purturbWeight(int weightid, float delta);
