@@ -298,7 +298,6 @@ int Layer::queryActiveNodeandComputeActivations(
 
       in = counts.size();
       if (counts.size() < 1500) {
-        srand(time(NULL));
         size_t start = rand() % _noOfNodes;
         for (size_t i = start; i < _noOfNodes; i++) {
           if (counts.size() >= 1000) {

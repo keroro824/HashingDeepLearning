@@ -100,7 +100,7 @@ int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
     //        tmplr *= pow(0.9, iter/10.0);
   }
 
-  Vec3d<int> activeNodesPerBatch(_currentBatchSize);
+  Vec3d<int> activeNodesPerBatch(_currentBatchSize);    // batch, layer, node
   Vec3d<float> activeValuesPerBatch(_currentBatchSize);
   Vec2d<int> sizesPerBatch(_currentBatchSize);
 #pragma omp parallel for  //num_threads(1)

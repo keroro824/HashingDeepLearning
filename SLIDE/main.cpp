@@ -322,6 +322,7 @@ int main(int argc, char *argv[]) {
   // Parse Config File
   //***********************************
   parseconfig(argv[1]);
+  srand(time(NULL));
 
   //***********************************
   // Initialize Network

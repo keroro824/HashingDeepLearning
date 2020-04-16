@@ -16,7 +16,6 @@ SparseRandomProjection::SparseRandomProjection(size_t dimension,
     a[i] = i;
   }
 
-  srand(time(0));
   _randBits.resize(_numhashes);
   _indices.resize(_numhashes);
 
