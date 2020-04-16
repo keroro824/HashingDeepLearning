@@ -1,15 +1,13 @@
 #pragma once
+#include <cassert>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
-#include <sstream>
-#include <cassert>
 
-
-//! convert string to variable of type T. Used to reading floats, int etc from files
-template<typename T>
-inline T Scan(const std::string &input)
-{
+//! convert string to variable of type T. Used to reading floats, int etc from
+//! files
+template <typename T> inline T Scan(const std::string &input) {
   std::stringstream stream(input);
   T ret;
   stream >> ret;
@@ -17,9 +15,8 @@ inline T Scan(const std::string &input)
 }
 
 //! convert vectors of string to vectors of type T variables
-template<typename T>
-inline std::vector<T> Scan(const std::vector< std::string > &input)
-{
+template <typename T>
+inline std::vector<T> Scan(const std::vector<std::string> &input) {
   std::vector<T> output(input.size());
   for (size_t i = 0; i < input.size(); i++) {
     output[i] = Scan<T>(input[i]);
@@ -27,12 +24,12 @@ inline std::vector<T> Scan(const std::vector< std::string > &input)
   return output;
 }
 
-/** tokenise input string to vector of string. each element has been separated by a character in the delimiters argument.
-    The separator can only be 1 character long. The default delimiters are space or tab
+/** tokenise input string to vector of string. each element has been separated
+   by a character in the delimiters argument. The separator can only be 1
+   character long. The default delimiters are space or tab
 */
-inline std::vector<std::string> Tokenize(const std::string& str,
-  const std::string& delimiters = " \t")
-{
+inline std::vector<std::string>
+Tokenize(const std::string &str, const std::string &delimiters = " \t") {
   std::vector<std::string> tokens;
   // Skip delimiters at beginning.
   std::string::size_type lastPos = str.find_first_not_of(delimiters, 0);
@@ -52,18 +49,15 @@ inline std::vector<std::string> Tokenize(const std::string& str,
 }
 
 //! tokenise input string to vector of type T
-template<typename T>
-inline std::vector<T> Tokenize(const std::string &input
-  , const std::string& delimiters = " \t")
-{
+template <typename T>
+inline std::vector<T> Tokenize(const std::string &input,
+                               const std::string &delimiters = " \t") {
   std::vector<std::string> stringVector = Tokenize(input, delimiters);
   return Scan<T>(stringVector);
 }
 
 ////////////////////////////////////////////////////////
-template<typename T>
-void Print(std::vector<T> &vec)
-{
+template <typename T> void Print(std::vector<T> &vec) {
   for (size_t i = 0; i < vec.size(); ++i) {
     std::cerr << vec[i] << " "; // << std::endl;
   }
@@ -71,37 +65,28 @@ void Print(std::vector<T> &vec)
 }
 
 ////////////////////////////////////////////////////////
-template<typename T> 
-using Vec2d = std::vector< std::vector<T> >;
+template <typename T> using Vec2d = std::vector<std::vector<T>>;
 
-template<typename T>
-using Vec3d = std::vector < std::vector< std::vector<T> > >;
-
+template <typename T> using Vec3d = std::vector<std::vector<std::vector<T>>>;
 
 ////////////////////////////////////////////////////////
-template<typename T>
-class SubVectorConst
-{
+template <typename T> class SubVectorConst {
 protected:
   const T *_ptrConst;
   size_t _size;
 
 public:
-  SubVectorConst()
-  {}
+  SubVectorConst() {}
 
   SubVectorConst(const std::vector<T> &vec, size_t startIdx, size_t size)
-    : _ptrConst(vec.data() + startIdx)
-    , _size(size)
-  {
-    //assert(_startIdx < _vecConst->size());
-    //assert(_startIdx + _size <= _vecConst->size());
+      : _ptrConst(vec.data() + startIdx), _size(size) {
+    // assert(_startIdx < _vecConst->size());
+    // assert(_startIdx + _size <= _vecConst->size());
   }
 
-  virtual const T &operator[](size_t idx) const
-  {
-    //assert(_vec);
-    //assert(idx < SubVectorConst<T>::_size);
+  virtual const T &operator[](size_t idx) const {
+    // assert(_vec);
+    // assert(idx < SubVectorConst<T>::_size);
     return _ptrConst[idx];
   }
 
@@ -110,31 +95,23 @@ public:
 };
 
 ////////////////////////////////////////////////////////
-template<typename T>
-class SubVector : public SubVectorConst<T>
-{
+template <typename T> class SubVector : public SubVectorConst<T> {
 protected:
   T *_ptr;
 
 public:
-  SubVector()
-    : SubVectorConst<T>()
-  {}
+  SubVector() : SubVectorConst<T>() {}
 
   SubVector(std::vector<T> &vec, size_t startIdx, size_t size)
-    : SubVectorConst<T>(vec, startIdx, size)
-    , _ptr(vec.data() + startIdx)
-  {}
+      : SubVectorConst<T>(vec, startIdx, size), _ptr(vec.data() + startIdx) {}
 
-  const T &operator[](size_t idx) const
-  { // shouldn't need this
+  const T &operator[](size_t idx) const { // shouldn't need this
     return SubVectorConst<T>::operator[](idx);
   }
 
-  virtual T &operator[](size_t idx)
-  {
-    //assert(_vec);
-    //assert(idx < SubVectorConst<T>::_size);
+  virtual T &operator[](size_t idx) {
+    // assert(_vec);
+    // assert(idx < SubVectorConst<T>::_size);
     return _ptr[idx];
   }
 

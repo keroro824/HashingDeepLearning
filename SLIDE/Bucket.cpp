@@ -1,56 +1,47 @@
-#include <iostream>
 #include "Bucket.h"
+#include <iostream>
 
 using namespace std;
 
-Bucket::Bucket()
-:isInit(-1)
-,arr(BUCKETSIZE)
-{
-}
+Bucket::Bucket() : isInit(-1), arr(BUCKETSIZE) {}
 
-
-Bucket::~Bucket()
-{
-}
+Bucket::~Bucket() {}
 
 void Bucket::add(int id) {
-
-    //FIFO
-    if (FIFO) {
-        isInit += 1;
-        int index = _counts & (BUCKETSIZE - 1);
-        _counts++;
-        arr.at(index) = id;
-        //return index;
+  // FIFO
+  if (FIFO) {
+    isInit += 1;
+    int index = _counts & (BUCKETSIZE - 1);
+    _counts++;
+    arr.at(index) = id;
+    // return index;
+  }
+  // Reservoir Sampling
+  else {
+    _counts++;
+    if (index == BUCKETSIZE) {
+      int randnum = rand() % (_counts) + 1;
+      if (randnum == 2) {
+        int randind = rand() % BUCKETSIZE;
+        arr.at(randind) = id;
+        // return randind;
+      } else {
+        // return -1;
+      }
+    } else {
+      arr.at(index) = id;
+      int returnIndex = index;
+      index++;
+      // return returnIndex;
     }
-    //Reservoir Sampling
-    else {
-        _counts++;
-        if (index == BUCKETSIZE) {
-            int randnum = rand() % (_counts) + 1;
-            if (randnum == 2) {
-                int randind = rand() % BUCKETSIZE;
-                arr.at(randind) = id;
-                //return randind;
-            } else {
-                //return -1;
-            }
-        } else {
-            arr.at(index) = id;
-            int returnIndex = index;
-            index++;
-            //return returnIndex;
-        }
-    }
+  }
 }
 
-const int * Bucket::getAll()
-{
-    if (isInit == -1)
-        return NULL;
-    if(_counts<BUCKETSIZE){
-        arr.at(_counts)=-1;
-    }
-    return arr.data();
+const int *Bucket::getAll() {
+  if (isInit == -1)
+    return NULL;
+  if (_counts < BUCKETSIZE) {
+    arr.at(_counts) = -1;
+  }
+  return arr.data();
 }
