@@ -30,17 +30,6 @@ Network::Network(const std::vector<int> &sizesOfLayers, const std::vector<NodeTy
     cout << "after layer" << endl;
 }
 
-
-Layer *Network::getLayer(int LayerID) {
-    if (LayerID < _numberOfLayers)
-        return _hiddenlayers[LayerID];
-    else {
-        cout << "LayerID out of bounds" << endl;
-        //TODO:Handle
-    }
-}
-
-
 int Network::predictClass(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, const Vec2d<int> &labels) {
     int correctPred = 0;
 
