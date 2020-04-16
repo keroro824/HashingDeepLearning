@@ -45,7 +45,7 @@ public:
   float getNomalizationConstant(int inputID) const;
   int queryActiveNodeandComputeActivations(
       Vec2d<int> &activenodesperlayer, Vec2d<float> &activeValuesperlayer,
-      std::vector<int> &inlenght, int layerID, int inputID,
+      std::vector<int> &inlenght, int inputID,
       const std::vector<int> &label, float Sparsity, int iter, bool train);
   void saveWeights(const std::string &file);
   void updateTable();

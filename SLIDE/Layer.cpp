@@ -75,7 +75,7 @@ if (ADAM){
   _train_array.resize(noOfNodes * batchsize);
 
   // create nodes for this layer
-#pragma omp parallel for num_threads(1)
+#pragma omp parallel for //num_threads(1)
   for (size_t i = 0; i < noOfNodes; i++) {
     _Nodes[i].Update(previousLayerNumOfNodes, i, _layerID, type, batchsize,
                      _weights, _bias[i], _adamAvgMom, _adamAvgVel,
@@ -171,7 +171,7 @@ float collision(int *hashes, int *table_hashes, int k, int l) {
 
 int Layer::queryActiveNodeandComputeActivations(
     Vec2d<int> &activenodesperlayer, Vec2d<float> &activeValuesperlayer,
-    std::vector<int> &lengths, int layerIndex, int inputID,
+    std::vector<int> &lengths, int inputID,
     const std::vector<int> &label, float Sparsity, int iter, bool train) {
   // LSH QueryLogic
 
@@ -181,26 +181,26 @@ int Layer::queryActiveNodeandComputeActivations(
 
   if (Sparsity == 1.0) {
     len = _noOfNodes;
-    lengths[layerIndex + 1] = len;
-    activenodesperlayer[layerIndex + 1].resize(
+    lengths[_layerID + 1] = len;
+    activenodesperlayer[_layerID + 1].resize(
         len); // assuming not intitialized;
     for (int i = 0; i < len; i++) {
-      activenodesperlayer[layerIndex + 1][i] = i;
+      activenodesperlayer[_layerID + 1][i] = i;
     }
   } else {
     if (Mode == 1) {
       std::vector<int> hashes;
       if (HashFunction == 1) {
-        hashes = _wtaHasher->getHash(activeValuesperlayer[layerIndex]);
+        hashes = _wtaHasher->getHash(activeValuesperlayer[_layerID]);
       } else if (HashFunction == 2) {
-        hashes = _dwtaHasher->getHash(activenodesperlayer[layerIndex],
-                                      activeValuesperlayer[layerIndex]);
+        hashes = _dwtaHasher->getHash(activenodesperlayer[_layerID],
+                                      activeValuesperlayer[_layerID]);
       } else if (HashFunction == 3) {
         hashes = _MinHasher->getHashEasy(
-            _binids, activeValuesperlayer[layerIndex], TOPK);
+            _binids, activeValuesperlayer[_layerID], TOPK);
       } else if (HashFunction == 4) {
-        hashes = _srp->getHashSparse(activenodesperlayer[layerIndex],
-                                     activeValuesperlayer[layerIndex]);
+        hashes = _srp->getHashSparse(activenodesperlayer[_layerID],
+                                     activeValuesperlayer[_layerID]);
       }
       std::vector<int> hashIndices = _hashTables.hashesToIndex(hashes);
       std::vector<const int *> actives = _hashTables.retrieveRaw(hashIndices);
@@ -244,11 +244,11 @@ int Layer::queryActiveNodeandComputeActivations(
       }
 
       len = vect.size();
-      lengths[layerIndex + 1] = len;
-      activenodesperlayer[layerIndex + 1].resize(len);
+      lengths[_layerID + 1] = len;
+      activenodesperlayer[_layerID + 1].resize(len);
 
       for (int i = 0; i < len; i++) {
-        activenodesperlayer[layerIndex + 1][i] = vect[i];
+        activenodesperlayer[_layerID + 1][i] = vect[i];
       }
       auto t33 = std::chrono::high_resolution_clock::now();
       in = len;
@@ -256,16 +256,16 @@ int Layer::queryActiveNodeandComputeActivations(
     if (Mode == 4) {
       std::vector<int> hashes;
       if (HashFunction == 1) {
-        hashes = _wtaHasher->getHash(activeValuesperlayer[layerIndex]);
+        hashes = _wtaHasher->getHash(activeValuesperlayer[_layerID]);
       } else if (HashFunction == 2) {
-        hashes = _dwtaHasher->getHash(activenodesperlayer[layerIndex],
-                                      activeValuesperlayer[layerIndex]);
+        hashes = _dwtaHasher->getHash(activenodesperlayer[_layerID],
+                                      activeValuesperlayer[_layerID]);
       } else if (HashFunction == 3) {
         hashes = _MinHasher->getHashEasy(
-            _binids, activeValuesperlayer[layerIndex], TOPK);
+            _binids, activeValuesperlayer[_layerID], TOPK);
       } else if (HashFunction == 4) {
-        hashes = _srp->getHashSparse(activenodesperlayer[layerIndex],
-                                     activeValuesperlayer[layerIndex]);
+        hashes = _srp->getHashSparse(activenodesperlayer[_layerID],
+                                     activeValuesperlayer[_layerID]);
       }
       std::vector<int> hashIndices = _hashTables.hashesToIndex(hashes);
       std::vector<const int *> actives = _hashTables.retrieveRaw(hashIndices);
@@ -322,19 +322,19 @@ int Layer::queryActiveNodeandComputeActivations(
       }
 
       len = counts.size();
-      lengths[layerIndex + 1] = len;
-      activenodesperlayer[layerIndex + 1].resize(len);
+      lengths[_layerID + 1] = len;
+      activenodesperlayer[_layerID + 1].resize(len);
 
       // copy map into new array
       int i = 0;
       for (auto &&x : counts) {
-        activenodesperlayer[layerIndex + 1][i] = x.first;
+        activenodesperlayer[_layerID + 1][i] = x.first;
         i++;
       }
     } else if (Mode == 2 & _type == NodeType::Softmax) {
       len = floor(_noOfNodes * Sparsity);
-      lengths[layerIndex + 1] = len;
-      activenodesperlayer[layerIndex + 1].resize(len);
+      lengths[_layerID + 1] = len;
+      activenodesperlayer[_layerID + 1].resize(len);
 
       auto t1 = std::chrono::high_resolution_clock::now();
       bitset<MAPLEN> bs;
@@ -342,7 +342,7 @@ int Layer::queryActiveNodeandComputeActivations(
       if (_type == NodeType::Softmax) {
         if (train) {
           for (int i = 0; i < label.size(); i++) {
-            activenodesperlayer[layerIndex + 1][i] = label[i];
+            activenodesperlayer[_layerID + 1][i] = label[i];
             bs[label[i]] = 1;
           }
           tmpsize = label.size();
@@ -352,7 +352,7 @@ int Layer::queryActiveNodeandComputeActivations(
       while (tmpsize < len) {
         int v = rand() % _noOfNodes;
         if (bs[v] == 0) {
-          activenodesperlayer[layerIndex + 1][tmpsize] = v;
+          activenodesperlayer[_layerID + 1][tmpsize] = v;
           bs[v] = 1;
           tmpsize++;
         }
@@ -366,16 +366,16 @@ int Layer::queryActiveNodeandComputeActivations(
 
     else if (Mode == 3 & _type == NodeType::Softmax) {
       len = floor(_noOfNodes * Sparsity);
-      lengths[layerIndex + 1] = len;
-      activenodesperlayer[layerIndex + 1].resize(len);
+      lengths[_layerID + 1] = len;
+      activenodesperlayer[_layerID + 1].resize(len);
       vector<pair<float, int>> sortW;
       int what = 0;
 
       for (size_t s = 0; s < _noOfNodes; s++) {
         float tmp =
-            innerproduct(activenodesperlayer[layerIndex].data(),
-                         activeValuesperlayer[layerIndex].data(),
-                         lengths[layerIndex], _Nodes[s].weights().data());
+            innerproduct(activenodesperlayer[_layerID].data(),
+                         activeValuesperlayer[_layerID].data(),
+                         lengths[_layerID], _Nodes[s].weights().data());
         tmp += _Nodes[s].bias();
         if (find(label.begin(), label.end(), s) != label.end()) {
           sortW.push_back(make_pair(-1000000000, s));
@@ -388,7 +388,7 @@ int Layer::queryActiveNodeandComputeActivations(
       std::sort(begin(sortW), end(sortW));
 
       for (int i = 0; i < len; i++) {
-        activenodesperlayer[layerIndex + 1][i] = sortW[i].second;
+        activenodesperlayer[_layerID + 1][i] = sortW[i].second;
         if (find(label.begin(), label.end(), sortW[i].second) != label.end()) {
           in = 1;
         }
@@ -397,7 +397,7 @@ int Layer::queryActiveNodeandComputeActivations(
   }
 
   //***********************************
-  activeValuesperlayer[layerIndex + 1].resize(
+  activeValuesperlayer[_layerID + 1].resize(
       len); // assuming its not initialized else memory leak;
   float maxValue = 0;
   if (_type == NodeType::Softmax)
@@ -405,22 +405,22 @@ int Layer::queryActiveNodeandComputeActivations(
 
   // find activation for all ACTIVE nodes in layer
   for (int i = 0; i < len; i++) {
-    activeValuesperlayer[layerIndex + 1][i] =
-        _Nodes[activenodesperlayer[layerIndex + 1][i]].getActivation(
-            activenodesperlayer[layerIndex], activeValuesperlayer[layerIndex],
-            lengths[layerIndex], inputID);
+    activeValuesperlayer[_layerID + 1][i] =
+        _Nodes[activenodesperlayer[_layerID + 1][i]].getActivation(
+            activenodesperlayer[_layerID], activeValuesperlayer[_layerID],
+            lengths[_layerID], inputID);
     if (_type == NodeType::Softmax &&
-        activeValuesperlayer[layerIndex + 1][i] > maxValue) {
-      maxValue = activeValuesperlayer[layerIndex + 1][i];
+        activeValuesperlayer[_layerID + 1][i] > maxValue) {
+      maxValue = activeValuesperlayer[_layerID + 1][i];
     }
   }
 
   if (_type == NodeType::Softmax) {
     for (int i = 0; i < len; i++) {
       float realActivation =
-          exp(activeValuesperlayer[layerIndex + 1][i] - maxValue);
-      activeValuesperlayer[layerIndex + 1][i] = realActivation;
-      _Nodes[activenodesperlayer[layerIndex + 1][i]].SetlastActivation(
+          exp(activeValuesperlayer[_layerID + 1][i] - maxValue);
+      activeValuesperlayer[_layerID + 1][i] = realActivation;
+      _Nodes[activenodesperlayer[_layerID + 1][i]].SetlastActivation(
           inputID, realActivation);
       _normalizationConstants[inputID] += realActivation;
     }

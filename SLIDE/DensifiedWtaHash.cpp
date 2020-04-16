@@ -24,13 +24,13 @@ DensifiedWtaHash::DensifiedWtaHash(int numHashes, int noOfBitsToHash)
   std::vector<int> n_array(_rangePow);
   _indices.resize(_rangePow * _permute);
   _pos.resize(_rangePow * _permute);
-
+  /*
   cerr << "numHashes=" << numHashes << endl;
   cerr << "noOfBitsToHash=_rangePow=" << noOfBitsToHash << endl;
   cerr << "_permute=" << _permute << endl;
   cerr << "_indices.size()=" << _indices.size() << endl;
   cerr << "_pos.size()=" << _pos.size() << endl;
-
+  */
   for (int i = 0; i < _rangePow; i++) {
     n_array[i] = i;
   }
@@ -159,7 +159,16 @@ DensifiedWtaHash::getHash(const std::vector<int> &indices,
     }
     hashArray[i] = next;
   }
-
+  /*
+  if (indices.size() != 128) {
+    cerr << "indices:" << indices.size() << " ";
+    cerr << "data:" << data.size() << " ";
+    cerr << "hashArray:" << hashArray.size() << endl;;
+    //Print(indices);  
+    //Print(data);
+    //Print(hashArray);
+  }
+  */
   return hashArray;
 }
 
