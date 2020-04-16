@@ -52,7 +52,7 @@ std::vector<int> SparseRandomProjection::getHash(const SubVectorConst<float> &ve
     for (size_t i = 0; i < _numhashes; i++) {
         double s = 0;
         for (size_t j = 0; j < _samSize; j++) {
-            float v = vector.get(_indices[i][j]);
+            float v = vector[_indices[i][j]];
             if (_randBits[i][j] >= 0) {
                 s += v;
             } else {

@@ -36,9 +36,9 @@ void Node::Update(int dim, int nodeID, int layerID, NodeType type, int batchsize
 
 float Node::getLastActivation(int inputID) const
 {
-	if(_train.get(inputID)._ActiveinputIds != 1)
+	if(_train[inputID]._ActiveinputIds != 1)
 		return 0.0;
-	return _train.get(inputID)._lastActivations;
+	return _train[inputID]._lastActivations;
 }
 
 

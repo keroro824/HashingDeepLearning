@@ -26,6 +26,12 @@ DensifiedWtaHash::DensifiedWtaHash(int numHashes, int noOfBitsToHash)
     _indices.resize(_rangePow * _permute);
     _pos.resize(_rangePow * _permute);
 
+    cerr << "numHashes=" << numHashes << endl;
+    cerr << "noOfBitsToHash=_rangePow=" << noOfBitsToHash << endl;
+    cerr << "_permute=" << _permute << endl;
+    cerr << "_indices.size()=" << _indices.size() << endl;
+    cerr << "_pos.size()=" << _pos.size() << endl;
+
     for (int i = 0; i < _rangePow; i++) {
         n_array[i] = i;
     }
@@ -79,7 +85,7 @@ std::vector<int> DensifiedWtaHash::getHashEasy(const SubVectorConst<float> &data
         for (int i = 0; i < data.size(); i++) {
             int inner_index = bin_index + i;
             int binid = _indices[inner_index];
-            float loc_data = data.get(i);
+            float loc_data = data[i];
             if(binid < _numhashes && values[binid] < loc_data) {
                 values[binid] = loc_data;
                 hashes[binid] = _pos[inner_index];

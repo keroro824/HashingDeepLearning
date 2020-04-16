@@ -98,16 +98,15 @@ public:
     //assert(_startIdx + _size <= _vecConst->size());
   }
 
-  inline const T &get(size_t idx) const
+  virtual const T &operator[](size_t idx) const
   {
-    //assert(_vecConst);
-    //assert(idx < _size);
+    //assert(_vec);
+    //assert(idx < SubVectorConst<T>::_size);
     return _ptrConst[idx];
   }
 
-  inline size_t size() const { return _size; }
-
-  inline const T *data() const { return _ptrConst; }
+  size_t size() const { return _size; }
+  const T *data() const { return _ptrConst; }
 };
 
 ////////////////////////////////////////////////////////
@@ -127,12 +126,17 @@ public:
     , _ptr(vec.data() + startIdx)
   {}
 
-  inline T &operator[](size_t idx)
+  const T &operator[](size_t idx) const
+  { // shouldn't need this
+    return SubVectorConst<T>::operator[](idx);
+  }
+
+  virtual T &operator[](size_t idx)
   {
     //assert(_vec);
     //assert(idx < SubVectorConst<T>::_size);
     return _ptr[idx];
   }
 
-  inline T *data() { return _ptr; }
+  T *data() { return _ptr; }
 };
