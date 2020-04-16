@@ -58,15 +58,13 @@ DensifiedWtaHash::DensifiedWtaHash(int numHashes, int noOfBitsToHash)
     _randHash[1]++;
 }
 
-std::vector<int> DensifiedWtaHash::getHashEasy(const std::vector<float> &data,
-                                               int topK) const {
+std::vector<int> DensifiedWtaHash::getHashEasy(const std::vector<float> &data) const {
   SubVectorConst<float> dataSub(data, 0, data.size());
-  return getHashEasy(dataSub, topK);
+  return getHashEasy(dataSub);
 }
 
 std::vector<int>
-DensifiedWtaHash::getHashEasy(const SubVectorConst<float> &data,
-                              int topK) const {
+DensifiedWtaHash::getHashEasy(const SubVectorConst<float> &data) const {
   // binsize is the number of times the range is larger than the total number of
   // hashes we need.
   std::vector<int> hashes(_numhashes);

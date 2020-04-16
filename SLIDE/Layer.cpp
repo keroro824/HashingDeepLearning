@@ -120,7 +120,7 @@ void Layer::addtoHashTable(SubVector<float> &weights, float bias, int ID) {
   if (HashFunction == 1) {
     hashes = _wtaHasher->getHash(weights);
   } else if (HashFunction == 2) {
-    hashes = _dwtaHasher->getHashEasy(weights, TOPK);
+    hashes = _dwtaHasher->getHashEasy(weights);
   } else if (HashFunction == 3) {
     hashes = _MinHasher->getHashEasy(_binids, weights, TOPK);
   } else if (HashFunction == 4) {
