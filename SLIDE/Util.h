@@ -57,14 +57,6 @@ inline std::vector<T> Tokenize(const std::string &input,
 }
 
 ////////////////////////////////////////////////////////
-template <typename T> void Print(std::vector<T> &vec) {
-  for (size_t i = 0; i < vec.size(); ++i) {
-    std::cerr << vec[i] << " "; // << std::endl;
-  }
-  std::cerr << std::endl;
-}
-
-////////////////////////////////////////////////////////
 template <typename T> using Vec2d = std::vector<std::vector<T>>;
 
 template <typename T> using Vec3d = std::vector<std::vector<std::vector<T>>>;
@@ -117,3 +109,16 @@ public:
 
   T *data() { return _ptr; }
 };
+
+////////////////////////////////////////////////////////
+template <typename T> void Print(const std::vector<T> &vec) {
+  SubVectorConst<T> subvec(vec, 0, vec.size());
+  Print(subvec);
+}
+
+template <typename T> void Print(const SubVectorConst<T> &vec) {
+  for (size_t i = 0; i < vec.size(); ++i) {
+    std::cerr << vec[i] << " "; // << std::endl;
+  }
+  std::cerr << std::endl;
+}

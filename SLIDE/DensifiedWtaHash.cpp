@@ -1,5 +1,6 @@
 #include "DensifiedWtaHash.h"
 #include "Config.h"
+#include "Util.h"
 #include <algorithm>
 #include <climits>
 #include <iostream>
@@ -7,6 +8,7 @@
 #include <math.h>
 #include <random>
 #include <vector>
+
 using namespace std;
 
 DensifiedWtaHash::DensifiedWtaHash(int numHashes, int noOfBitsToHash)
@@ -106,6 +108,13 @@ DensifiedWtaHash::getHashEasy(const SubVectorConst<float> &data,
     }
     hashArray[i] = next;
   }
+
+  //cerr << "data:" << data.size() << endl;
+  //Print(data);
+
+  //cerr << "hashArray:" << hashArray.size() << endl;;
+  //Print(hashArray);
+
   return hashArray;
 }
 
