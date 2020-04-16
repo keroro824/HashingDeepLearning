@@ -18,41 +18,14 @@ Network::Network(const std::vector<int> &sizesOfLayers, const std::vector<NodeTy
 ,_currentBatchSize(batchSize)
 {
     for (int i = 0; i < noOfLayers; i++) {
+      int previousLayerNumOfNodes;
         if (i != 0) {
-            /*
-            cnpy::NpyArray weightArr, biasArr, adamArr, adamvArr;
-            float* weight, *bias, *adamAvgMom, *adamAvgVel;
-            if(LOADWEIGHT){
-                weightArr = arr["w_layer_"+to_string(i)];
-                weight = weightArr.data<float>();
-                biasArr = arr["b_layer_"+to_string(i)];
-                bias = biasArr.data<float>();
-
-                adamArr = arr["am_layer_"+to_string(i)];
-                adamAvgMom = adamArr.data<float>();
-                adamvArr = arr["av_layer_"+to_string(i)];
-                adamAvgVel = adamvArr.data<float>();
-            }
-            */
-            _hiddenlayers[i] = new Layer(sizesOfLayers[i], sizesOfLayers[i - 1], i, _layersTypes[i], _currentBatchSize,  K[i], L[i], RangePow[i], Sparsity[i]);
+          previousLayerNumOfNodes = sizesOfLayers[i - 1];
         } else {
-            /*
-            cnpy::NpyArray weightArr, biasArr, adamArr, adamvArr;
-            float* weight, *bias, *adamAvgMom, *adamAvgVel;
-            if(LOADWEIGHT){
-                weightArr = arr["w_layer_"+to_string(i)];
-                weight = weightArr.data<float>();
-                biasArr = arr["b_layer_"+to_string(i)];
-                bias = biasArr.data<float>();
-
-                adamArr = arr["am_layer_"+to_string(i)];
-                adamAvgMom = adamArr.data<float>();
-                adamvArr = arr["av_layer_"+to_string(i)];
-                adamAvgVel = adamvArr.data<float>();
-            }
-            */
-            _hiddenlayers[i] = new Layer(sizesOfLayers[i], inputdim, i, _layersTypes[i], _currentBatchSize, K[i], L[i], RangePow[i], Sparsity[i]);
+          previousLayerNumOfNodes = inputdim;
         }
+
+        _hiddenlayers[i] = new Layer(sizesOfLayers[i], previousLayerNumOfNodes, i, _layersTypes[i], _currentBatchSize, K[i], L[i], RangePow[i], Sparsity[i]);
     }
     cout << "after layer" << endl;
 }
