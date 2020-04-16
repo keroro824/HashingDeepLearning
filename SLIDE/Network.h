@@ -21,7 +21,7 @@ public:
 	Layer* getLayer(int LayerID);
 	int predictClass(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, const Vec2d<int> &labels);
 	int ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, const Vec2d<int> &labels, int iter, bool rehash, bool rebuild);
-	void saveWeights(std::string file);
+	void saveWeights(const std::string &file);
 	~Network();
 };
 

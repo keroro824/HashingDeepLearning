@@ -228,7 +228,7 @@ int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues, c
 }
 
 
-void Network::saveWeights(string file)
+void Network::saveWeights(const std::string &file)
 {
     for (int i=0; i< _numberOfLayers; i++){
         _hiddenlayers[i]->saveWeights(file);
