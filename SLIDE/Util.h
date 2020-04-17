@@ -111,12 +111,13 @@ public:
 };
 
 ////////////////////////////////////////////////////////
-template <typename T> void Print(const std::vector<T> &vec) {
+template <typename T> void Print(const std::string &str, const std::vector<T> &vec) {
   SubVectorConst<T> subvec(vec, 0, vec.size());
-  Print(subvec);
+  Print(str, subvec);
 }
 
-template <typename T> void Print(const SubVectorConst<T> &vec) {
+template <typename T> void Print(const std::string &str, const SubVectorConst<T> &vec) {
+  std::cerr << str << "=" << std::flush;
   for (size_t i = 0; i < vec.size(); ++i) {
     std::cerr << vec[i] << " "; // << std::endl;
   }

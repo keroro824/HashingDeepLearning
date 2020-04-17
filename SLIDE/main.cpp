@@ -116,15 +116,14 @@ void parseconfig(string filename) {
       }
     } else if (trim(first) == "Sparsity") {
       string str = trim(second).c_str();
-      Sparsity.resize(numLayer * 2);
+      //Sparsity.resize(numLayer);
       char *mystring = &str[0];
       char *pch;
       pch = strtok(mystring, ",");
-      int i = 0;
       while (pch != NULL) {
-        Sparsity[i] = atof(pch);
+        Sparsity.push_back(atof(pch));
+        //Print("Sparsity", Sparsity);
         pch = strtok(NULL, ",");
-        i++;
       }
     } else if (trim(first) == "Batchsize") {
       Batchsize = atoi(trim(second).c_str());

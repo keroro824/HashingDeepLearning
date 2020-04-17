@@ -17,6 +17,8 @@ Network::Network(const std::vector<int> &sizesOfLayers,
       _layersTypes(layersTypes), _Sparsity(Sparsity),
       _numberOfLayers(noOfLayers), _learningRate(lr),
       _currentBatchSize(batchSize) {
+  //Print("_Sparsity", _Sparsity);
+
   for (int i = 0; i < noOfLayers; i++) {
     int previousLayerNumOfNodes;
     if (i != 0) {
@@ -51,7 +53,7 @@ int Network::predictClass(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
     for (int j = 0; j < _numberOfLayers; j++) {
       _hiddenlayers[j]->queryActiveNodeandComputeActivations(
           activenodesperlayer, activeValuesperlayer, sizes, i, labels[i],
-          _Sparsity[_numberOfLayers + j], -1, false);
+          _Sparsity.at(_numberOfLayers + j), -1, false);
     }
 
     // compute softmax
@@ -123,7 +125,7 @@ int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
     for (int j = 0; j < _numberOfLayers; j++) {
       in = _hiddenlayers[j]->queryActiveNodeandComputeActivations(
           activenodesperlayer, activeValuesperlayer, sizes, i, labels[i],
-          _Sparsity[j], iter * _currentBatchSize + i, true);
+          _Sparsity.at(j), iter * _currentBatchSize + i, true);
       avg_retrieval[j] += in;
     }
 
@@ -157,12 +159,12 @@ int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
   bool tmpRebuild;
 
   for (int l = 0; l < _numberOfLayers; l++) {
-    if (rehash & _Sparsity[l] < 1) {
+    if (rehash & _Sparsity.at(l) < 1) {
       tmpRehash = true;
     } else {
       tmpRehash = false;
     }
-    if (rebuild & _Sparsity[l] < 1) {
+    if (rebuild & _Sparsity.at(l) < 1) {
       tmpRebuild = true;
     } else {
       tmpRebuild = false;
