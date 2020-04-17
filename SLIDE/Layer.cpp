@@ -248,7 +248,7 @@ int Layer::queryActiveNodeandComputeActivations(
         if (actives[i] == NULL) {
           continue;
         } else {
-          for (int j = 0; j < BUCKETSIZE; j++) {
+          for (int j = 0; j < actives[i]->size(); j++) {
             int tempID = (*actives[i])[j] - 1;
             if (tempID >= 0) {
               counts[tempID] += 1;
@@ -311,7 +311,7 @@ int Layer::queryActiveNodeandComputeActivations(
           continue;
         } else {
           // copy sparse array into (dense) map
-          for (int j = 0; j < BUCKETSIZE; j++) {
+          for (int j = 0; j < actives[i]->size(); j++) {
             int tempID = (*actives[i])[j] - 1;
             if (tempID >= 0) {
               counts[tempID] += 1;

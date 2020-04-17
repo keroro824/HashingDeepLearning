@@ -11,9 +11,9 @@ void Bucket::add(int id) {
   // FIFO
   if (FIFO) {
     _isInit += 1;
-    int index = _counts & (BUCKETSIZE - 1);  // TODO is this supposed to be the class variable?
+    _index = _counts & (BUCKETSIZE - 1);  // TODO is this supposed to be the class variable?
     _counts++;
-    _arr.at(index) = id;
+    _arr.at(_index) = id;
     // return index;
   }
   // Reservoir Sampling
@@ -37,8 +37,6 @@ void Bucket::add(int id) {
   }
 }
 
-const std::vector<int> *Bucket::getAll() const {
-  if (_isInit == -1)
-    return NULL;
-  return &_arr;
+const std::vector<int> &Bucket::getAll() const {
+  return _arr;
 }

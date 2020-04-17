@@ -97,7 +97,7 @@ std::vector<const std::vector<int>*> LSH::retrieveRaw(const std::vector<int> &in
   std::vector<const std::vector<int>*> rawResults(_L);
 
   for (int i = 0; i < _L; i++) {
-    rawResults[i] = _bucket[i][indices[i]].getAll();
+    rawResults[i] = &_bucket[i][indices[i]].getAll();
   }
   return rawResults;
 }
