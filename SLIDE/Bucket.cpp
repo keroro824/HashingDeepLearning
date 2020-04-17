@@ -3,7 +3,7 @@
 
 using namespace std;
 
-Bucket::Bucket() : _isInit(-1), arr(BUCKETSIZE) {}
+Bucket::Bucket() : _isInit(-1), _arr(BUCKETSIZE) {}
 
 Bucket::~Bucket() {}
 
@@ -13,7 +13,7 @@ void Bucket::add(int id) {
     _isInit += 1;
     int index = _counts & (BUCKETSIZE - 1);  // TODO is this supposed to be the class variable?
     _counts++;
-    arr.at(index) = id;
+    _arr.at(index) = id;
     // return index;
   }
   // Reservoir Sampling
@@ -23,13 +23,13 @@ void Bucket::add(int id) {
       int randnum = rand() % (_counts) + 1;
       if (randnum == 2) {
         int randind = rand() % BUCKETSIZE;
-        arr.at(randind) = id;
+        _arr.at(randind) = id;
         // return randind;
       } else {
         // return -1;
       }
     } else {
-      arr.at(_index) = id;
+      _arr.at(_index) = id;
       int returnIndex = _index;
       _index++;
       // return returnIndex;
@@ -37,11 +37,11 @@ void Bucket::add(int id) {
   }
 }
 
-const int *Bucket::getAll() {
+const std::vector<int> *Bucket::getAll() {
   if (_isInit == -1)
     return NULL;
   if (_counts < BUCKETSIZE) {
-    arr.at(_counts) = -1;
+    _arr.at(_counts) = -1;
   }
-  return arr.data();
+  return &_arr;
 }

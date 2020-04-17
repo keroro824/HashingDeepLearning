@@ -4,7 +4,7 @@
 
 class Bucket {
 private:
-  std::vector<int> arr;
+  std::vector<int> _arr;
   int _isInit = -1;
   int _index = 0;
   int _counts = 0;
@@ -12,7 +12,7 @@ private:
 public:
   Bucket();
   void add(int id);
-  const int *getAll();
+  const std::vector<int> *getAll();
   int getSize() const { return _counts; }
   ~Bucket();
 };

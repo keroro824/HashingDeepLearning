@@ -75,7 +75,7 @@ if (ADAM){
   _train_array.resize(noOfNodes * batchsize);
 
   // create nodes for this layer
-#pragma omp parallel for num_threads(1)
+#pragma omp parallel for //num_threads(1)
   for (size_t i = 0; i < noOfNodes; i++) {
     _Nodes[i].Update(previousLayerNumOfNodes, i, _layerID, type, batchsize,
                      _weights, _bias[i], _adamAvgMom, _adamAvgVel,
@@ -229,7 +229,7 @@ int Layer::queryActiveNodeandComputeActivations(
                                      activeValuesperlayer[_layerID]);
       }
       std::vector<int> hashIndices = _hashTables.hashesToIndex(hashes);
-      std::vector<const int *> actives = _hashTables.retrieveRaw(hashIndices);
+      std::vector<const std::vector<int>*> actives = _hashTables.retrieveRaw(hashIndices);
 
       // Get candidates from hashtable
       auto t00 = std::chrono::high_resolution_clock::now();
@@ -249,7 +249,7 @@ int Layer::queryActiveNodeandComputeActivations(
           continue;
         } else {
           for (int j = 0; j < BUCKETSIZE; j++) {
-            int tempID = actives[i][j] - 1;
+            int tempID = (*actives[i])[j] - 1;
             if (tempID >= 0) {
               counts[tempID] += 1;
             } else {
@@ -294,7 +294,7 @@ int Layer::queryActiveNodeandComputeActivations(
                                      activeValuesperlayer[_layerID]);
       }
       std::vector<int> hashIndices = _hashTables.hashesToIndex(hashes);
-      std::vector<const int *> actives = _hashTables.retrieveRaw(hashIndices);
+      std::vector<const std::vector<int>*> actives = _hashTables.retrieveRaw(hashIndices);
       // we now have a sparse array of indices of active nodes
 
       // Get candidates from hashtable
@@ -312,7 +312,7 @@ int Layer::queryActiveNodeandComputeActivations(
         } else {
           // copy sparse array into (dense) map
           for (int j = 0; j < BUCKETSIZE; j++) {
-            int tempID = actives[i][j] - 1;
+            int tempID = (*actives[i])[j] - 1;
             if (tempID >= 0) {
               counts[tempID] += 1;
             } else {
