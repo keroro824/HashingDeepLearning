@@ -3,7 +3,7 @@
 
 using namespace std;
 
-Bucket::Bucket() : _isInit(-1), _arr(BUCKETSIZE) {}
+Bucket::Bucket() : _isInit(-1), _arr(BUCKETSIZE, -1) {}
 
 Bucket::~Bucket() {}
 
@@ -37,11 +37,8 @@ void Bucket::add(int id) {
   }
 }
 
-const std::vector<int> *Bucket::getAll() {
+const std::vector<int> *Bucket::getAll() const {
   if (_isInit == -1)
     return NULL;
-  if (_counts < BUCKETSIZE) {
-    _arr.at(_counts) = -1;
-  }
   return &_arr;
 }
