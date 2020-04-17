@@ -248,11 +248,8 @@ int Layer::queryActiveNodeandComputeActivations(
         assert(actives[i]);
         for (int j = 0; j < actives[i]->size(); j++) {
           int tempID = (*actives[i])[j] - 1;
-          if (tempID >= 0) {
-            counts[tempID] += 1;
-          } else {
-            break;
-          }
+          assert(tempID >= 0);
+          counts[tempID] += 1;
         }
       }
       auto t11 = std::chrono::high_resolution_clock::now();
@@ -308,11 +305,8 @@ int Layer::queryActiveNodeandComputeActivations(
         // copy sparse array into (dense) map
         for (int j = 0; j < actives[i]->size(); j++) {
           int tempID = (*actives[i])[j] - 1;
-          if (tempID >= 0) {
-            counts[tempID] += 1;
-          } else {
-            break;
-          }
+          assert(tempID >= 0);
+          counts[tempID] += 1;
         }
       }
 
