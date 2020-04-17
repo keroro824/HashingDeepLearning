@@ -11,6 +11,5 @@ public:
   Bucket();
   void add(int id);
   const std::vector<int> &getAll() const;
-  int getSize() const { return _counts; }
   ~Bucket();
 };

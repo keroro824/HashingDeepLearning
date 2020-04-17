@@ -36,20 +36,6 @@ void LSH::clear() {
   }
 }
 
-void LSH::count() const {
-  for (int j = 0; j < _L; j++) {
-    int total = 0;
-    for (int i = 0; i < 1 << _RangePow; i++) {
-      if (_bucket[j][i].getSize() != 0) {
-        cout << _bucket[j][i].getSize() << " ";
-      }
-      total += _bucket[j][i].getSize();
-    }
-    cout << endl;
-    cout << "TABLE " << j << "Total " << total << endl;
-  }
-}
-
 std::vector<int> LSH::hashesToIndex(const std::vector<int> &hashes) const {
   std::vector<int> indices(_L);
   for (int i = 0; i < _L; i++) {

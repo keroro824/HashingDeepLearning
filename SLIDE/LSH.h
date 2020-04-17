@@ -20,6 +20,5 @@ public:
   std::vector<int> hashesToIndex(const std::vector<int> &hashes) const;
   std::vector<const std::vector<int> *>
   retrieveRaw(const std::vector<int> &indices) const;
-  void count() const;
   ~LSH();
 };
