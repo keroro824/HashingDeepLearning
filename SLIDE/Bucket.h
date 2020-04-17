@@ -5,8 +5,6 @@
 class Bucket {
 private:
   std::vector<int> _arr;
-  int _isInit = -1;
-  int _index = 0;
   int _counts = 0;
 
 public:

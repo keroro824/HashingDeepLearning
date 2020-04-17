@@ -36,7 +36,7 @@ void LSH::clear() {
   }
 }
 
-void LSH::count() {
+void LSH::count() const {
   for (int j = 0; j < _L; j++) {
     int total = 0;
     for (int i = 0; i < 1 << _RangePow; i++) {
