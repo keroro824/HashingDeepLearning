@@ -75,7 +75,7 @@ if (ADAM){
   _train_array.resize(noOfNodes * batchsize);
 
   // create nodes for this layer
-#pragma omp parallel for //num_threads(1)
+#pragma omp parallel for num_threads(1)
   for (size_t i = 0; i < noOfNodes; i++) {
     _Nodes[i].Update(previousLayerNumOfNodes, i, _layerID, type, batchsize,
                      _weights, _bias[i], _adamAvgMom, _adamAvgVel,
@@ -129,6 +129,30 @@ void Layer::addtoHashTable(SubVector<float> &weights, float bias, int ID) {
 
   std::vector<int> hashIndices = _hashTables.hashesToIndex(hashes);
   _hashTables.add(hashIndices, ID + 1);
+
+  // mine
+  std::vector<float> w(135909, 0);
+  hashes = _dwtaHasher->getHashEasy(w);
+  hashIndices = _hashTables.hashesToIndex(hashes);
+
+  //cerr << "w" << endl; Print(w);
+  cerr << "hashes" << endl; Print(hashes);
+  cerr << "hashIndices" << endl; Print(hashIndices);
+
+  random_device rd;
+  default_random_engine dre(rd());
+  normal_distribution<float> distribution(0.0, 0.01);
+  generate(w.begin(), w.end(),[&]() { return distribution(dre); });
+  //w.clear();
+  //w.resize(135909, 44);
+  hashes = _dwtaHasher->getHashEasy(w);
+  hashIndices = _hashTables.hashesToIndex(hashes);
+
+  //cerr << "w" << endl; Print(w);
+  cerr << "hashes" << endl; Print(hashes);
+  cerr << "hashIndices" << endl; Print(hashIndices);
+
+  exit(44);
 }
 
 Node &Layer::getNodebyID(size_t nodeID) {
