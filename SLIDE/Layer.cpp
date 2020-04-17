@@ -245,16 +245,13 @@ int Layer::queryActiveNodeandComputeActivations(
       }
 
       for (int i = 0; i < _L; i++) {
-        if (actives[i] == NULL) {
-          continue;
-        } else {
-          for (int j = 0; j < actives[i]->size(); j++) {
-            int tempID = (*actives[i])[j] - 1;
-            if (tempID >= 0) {
-              counts[tempID] += 1;
-            } else {
-              break;
-            }
+        assert(actives[i]);
+        for (int j = 0; j < actives[i]->size(); j++) {
+          int tempID = (*actives[i])[j] - 1;
+          if (tempID >= 0) {
+            counts[tempID] += 1;
+          } else {
+            break;
           }
         }
       }
@@ -307,17 +304,14 @@ int Layer::queryActiveNodeandComputeActivations(
       }
 
       for (int i = 0; i < _L; i++) {
-        if (actives[i] == NULL) {
-          continue;
-        } else {
-          // copy sparse array into (dense) map
-          for (int j = 0; j < actives[i]->size(); j++) {
-            int tempID = (*actives[i])[j] - 1;
-            if (tempID >= 0) {
-              counts[tempID] += 1;
-            } else {
-              break;
-            }
+        assert(actives[i]);
+        // copy sparse array into (dense) map
+        for (int j = 0; j < actives[i]->size(); j++) {
+          int tempID = (*actives[i])[j] - 1;
+          if (tempID >= 0) {
+            counts[tempID] += 1;
+          } else {
+            break;
           }
         }
       }
