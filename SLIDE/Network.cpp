@@ -37,7 +37,7 @@ int Network::predictClass(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
   int correctPred = 0;
 
   auto t1 = std::chrono::high_resolution_clock::now();
-#pragma omp parallel for reduction(+ : correctPred) //num_threads(1)
+#pragma omp parallel for reduction(+ : correctPred) // num_threads(1)
   for (int i = 0; i < _currentBatchSize; i++) {
     Vec2d<int> activenodesperlayer(_numberOfLayers + 1);
     Vec2d<float> activeValuesperlayer(_numberOfLayers + 1);
@@ -100,10 +100,10 @@ int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
     //        tmplr *= pow(0.9, iter/10.0);
   }
 
-  Vec3d<int> activeNodesPerBatch(_currentBatchSize);    // batch, layer, node
+  Vec3d<int> activeNodesPerBatch(_currentBatchSize); // batch, layer, node
   Vec3d<float> activeValuesPerBatch(_currentBatchSize);
   Vec2d<int> sizesPerBatch(_currentBatchSize);
-#pragma omp parallel for  //num_threads(1)
+#pragma omp parallel for // num_threads(1)
   for (int i = 0; i < _currentBatchSize; i++) {
     Vec2d<int> &activenodesperlayer = activeNodesPerBatch[i];
     activenodesperlayer.resize(_numberOfLayers + 1);
@@ -174,7 +174,7 @@ int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
       _hiddenlayers[l]->updateTable();
     }
     int ratio = 1;
-#pragma omp parallel for //num_threads(1)
+#pragma omp parallel for // num_threads(1)
     for (size_t m = 0; m < _hiddenlayers[l]->noOfNodes(); m++) {
       Node &tmp = _hiddenlayers[l]->getNodebyID(m);
       int dim = tmp.dim();
@@ -212,8 +212,7 @@ int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
         if (HashFunction == 1) {
           hashes = _hiddenlayers[l]->_wtaHasher->getHash(local_weights);
         } else if (HashFunction == 2) {
-          hashes =
-              _hiddenlayers[l]->_dwtaHasher->getHashEasy(local_weights);
+          hashes = _hiddenlayers[l]->_dwtaHasher->getHashEasy(local_weights);
         } else if (HashFunction == 3) {
           hashes = _hiddenlayers[l]->_MinHasher->getHashEasy(
               _hiddenlayers[l]->binids(), local_weights, TOPK);

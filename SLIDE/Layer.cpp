@@ -75,7 +75,7 @@ if (ADAM){
   _train_array.resize(noOfNodes * batchsize);
 
   // create nodes for this layer
-#pragma omp parallel for //num_threads(1)
+#pragma omp parallel for // num_threads(1)
   for (size_t i = 0; i < noOfNodes; i++) {
     _Nodes[i].Update(previousLayerNumOfNodes, i, _layerID, type, batchsize,
                      _weights, _bias[i], _adamAvgMom, _adamAvgVel,
@@ -85,7 +85,7 @@ if (ADAM){
   auto t2 = std::chrono::high_resolution_clock::now();
   auto timeDiffInMiliseconds =
       std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
-  //std::cout << noOfNodes << " " << 1.0 * timeDiffInMiliseconds << std::endl;
+  // std::cout << noOfNodes << " " << 1.0 * timeDiffInMiliseconds << std::endl;
 
   if (type == NodeType::Softmax) {
     _normalizationConstants.resize(batchsize);
@@ -197,8 +197,8 @@ float collision(int *hashes, int *table_hashes, int k, int l) {
 
 int Layer::queryActiveNodeandComputeActivations(
     Vec2d<int> &activenodesperlayer, Vec2d<float> &activeValuesperlayer,
-    std::vector<int> &lengths, int inputID,
-    const std::vector<int> &label, float Sparsity, int iter, bool train) {
+    std::vector<int> &lengths, int inputID, const std::vector<int> &label,
+    float Sparsity, int iter, bool train) {
   // LSH QueryLogic
 
   // Beidi. Query out all the candidate nodes
@@ -208,8 +208,7 @@ int Layer::queryActiveNodeandComputeActivations(
   if (Sparsity == 1.0) {
     len = _noOfNodes;
     lengths[_layerID + 1] = len;
-    activenodesperlayer[_layerID + 1].resize(
-        len); // assuming not intitialized;
+    activenodesperlayer[_layerID + 1].resize(len); // assuming not intitialized;
     for (int i = 0; i < len; i++) {
       activenodesperlayer[_layerID + 1][i] = i;
     }
@@ -222,14 +221,15 @@ int Layer::queryActiveNodeandComputeActivations(
         hashes = _dwtaHasher->getHash(activenodesperlayer[_layerID],
                                       activeValuesperlayer[_layerID]);
       } else if (HashFunction == 3) {
-        hashes = _MinHasher->getHashEasy(
-            _binids, activeValuesperlayer[_layerID], TOPK);
+        hashes = _MinHasher->getHashEasy(_binids,
+                                         activeValuesperlayer[_layerID], TOPK);
       } else if (HashFunction == 4) {
         hashes = _srp->getHashSparse(activenodesperlayer[_layerID],
                                      activeValuesperlayer[_layerID]);
       }
       std::vector<int> hashIndices = _hashTables.hashesToIndex(hashes);
-      std::vector<const std::vector<int>*> actives = _hashTables.retrieveRaw(hashIndices);
+      std::vector<const std::vector<int> *> actives =
+          _hashTables.retrieveRaw(hashIndices);
 
       // Get candidates from hashtable
       auto t00 = std::chrono::high_resolution_clock::now();
@@ -281,14 +281,15 @@ int Layer::queryActiveNodeandComputeActivations(
         hashes = _dwtaHasher->getHash(activenodesperlayer[_layerID],
                                       activeValuesperlayer[_layerID]);
       } else if (HashFunction == 3) {
-        hashes = _MinHasher->getHashEasy(
-            _binids, activeValuesperlayer[_layerID], TOPK);
+        hashes = _MinHasher->getHashEasy(_binids,
+                                         activeValuesperlayer[_layerID], TOPK);
       } else if (HashFunction == 4) {
         hashes = _srp->getHashSparse(activenodesperlayer[_layerID],
                                      activeValuesperlayer[_layerID]);
       }
       std::vector<int> hashIndices = _hashTables.hashesToIndex(hashes);
-      std::vector<const std::vector<int>*> actives = _hashTables.retrieveRaw(hashIndices);
+      std::vector<const std::vector<int> *> actives =
+          _hashTables.retrieveRaw(hashIndices);
       // we now have a sparse array of indices of active nodes
 
       // Get candidates from hashtable
@@ -385,10 +386,9 @@ int Layer::queryActiveNodeandComputeActivations(
       int what = 0;
 
       for (size_t s = 0; s < _noOfNodes; s++) {
-        float tmp =
-            innerproduct(activenodesperlayer[_layerID].data(),
-                         activeValuesperlayer[_layerID].data(),
-                         lengths[_layerID], _Nodes[s].weights().data());
+        float tmp = innerproduct(activenodesperlayer[_layerID].data(),
+                                 activeValuesperlayer[_layerID].data(),
+                                 lengths[_layerID], _Nodes[s].weights().data());
         tmp += _Nodes[s].bias();
         if (find(label.begin(), label.end(), s) != label.end()) {
           sortW.push_back(make_pair(-1000000000, s));
@@ -452,7 +452,7 @@ void Layer::saveWeights(const string &file) {
     cnpy::npz_save(file, "av_layer_0", _adamAvgVel.data(),
                    {_noOfNodes, _Nodes[0].dim()}, "a");
     cout << "save for layer 0" << endl;
-    //cout << _weights[0] << " " << _weights[1] << endl;
+    // cout << _weights[0] << " " << _weights[1] << endl;
   } else {
     cnpy::npz_save(file, "w_layer_" + to_string(_layerID), _weights.data(),
                    {_noOfNodes, _Nodes[0].dim()}, "a");
@@ -463,7 +463,7 @@ void Layer::saveWeights(const string &file) {
     cnpy::npz_save(file, "av_layer_" + to_string(_layerID), _adamAvgVel.data(),
                    {_noOfNodes, _Nodes[0].dim()}, "a");
     cout << "save for layer " << to_string(_layerID) << endl;
-    //cout << _weights[0] << " " << _weights[1] << endl;
+    // cout << _weights[0] << " " << _weights[1] << endl;
   }
 }
 

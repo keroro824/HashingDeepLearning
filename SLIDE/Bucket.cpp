@@ -4,20 +4,17 @@
 
 using namespace std;
 
-Bucket::Bucket() {
-  _arr.reserve(BUCKETSIZE);
-}
+Bucket::Bucket() { _arr.reserve(BUCKETSIZE); }
 
 Bucket::~Bucket() {}
 
 void Bucket::add(int id) {
   if (_arr.size() < BUCKETSIZE) {
     _arr.push_back(id);
-  }
-  else {
+  } else {
     // FIFO
     if (FIFO) {
-      int index = _counts & (BUCKETSIZE - 1);  
+      int index = _counts & (BUCKETSIZE - 1);
       _arr.at(index) = id;
       // return index;
     }
@@ -46,6 +43,4 @@ void Bucket::add(int id) {
   ++_counts;
 }
 
-const std::vector<int> &Bucket::getAll() const {
-  return _arr;
-}
+const std::vector<int> &Bucket::getAll() const { return _arr; }

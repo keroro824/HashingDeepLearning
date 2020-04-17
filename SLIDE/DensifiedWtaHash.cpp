@@ -58,7 +58,8 @@ DensifiedWtaHash::DensifiedWtaHash(int numHashes, int noOfBitsToHash)
     _randHash[1]++;
 }
 
-std::vector<int> DensifiedWtaHash::getHashEasy(const std::vector<float> &data) const {
+std::vector<int>
+DensifiedWtaHash::getHashEasy(const std::vector<float> &data) const {
   SubVectorConst<float> dataSub(data, 0, data.size());
   return getHashEasy(dataSub);
 }
@@ -107,11 +108,11 @@ DensifiedWtaHash::getHashEasy(const SubVectorConst<float> &data) const {
     hashArray[i] = next;
   }
 
-  //cerr << "data:" << data.size() << endl;
-  //Print(data);
+  // cerr << "data:" << data.size() << endl;
+  // Print(data);
 
-  //cerr << "hashArray:" << hashArray.size() << endl;;
-  //Print(hashArray);
+  // cerr << "hashArray:" << hashArray.size() << endl;;
+  // Print(hashArray);
 
   return hashArray;
 }
@@ -164,7 +165,7 @@ DensifiedWtaHash::getHash(const std::vector<int> &indices,
     cerr << "indices:" << indices.size() << " ";
     cerr << "data:" << data.size() << " ";
     cerr << "hashArray:" << hashArray.size() << endl;;
-    //Print(indices);  
+    //Print(indices);
     //Print(data);
     //Print(hashArray);
   }
