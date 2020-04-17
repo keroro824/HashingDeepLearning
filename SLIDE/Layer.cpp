@@ -131,6 +131,7 @@ void Layer::addtoHashTable(SubVector<float> &weights, float bias, int ID) {
   _hashTables.add(hashIndices, ID + 1);
 
   // mine
+  /*
   std::vector<float> w(135909, 0);
   hashes = _dwtaHasher->getHashEasy(w);
   hashIndices = _hashTables.hashesToIndex(hashes);
@@ -153,6 +154,7 @@ void Layer::addtoHashTable(SubVector<float> &weights, float bias, int ID) {
   cerr << "hashIndices" << endl; Print(hashIndices);
 
   exit(44);
+  */
 }
 
 Node &Layer::getNodebyID(size_t nodeID) {
