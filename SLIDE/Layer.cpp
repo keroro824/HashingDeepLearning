@@ -85,7 +85,7 @@ if (ADAM){
   auto t2 = std::chrono::high_resolution_clock::now();
   auto timeDiffInMiliseconds =
       std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
-  std::cout << noOfNodes << " " << 1.0 * timeDiffInMiliseconds << std::endl;
+  //std::cout << noOfNodes << " " << 1.0 * timeDiffInMiliseconds << std::endl;
 
   if (type == NodeType::Softmax) {
     _normalizationConstants.resize(batchsize);
@@ -464,7 +464,7 @@ void Layer::saveWeights(const string &file) {
     cnpy::npz_save(file, "av_layer_0", _adamAvgVel.data(),
                    {_noOfNodes, _Nodes[0].dim()}, "a");
     cout << "save for layer 0" << endl;
-    cout << _weights[0] << " " << _weights[1] << endl;
+    //cout << _weights[0] << " " << _weights[1] << endl;
   } else {
     cnpy::npz_save(file, "w_layer_" + to_string(_layerID), _weights.data(),
                    {_noOfNodes, _Nodes[0].dim()}, "a");
@@ -475,7 +475,7 @@ void Layer::saveWeights(const string &file) {
     cnpy::npz_save(file, "av_layer_" + to_string(_layerID), _adamAvgVel.data(),
                    {_noOfNodes, _Nodes[0].dim()}, "a");
     cout << "save for layer " << to_string(_layerID) << endl;
-    cout << _weights[0] << " " << _weights[1] << endl;
+    //cout << _weights[0] << " " << _weights[1] << endl;
   }
 }
 
