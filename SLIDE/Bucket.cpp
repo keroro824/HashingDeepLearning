@@ -4,11 +4,24 @@
 
 using namespace std;
 
-Bucket::Bucket() { _arr.reserve(BUCKETSIZE); }
+Bucket::Bucket() {
+  _arr.reserve(BUCKETSIZE); 
+  _mutex = new std::mutex();
+}
 
-Bucket::~Bucket() {}
+Bucket::~Bucket() {
+  delete _mutex;
+}
 
 void Bucket::add(int id) {
+  std::lock_guard<std::mutex> guard(*_mutex);
+  
+  //cerr << "id=" << id << endl;
+  if (id <= 0) {
+    cerr << "shit id=" << id << endl;
+    abort();
+    exit(22);
+  }
   if (_arr.size() < BUCKETSIZE) {
     _arr.push_back(id);
   } else {
@@ -43,4 +56,7 @@ void Bucket::add(int id) {
   ++_counts;
 }
 
-const std::vector<int> &Bucket::getAll() const { return _arr; }
+const std::vector<int> &Bucket::getAll() const {
+  //Print("_arr", _arr);
+  return _arr; 
+}
