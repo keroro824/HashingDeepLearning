@@ -273,6 +273,8 @@ int Layer::queryActiveNodeandComputeActivations(
       in = len;
     }
     if (Mode == 4) {
+      Print("activenodesperlayer", activenodesperlayer[_layerID]);
+      Print("activeValuesperlayer", activeValuesperlayer[_layerID]);
       std::vector<int> hashes;
       if (HashFunction == 1) {
         hashes = _wtaHasher->getHash(activeValuesperlayer[_layerID]);

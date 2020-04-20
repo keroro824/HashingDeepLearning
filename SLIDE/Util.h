@@ -117,7 +117,7 @@ template <typename T> void Print(const std::string &str, const std::vector<T> &v
 }
 
 template <typename T> void Print(const std::string &str, const SubVectorConst<T> &vec) {
-  std::cerr << str << "=" << std::flush;
+  std::cerr << str << " " << vec.size() << "=" << std::flush;
   for (size_t i = 0; i < vec.size(); ++i) {
     std::cerr << vec[i] << " "; // << std::endl;
   }
