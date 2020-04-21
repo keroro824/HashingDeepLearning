@@ -277,7 +277,7 @@ void ReadDataSVM(size_t numBatches, Network &_mynet, int epoch) {
   std::getline(file, str);
   for (size_t i = 0; i < numBatches; i++) {
     if ((i + epoch * numBatches) % Stepsize == 0) {
-      EvalDataSVM(2, _mynet, epoch * numBatches + i);
+      EvalDataSVM(20, _mynet, epoch * numBatches + i);
     }
     Vec2d<int> records(Batchsize);
     Vec2d<float> values(Batchsize);
