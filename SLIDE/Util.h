@@ -123,3 +123,12 @@ template <typename T> void Print(const std::string &str, const SubVectorConst<T>
   }
   std::cerr << std::endl;
 }
+
+template <typename T> void PrintSizes(const std::string &str, const Vec2d<T> &vec) {
+  std::cerr << str << " " << vec.size() << "=" << std::flush;
+  for (size_t i = 0; i < vec.size(); ++i) {
+    const std::vector<T> &inner = vec[i];
+    std::cerr << inner.size() << " "; // << std::endl;
+  }
+  std::cerr << std::endl;
+}

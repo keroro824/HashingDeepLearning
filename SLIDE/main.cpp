@@ -237,6 +237,10 @@ void CreateData(std::ifstream &file, Vec2d<int> &records, Vec2d<float> &values,
 void EvalDataSVM(int numBatchesTest, Network &_mynet, int iter) {
   int totCorrect = 0;
   std::ifstream file(testData);
+  if (!file) {
+    cout << "Error file not found: " << testData << endl;
+  }
+
   string str;
   // Skipe header
   std::getline(file, str);
@@ -272,6 +276,10 @@ void EvalDataSVM(int numBatchesTest, Network &_mynet, int iter) {
 
 void ReadDataSVM(size_t numBatches, Network &_mynet, int epoch) {
   std::ifstream file(trainData);
+  if (!file) {
+    cout << "Error file not found: " << trainData << endl;
+  }
+
   std::string str;
   // skipe header
   std::getline(file, str);
