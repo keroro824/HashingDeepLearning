@@ -36,14 +36,14 @@ void Node::Update(int dim, int nodeID, int layerID, NodeType type,
 }
 
 float Node::getLastActivation(int inputID) const {
-  if (_train[inputID]._ActiveinputIds != 1)
+  if (!_train[inputID]._ActiveinputIds)
     return 0.0;
   return _train[inputID]._lastActivations;
 }
 
 void Node::incrementDelta(int inputID, float incrementValue) {
   assert(("Input Not Active but still called !! BUG",
-          _train[inputID]._ActiveinputIds == 1));
+          _train[inputID]._ActiveinputIds));
   if (_train[inputID]._lastActivations > 0)
     _train[inputID]._lastDeltaforBPs += incrementValue;
 }
@@ -55,8 +55,8 @@ float Node::getActivation(const std::vector<int> &indices,
 
   // FUTURE TODO: shrink batchsize and check if input is alread active then
   // ignore and ensure backpopagation is ignored too.
-  if (_train[inputID]._ActiveinputIds != 1) {
-    _train[inputID]._ActiveinputIds = 1; // activate input
+  if (!_train[inputID]._ActiveinputIds) {
+    _train[inputID]._ActiveinputIds = true; // activate input
     _activeInputs++;
   }
 
@@ -91,7 +91,7 @@ float Node::getActivation(const std::vector<int> &indices,
 void Node::ComputeExtaStatsForSoftMax(float normalizationConstant, int inputID,
                                       const std::vector<int> &label) {
   assert(("Input Not Active but still called !! BUG",
-          _train[inputID]._ActiveinputIds == 1));
+          _train[inputID]._ActiveinputIds));
 
   _train[inputID]._lastActivations /= normalizationConstant + 0.0000001;
 
@@ -112,7 +112,7 @@ void Node::backPropagate(std::vector<Node> &previousNodes,
                          int previousLayerActiveNodeSize, float learningRate,
                          int inputID) {
   assert(("Input Not Active but still called !! BUG",
-          _train[inputID]._ActiveinputIds == 1));
+          _train[inputID]._ActiveinputIds));
   for (int i = 0; i < previousLayerActiveNodeSize; i++) {
     // UpdateDelta before updating weights
     Node &prev_node = previousNodes[previousLayerActiveNodeIds[i]];
@@ -138,7 +138,7 @@ void Node::backPropagate(std::vector<Node> &previousNodes,
     _mirrorbias += learningRate * _train[inputID]._lastDeltaforBPs;
   }
 
-  _train[inputID]._ActiveinputIds = 0;
+  _train[inputID]._ActiveinputIds = false;
   _train[inputID]._lastDeltaforBPs = 0;
   _train[inputID]._lastActivations = 0;
   _activeInputs--;
@@ -149,7 +149,7 @@ void Node::backPropagateFirstLayer(const std::vector<int> &nnzindices,
                                    int nnzSize, float learningRate,
                                    int inputID) {
   assert(("Input Not Active but still called !! BUG",
-          _train[inputID]._ActiveinputIds == 1));
+          _train[inputID]._ActiveinputIds));
   for (int i = 0; i < nnzSize; i++) {
     float grad_t = _train[inputID]._lastDeltaforBPs * nnzvalues[i];
     float grad_tsq = grad_t * grad_t;
@@ -168,7 +168,7 @@ void Node::backPropagateFirstLayer(const std::vector<int> &nnzindices,
     _mirrorbias += learningRate * _train[inputID]._lastDeltaforBPs;
   }
 
-  _train[inputID]._ActiveinputIds = 0; // deactivate inputIDs
+  _train[inputID]._ActiveinputIds = false; // deactivate inputIDs
   _train[inputID]._lastDeltaforBPs = 0;
   _train[inputID]._lastActivations = 0;
   _activeInputs--;

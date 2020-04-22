@@ -18,6 +18,7 @@ Network::Network(const std::vector<int> &sizesOfLayers,
       _numberOfLayers(noOfLayers), _learningRate(lr),
       _currentBatchSize(batchSize) {
   //Print("_Sparsity", _Sparsity);
+  Print("layersTypes", layersTypes);
 
   for (int i = 0; i < noOfLayers; i++) {
     int previousLayerNumOfNodes;

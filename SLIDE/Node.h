@@ -12,7 +12,7 @@ struct train {
   float _lastDeltaforBPs;
   float _lastActivations;
   float _lastGradients;
-  int _ActiveinputIds;
+  bool _ActiveinputIds;
 } __attribute__((aligned(64)));
 
 class Node {

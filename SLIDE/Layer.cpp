@@ -411,6 +411,7 @@ int Layer::queryActiveNodeandComputeActivations(
   }
 
   //***********************************
+  // Calc logit and Z for softmax
   activeValuesperlayer[_layerID + 1].resize(
       len); // assuming its not initialized else memory leak;
   float maxValue = 0;
