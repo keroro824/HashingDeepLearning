@@ -4,6 +4,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 //! convert string to variable of type T. Used to reading floats, int etc from
 //! files
@@ -136,5 +137,8 @@ void PrintSizes(const std::string &str, const Vec2d<T> &vec) {
   std::cerr << std::endl;
 }
 
+void CreateData(std::ifstream &file, std::vector<std::unordered_map<int, float> > &data, Vec2d<int> &labels, int batchsize);
+
 void CreateData(std::ifstream &file, Vec2d<int> &records, Vec2d<float> &values,
                 Vec2d<int> &labels, int batchsize);
+

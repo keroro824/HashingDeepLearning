@@ -16,32 +16,26 @@ Network::Network() {
 
 Network::~Network() { cerr << "~Network" << endl; }
 
-size_t Network::predictClass(const Vec2d<int> &inputIndices, const Vec2d<float> &inputValues,
-  const Vec2d<int> &labels) const {
-  assert(inputIndices.size() == inputValues.size());
-  assert(inputIndices.size() == labels.size());
-  size_t batchSize = inputIndices.size();
+size_t
+Network::predictClass(const std::vector<std::unordered_map<int, float>> &data,
+                      const Vec2d<int> &labels) const {
+  assert(data.size() == labels.size());
+  size_t batchSize = data.size();
 
   size_t correctPred = 0;
 
   // inference
-  for (int batchSize = 0; batchSize < batchSize; ++batchSize) {
-    const std::vector<int> &inputIndices1 = inputIndices[batchSize];
-    const std::vector<float> &inputValues1 = inputValues[batchSize];
-    const std::vector<int> &labels1 = labels[batchSize];
-    
-    size_t correctPred1 = computeActivation(inputIndices1, inputValues1, labels1);
+  for (size_t batchIdx = 0; batchIdx < batchSize; ++batchIdx) {
+    const std::unordered_map<int, float> &data1 = data[batchIdx];
+    const std::vector<int> &labels1 = labels[batchIdx];
 
+    size_t correctPred1 = computeActivation(data1, labels1);
   }
-
-
   return correctPred;
 }
 
-size_t Network::computeActivation(const std::vector<int> &inputIndices1, const std::vector<float> &inputValues1,
-  const std::vector<int> &labels1) const {
-  assert(inputIndices1.size() == inputValues1.size());
-
+size_t Network::computeActivation(const std::unordered_map<int, float> &data1,
+                                  const std::vector<int> &labels1) const {
   size_t correctPred = 0;
 
   // inference
@@ -49,9 +43,7 @@ size_t Network::computeActivation(const std::vector<int> &inputIndices1, const s
 
   for (int layerIdx = 1; layerIdx < _layers.size(); ++layerIdx) {
     const Layer &layer = getLayer(layerIdx);
-
   }
-
 
   return correctPred;
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include "Layer.h"
+#include <unordered_map>
 #include <vector>
 
 namespace hieu {
@@ -10,16 +11,15 @@ protected:
   const Layer &getLayer(size_t idx) const { return *_layers[idx]; }
   Layer &getLayer(size_t idx) { return *_layers[idx]; }
 
-  size_t computeActivation(const std::vector<int> &inputIndices, const std::vector<float> &inputValues,
-    const std::vector<int> &labels) const;
+  size_t computeActivation(const std::unordered_map<int, float> &data1,
+                           const std::vector<int> &labels) const;
 
 public:
   Network();
   virtual ~Network();
 
-  size_t predictClass(const Vec2d<int> &inputIndices, const Vec2d<float> &inputValues,
-    const Vec2d<int> &labels) const;
-
+  size_t predictClass(const std::vector<std::unordered_map<int, float>> &data,
+                      const Vec2d<int> &labels) const;
 };
 
 } // namespace hieu

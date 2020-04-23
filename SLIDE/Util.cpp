@@ -3,8 +3,32 @@
 #include <iostream>
 #include <string.h>
 #include <vector>
+#include <cassert>
 
 using namespace std;
+
+void CreateData(std::ifstream &file, std::vector<std::unordered_map<int, float> > &data, Vec2d<int> &labels, int batchsize)
+{
+  Vec2d<int> records;
+  Vec2d<float> values;
+
+  CreateData(file, records, values, labels, batchsize);
+  assert(records.size() == values.size());
+  assert(records.size() == labels.size());
+
+  for (size_t batchIdx = 0; batchIdx < records.size(); ++batchIdx) {
+    const std::vector<int> &records1 = records[batchIdx];
+    const std::vector<float> &values1 = values[batchIdx];
+    assert(records1.size() == values1.size());
+
+    std::unordered_map<int, float> &data1 = data[batchIdx];
+    for (size_t featureIdx = 0; featureIdx < records1.size(); ++featureIdx) {
+      int feature = records1[featureIdx];
+      float value = values1[featureIdx];
+      data1[feature] = value;
+    }
+  }
+}
 
 void CreateData(std::ifstream &file, Vec2d<int> &records, Vec2d<float> &values,
                 Vec2d<int> &labels, int batchsize) {
