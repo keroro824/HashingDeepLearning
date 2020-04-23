@@ -22,6 +22,7 @@
     <ClCompile Include="Bucket.cpp" />
     <ClCompile Include="DensifiedMinhash.cpp" />
     <ClCompile Include="DensifiedWtaHash.cpp" />
+    <ClCompile Include="hieu\hieu-main.cpp" />
     <ClCompile Include="Layer.cpp" />
     <ClCompile Include="LSH.cpp" />
     <ClCompile Include="main.cpp" />
@@ -37,6 +38,7 @@
     <ClInclude Include="Config.h" />
     <ClInclude Include="DensifiedMinhash.h" />
     <ClInclude Include="DensifiedWtaHash.h" />
+    <ClInclude Include="hieu\hieu-main.h" />
     <ClInclude Include="Layer.h" />
     <ClInclude Include="LSH.h" />
     <ClInclude Include="MurmurHash.h" />

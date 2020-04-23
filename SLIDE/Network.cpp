@@ -56,7 +56,7 @@ int Network::predictClass(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
                           const Vec2d<int> &labels) {
   int correctPred = 0;
   _hiddenlayers.back()->Reset();
-  PrintNumberActive("HH1");
+  //PrintNumberActive("HH1");
   
   auto t1 = std::chrono::high_resolution_clock::now();
 #pragma omp parallel for reduction(+ : correctPred) //num_threads(1)
@@ -95,7 +95,7 @@ int Network::predictClass(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
       correctPred++;
     }
   }
-  PrintNumberActive("HH2");
+  //PrintNumberActive("HH2");
 
   auto t2 = std::chrono::high_resolution_clock::now();
   float timeDiffInMiliseconds =

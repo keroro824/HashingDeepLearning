@@ -13,7 +13,7 @@ struct train {
   float _lastActivations;
   float _lastGradients;
   bool _ActiveinputIds;
-} __attribute__((aligned(64)));
+};
 
 class Node {
 private:

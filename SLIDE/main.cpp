@@ -2,6 +2,7 @@
 #include "Network.h"
 #include "Node.h"
 #include "Util.h"
+#include "hieu/hieu-main.h"
 #include <algorithm>
 #include <cfloat>
 #include <climits>
@@ -116,13 +117,13 @@ void parseconfig(string filename) {
       }
     } else if (trim(first) == "Sparsity") {
       string str = trim(second).c_str();
-      //Sparsity.resize(numLayer);
+      // Sparsity.resize(numLayer);
       char *mystring = &str[0];
       char *pch;
       pch = strtok(mystring, ",");
       while (pch != NULL) {
         Sparsity.push_back(atof(pch));
-        //Print("Sparsity", Sparsity);
+        // Print("Sparsity", Sparsity);
         pch = strtok(NULL, ",");
       }
     } else if (trim(first) == "Batchsize") {
@@ -325,6 +326,8 @@ void ReadDataSVM(size_t numBatches, Network &_mynet, int epoch) {
 }
 
 int main(int argc, char *argv[]) {
+  hieu::main(argc, argv);
+
   //***********************************
   // Parse Config File
   //***********************************
