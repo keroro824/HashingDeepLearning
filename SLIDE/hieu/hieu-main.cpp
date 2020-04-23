@@ -11,9 +11,10 @@ int main(int argc, char *argv[]) {
   cerr << "Starting" << endl;
   size_t numEpochs = 5;
 
-  Network mynet();
-
+  hieu::Network mynet(11);
+  
   for (size_t epoch = 0; epoch < numEpochs; epoch++) {
+    cerr << "epoch=" << epoch << endl;
   }
 
   cerr << "Finished" << endl;

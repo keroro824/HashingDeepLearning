@@ -5,10 +5,10 @@
 namespace hieu {
 class Network {
 protected:
-  std::vector<Layer> _layers;
+  std::vector<Layer*> _layers;
 
 public:
-  Network();
+  Network(int);
   virtual ~Network();
 };
 

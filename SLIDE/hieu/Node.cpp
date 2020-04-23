@@ -6,8 +6,10 @@
 using namespace std;
 
 namespace hieu {
-  Node::Node() {
-    cerr << "Create Node" << endl;
+  Node::Node(size_t idx) 
+    :_idx(idx)
+  {
+    //cerr << "Create Node" << endl;
 
   }
 

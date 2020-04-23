@@ -17,6 +17,7 @@ private:
   void PrintNumberActive(const std::string &str) const;
 
 public:
+  Network() = delete;
   Network(const std::vector<int> &sizesOfLayers,
           const std::vector<NodeType> &layersTypes, int noOfLayers,
           int batchsize, float lr, int inputdim, const std::vector<int> &K,

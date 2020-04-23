@@ -3,14 +3,19 @@
 #include <stddef.h>
 #include <stdlib.h>
 
+using namespace std;
+
 namespace hieu {
-Network::Network() 
+Network::Network(int) 
 {
-  _layers.push_back(Layer());
-  _layers.push_back(Layer());
-  _layers.push_back(Layer());
+  cerr << "Create Network" << endl;
+  _layers.push_back(new RELULayer(128));
+  _layers.push_back(new SoftmaxLayer(670091));
 }
 
-Network::~Network() {}
+Network::~Network() 
+{
+  cerr << "~Network" << endl;
+}
 
 } // namespace hieu

@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\bin\CNPY-source\cnpy.cpp" />
     <ClCompile Include="Bucket.cpp" />
     <ClCompile Include="DensifiedMinhash.cpp" />
     <ClCompile Include="DensifiedWtaHash.cpp" />
@@ -37,6 +38,7 @@
     <ClCompile Include="WtaHash.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\bin\CNPY-source\cnpy.h" />
     <ClInclude Include="Bucket.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="DensifiedMinhash.h" />
