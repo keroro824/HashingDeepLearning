@@ -17,8 +17,8 @@ Network::Network(const std::vector<int> &sizesOfLayers,
       _layersTypes(layersTypes), _Sparsity(Sparsity),
       _numberOfLayers(noOfLayers), _learningRate(lr),
       _currentBatchSize(batchSize) {
-  //Print("_Sparsity", _Sparsity);
-  //Print("layersTypes", layersTypes);
+  // Print("_Sparsity", _Sparsity);
+  // Print("layersTypes", layersTypes);
 
   for (int i = 0; i < noOfLayers; i++) {
     int previousLayerNumOfNodes;
@@ -35,14 +35,13 @@ Network::Network(const std::vector<int> &sizesOfLayers,
   cout << "after layer" << endl;
 }
 
-void Network::PrintNumberActive(const std::string &str) const
-{
+void Network::PrintNumberActive(const std::string &str) const {
   Layer &layer = *_hiddenlayers.back();
   cerr << str << "=";
   for (int i = 0; i < _currentBatchSize; i++) {
     size_t c = 0;
     for (size_t j = 0; j < layer.getAllNodes().size(); ++j) {
-      //cerr << layer.getAllNodes()[j].getTrain(i)._ActiveinputIds << flush;
+      // cerr << layer.getAllNodes()[j].getTrain(i)._ActiveinputIds << flush;
       if (layer.getAllNodes()[j].getTrain(i)._ActiveinputIds) {
         ++c;
       }
@@ -56,10 +55,10 @@ int Network::predictClass(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
                           const Vec2d<int> &labels) {
   int correctPred = 0;
   _hiddenlayers.back()->Reset();
-  //PrintNumberActive("HH1");
-  
+  // PrintNumberActive("HH1");
+
   auto t1 = std::chrono::high_resolution_clock::now();
-#pragma omp parallel for reduction(+ : correctPred) //num_threads(1)
+#pragma omp parallel for reduction(+ : correctPred) // num_threads(1)
   for (int i = 0; i < _currentBatchSize; i++) {
     Vec2d<int> activenodesperlayer(_numberOfLayers + 1);
     Vec2d<float> activeValuesperlayer(_numberOfLayers + 1);
@@ -95,7 +94,7 @@ int Network::predictClass(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
       correctPred++;
     }
   }
-  //PrintNumberActive("HH2");
+  // PrintNumberActive("HH2");
 
   auto t2 = std::chrono::high_resolution_clock::now();
   float timeDiffInMiliseconds =
@@ -127,7 +126,7 @@ int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
   Vec3d<int> activeNodesPerBatch(_currentBatchSize); // batch, layer, node
   Vec3d<float> activeValuesPerBatch(_currentBatchSize);
   Vec2d<int> sizesPerBatch(_currentBatchSize);
-#pragma omp parallel for //num_threads(1)
+#pragma omp parallel for // num_threads(1)
   for (int i = 0; i < _currentBatchSize; i++) {
     Vec2d<int> &activenodesperlayer = activeNodesPerBatch[i];
     activenodesperlayer.resize(_numberOfLayers + 1);
@@ -146,7 +145,7 @@ int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
     // auto t1 = std::chrono::high_resolution_clock::now();
     for (int j = 0; j < _numberOfLayers; j++) {
       Layer &layer = *_hiddenlayers[j];
-      //layer.Reset();
+      // layer.Reset();
 
       in = _hiddenlayers[j]->queryActiveNodeandComputeActivations(
           activenodesperlayer, activeValuesperlayer, sizes, i, labels[i],
@@ -201,7 +200,7 @@ int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
       _hiddenlayers[l]->updateTable();
     }
     int ratio = 1;
-#pragma omp parallel for //num_threads(1)
+#pragma omp parallel for // num_threads(1)
     for (size_t m = 0; m < _hiddenlayers[l]->noOfNodes(); m++) {
       Node &tmp = _hiddenlayers[l]->getNodebyID(m);
       int dim = tmp.dim();

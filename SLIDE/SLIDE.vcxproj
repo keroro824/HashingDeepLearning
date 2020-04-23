@@ -19,7 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\bin\CNPY-source\cnpy.cpp" />
+    <ClCompile Include="..\bin\CNPY-source\cnpy.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Bucket.cpp" />
     <ClCompile Include="DensifiedMinhash.cpp" />
     <ClCompile Include="DensifiedWtaHash.cpp" />

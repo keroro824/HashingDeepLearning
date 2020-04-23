@@ -1,7 +1,7 @@
 #pragma once
 #include "Config.h"
-#include <vector>
 #include <mutex>
+#include <vector>
 
 class Bucket {
 private:
@@ -15,5 +15,4 @@ public:
 
   void add(int id);
   const std::vector<int> &getAll() const;
-  
 };

@@ -111,12 +111,14 @@ public:
 };
 
 ////////////////////////////////////////////////////////
-template <typename T> void Print(const std::string &str, const std::vector<T> &vec) {
+template <typename T>
+void Print(const std::string &str, const std::vector<T> &vec) {
   SubVectorConst<T> subvec(vec, 0, vec.size());
   Print(str, subvec);
 }
 
-template <typename T> void Print(const std::string &str, const SubVectorConst<T> &vec) {
+template <typename T>
+void Print(const std::string &str, const SubVectorConst<T> &vec) {
   std::cerr << str << " " << vec.size() << "=" << std::flush;
   for (size_t i = 0; i < vec.size(); ++i) {
     std::cerr << vec[i] << " "; // << std::endl;
@@ -124,7 +126,8 @@ template <typename T> void Print(const std::string &str, const SubVectorConst<T>
   std::cerr << std::endl;
 }
 
-template <typename T> void PrintSizes(const std::string &str, const Vec2d<T> &vec) {
+template <typename T>
+void PrintSizes(const std::string &str, const Vec2d<T> &vec) {
   std::cerr << str << " " << vec.size() << "=" << std::flush;
   for (size_t i = 0; i < vec.size(); ++i) {
     const std::vector<T> &inner = vec[i];
@@ -134,4 +137,4 @@ template <typename T> void PrintSizes(const std::string &str, const Vec2d<T> &ve
 }
 
 void CreateData(std::ifstream &file, Vec2d<int> &records, Vec2d<float> &values,
-  Vec2d<int> &labels, int batchsize);
+                Vec2d<int> &labels, int batchsize);

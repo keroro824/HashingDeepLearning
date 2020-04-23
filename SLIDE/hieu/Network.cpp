@@ -6,8 +6,7 @@
 using namespace std;
 
 namespace hieu {
-Network::Network(int) 
-{
+Network::Network(int) {
   size_t inputDim = 135909;
 
   cerr << "Create Network" << endl;
@@ -15,9 +14,6 @@ Network::Network(int)
   _layers.push_back(new SoftmaxLayer(670091, 128));
 }
 
-Network::~Network() 
-{
-  cerr << "~Network" << endl;
-}
+Network::~Network() { cerr << "~Network" << endl; }
 
 } // namespace hieu

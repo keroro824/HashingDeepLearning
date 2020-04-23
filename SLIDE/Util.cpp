@@ -1,13 +1,13 @@
 #include "Util.h"
-#include <vector>
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <string.h>
+#include <vector>
 
 using namespace std;
 
 void CreateData(std::ifstream &file, Vec2d<int> &records, Vec2d<float> &values,
-  Vec2d<int> &labels, int batchsize) {
+                Vec2d<int> &labels, int batchsize) {
   int nonzeros = 0;
   int count = 0;
   vector<string> list;

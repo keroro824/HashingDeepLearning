@@ -75,7 +75,7 @@ if (ADAM){
   _train_array.resize(noOfNodes * batchsize);
 
   // create nodes for this layer
-#pragma omp parallel for //num_threads(1)
+#pragma omp parallel for // num_threads(1)
   for (size_t i = 0; i < noOfNodes; i++) {
     _Nodes[i].Update(previousLayerNumOfNodes, i, _layerID, type, batchsize,
                      _weights, _bias[i], _adamAvgMom, _adamAvgVel,
@@ -273,8 +273,8 @@ int Layer::queryActiveNodeandComputeActivations(
       in = len;
     }
     if (Mode == 4) {
-      //Print("activenodesperlayer", activenodesperlayer[_layerID]);
-      //Print("activeValuesperlayer", activeValuesperlayer[_layerID]);
+      // Print("activenodesperlayer", activenodesperlayer[_layerID]);
+      // Print("activeValuesperlayer", activeValuesperlayer[_layerID]);
       std::vector<int> hashes;
       if (HashFunction == 1) {
         hashes = _wtaHasher->getHash(activeValuesperlayer[_layerID]);

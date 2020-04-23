@@ -87,5 +87,4 @@ public:
 
   void Reset();
   const train &getTrain(size_t idx) const { return _train[idx]; }
-
 };
