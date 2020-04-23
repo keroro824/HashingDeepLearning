@@ -35,13 +35,10 @@ Network::Network(const std::vector<int> &sizesOfLayers,
   cout << "after layer" << endl;
 }
 
-int Network::predictClass(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
-                          const Vec2d<int> &labels) {
-  int correctPred = 0;
-
+void Network::PrintNumberActive(const std::string &str) const
+{
   Layer &layer = *_hiddenlayers.back();
-  layer.Reset();
-  cerr << "batch actives=";
+  cerr << str << "=";
   for (int i = 0; i < _currentBatchSize; i++) {
     size_t c = 0;
     for (size_t j = 0; j < layer.getAllNodes().size(); ++j) {
@@ -53,7 +50,14 @@ int Network::predictClass(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
     cerr << c << " ";
   }
   cerr << endl;
+}
 
+int Network::predictClass(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
+                          const Vec2d<int> &labels) {
+  int correctPred = 0;
+  _hiddenlayers.back()->Reset();
+  PrintNumberActive("HH1");
+  
   auto t1 = std::chrono::high_resolution_clock::now();
 #pragma omp parallel for reduction(+ : correctPred) //num_threads(1)
   for (int i = 0; i < _currentBatchSize; i++) {
@@ -91,6 +95,8 @@ int Network::predictClass(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
       correctPred++;
     }
   }
+  PrintNumberActive("HH2");
+
   auto t2 = std::chrono::high_resolution_clock::now();
   float timeDiffInMiliseconds =
       std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
