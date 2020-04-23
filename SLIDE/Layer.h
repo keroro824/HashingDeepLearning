@@ -50,6 +50,7 @@ public:
   void saveWeights(const std::string &file);
   void updateTable();
   void updateRandomNodes();
+  void Reset();
 
   ~Layer();
 };

@@ -39,6 +39,21 @@ int Network::predictClass(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
                           const Vec2d<int> &labels) {
   int correctPred = 0;
 
+  Layer &layer = *_hiddenlayers.back();
+  layer.Reset();
+  cerr << "batch actives=";
+  for (int i = 0; i < _currentBatchSize; i++) {
+    size_t c = 0;
+    for (size_t j = 0; j < layer.getAllNodes().size(); ++j) {
+      //cerr << layer.getAllNodes()[j].getTrain(i)._ActiveinputIds << flush;
+      if (layer.getAllNodes()[j].getTrain(i)._ActiveinputIds) {
+        ++c;
+      }
+    }
+    cerr << c << " ";
+  }
+  cerr << endl;
+
   auto t1 = std::chrono::high_resolution_clock::now();
 #pragma omp parallel for reduction(+ : correctPred) //num_threads(1)
   for (int i = 0; i < _currentBatchSize; i++) {
@@ -124,6 +139,9 @@ int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
     int in;
     // auto t1 = std::chrono::high_resolution_clock::now();
     for (int j = 0; j < _numberOfLayers; j++) {
+      Layer &layer = *_hiddenlayers[j];
+      //layer.Reset();
+
       in = _hiddenlayers[j]->queryActiveNodeandComputeActivations(
           activenodesperlayer, activeValuesperlayer, sizes, i, labels[i],
           _Sparsity.at(j), iter * _currentBatchSize + i, true);

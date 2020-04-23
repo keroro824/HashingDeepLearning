@@ -84,4 +84,8 @@ public:
   // only for debugging
   float purturbWeight(int weightid, float delta);
   float getGradient(int weightid, int inputID, float InputVal);
+
+  void Reset();
+  const train &getTrain(size_t idx) const { return _train[idx]; }
+
 };
