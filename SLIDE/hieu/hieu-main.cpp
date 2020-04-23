@@ -38,6 +38,7 @@ void EvalDataSVM(int numBatchesTest, Network &mynet, const std::string &path, si
 
     std::cout << batchSize << " records, with " << num_features
       << " features and " << num_labels << " labels" << std::endl;
+    size_t correctPredict = mynet.predictClass(records, values, labels);
 
   }
 }
@@ -51,7 +52,7 @@ int main(int argc, char *argv[]) {
   int numBatches = totRecords / batchSize;
   int numBatchesTest = totRecordsTest / batchSize;
 
-  hieu::Network mynet(11);
+  hieu::Network mynet;
 
   for (size_t epoch = 0; epoch < numEpochs; epoch++) {
     cerr << "epoch=" << epoch << endl;

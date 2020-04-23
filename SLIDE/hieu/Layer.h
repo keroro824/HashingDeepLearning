@@ -12,6 +12,9 @@ protected:
 public:
   Layer(size_t numNodes, size_t prevNumNodes);
   virtual ~Layer();
+
+  void computeActivation(const std::vector<int> &inputIndices1, const std::vector<float> &inputValues1) const;
+
 };
 
 class RELULayer : public Layer {
