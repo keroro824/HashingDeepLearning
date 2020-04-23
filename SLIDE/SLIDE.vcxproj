@@ -23,6 +23,9 @@
     <ClCompile Include="DensifiedMinhash.cpp" />
     <ClCompile Include="DensifiedWtaHash.cpp" />
     <ClCompile Include="hieu\hieu-main.cpp" />
+    <ClCompile Include="hieu\Layer.cpp" />
+    <ClCompile Include="hieu\Network.cpp" />
+    <ClCompile Include="hieu\Node.cpp" />
     <ClCompile Include="Layer.cpp" />
     <ClCompile Include="LSH.cpp" />
     <ClCompile Include="main.cpp" />
@@ -39,6 +42,9 @@
     <ClInclude Include="DensifiedMinhash.h" />
     <ClInclude Include="DensifiedWtaHash.h" />
     <ClInclude Include="hieu\hieu-main.h" />
+    <ClInclude Include="hieu\Layer.h" />
+    <ClInclude Include="hieu\Network.h" />
+    <ClInclude Include="hieu\Node.h" />
     <ClInclude Include="Layer.h" />
     <ClInclude Include="LSH.h" />
     <ClInclude Include="MurmurHash.h" />
