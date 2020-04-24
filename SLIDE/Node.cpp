@@ -189,7 +189,7 @@ float Node::getGradient(int weightid, int inputID, float InputVal) {
 
 void Node::Reset() {
   for (size_t i = 0; i < _train.size(); ++i) {
-    train &t = _train[i];
+    Train &t = _train[i];
     t._ActiveinputIds = false;
   }
 }
