@@ -266,7 +266,7 @@ void ReadDataSVM(size_t numBatches, Network &_mynet, int epoch) {
 }
 
 int main(int argc, char *argv[]) {
-  // hieu::main(argc, argv);
+  hieu::main(argc, argv);
 
   //***********************************
   // Parse Config File
