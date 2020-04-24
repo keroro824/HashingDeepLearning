@@ -67,6 +67,7 @@ float Network::ProcessInput(const Vec2d<float> &data, const Vec2d<int> &labels,
   size_t batchSize = data.size();
 
   float logloss = 0.0;
+  float tmpLR = 24534534.5;
 
   for (size_t batchIdx = 0; batchIdx < batchSize; ++batchIdx) {
     const std::vector<float> &data1 = data.at(batchIdx);
@@ -78,9 +79,29 @@ float Network::ProcessInput(const Vec2d<float> &data, const Vec2d<int> &labels,
     delete lastActivations;
 
     // Now backpropagate.
-    for (int j = _layers.size() - 1; j >= 0; j--) {
-      Layer &layer = getLayer(j);
-      Layer &prev_layer = getLayer(j - 1);
+    for (int layerIdx = _layers.size() - 1; layerIdx >= 0; layerIdx--) {
+      Layer &layer = getLayer(layerIdx);
+
+      // active nodes
+      std::vector<int> activeNodesIdx(layer.getNumNodes());
+      for (size_t nodeIdx = 0; nodeIdx < layer.getNumNodes(); ++nodeIdx) {
+        activeNodesIdx[nodeIdx] = nodeIdx;
+      }
+
+      for (size_t nodeIdx : activeNodesIdx) {
+        Node &node = layer.getNode(nodeIdx);
+
+        if (layerIdx > 0) {
+          Layer &prev_layer = getLayer(layerIdx - 1);
+
+          node.backPropagate(prev_layer.getNodes(), activeNodesIdx, tmpLR, batchIdx);
+
+        }
+        else {
+
+        }
+
+      }
     }
   }
 }

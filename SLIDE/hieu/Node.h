@@ -16,5 +16,8 @@ public:
   const SubVector<float> &getWeights() const { return _nodeWeights; }
 
   float computeActivation(const std::vector<float> &dataIn) const;
+  
+  void backPropagate(const std::vector<Node> &prevNodes, const std::vector<int> &activeNodesIdx, float tmpLR, size_t batchIdx);
+
 };
 } // namespace hieu

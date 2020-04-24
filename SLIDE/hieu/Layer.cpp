@@ -28,7 +28,7 @@ Layer::Layer(size_t layerIdx, size_t numNodes, size_t prevNumNodes)
         SubVector<float>(_weights, nodeIdx * prevNumNodes, prevNumNodes);
     float &nodeBias = _bias[nodeIdx];
 
-    _nodes.emplace_back(new Node(nodeIdx, nodeWeights, nodeBias));
+    _nodes.emplace_back(Node(nodeIdx, nodeWeights, nodeBias));
   }
 
   cerr << "Created Layer"

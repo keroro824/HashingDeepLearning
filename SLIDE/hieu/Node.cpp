@@ -23,4 +23,9 @@ float Node::computeActivation(const std::vector<float> &dataIn) const {
   return ret;
 }
 
+void Node::backPropagate(const std::vector<Node> &prevNodes, const std::vector<int> &activeNodesIdx, float tmpLR, size_t batchIdx)
+{
+
+}
+
 } // namespace hieu
