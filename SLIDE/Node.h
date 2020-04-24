@@ -74,10 +74,9 @@ public:
                                   const std::vector<int> &label);
   void backPropagate(std::vector<Node> &previousNodes,
                      const std::vector<int> &previousLayerActiveNodeIds,
-                     int previousLayerActiveNodeSize, float learningRate,
-                     int inputID);
+                     float learningRate, int inputID);
   void backPropagateFirstLayer(const std::vector<int> &nnzindices,
-                               const std::vector<float> &nnzvalues, int nnzSize,
+                               const std::vector<float> &nnzvalues,
                                float learningRate, int inputID);
   ~Node();
 

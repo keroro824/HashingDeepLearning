@@ -164,11 +164,9 @@ float Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
         }
         if (j != 0) {
           node.backPropagate(prev_layer->getAllNodes(),
-                             activeNodesPerBatch[i][j], activeNodesPerBatch[i][j].size(),
-                             tmplr, i);
+                             activeNodesPerBatch[i][j], tmplr, i);
         } else {
-          node.backPropagateFirstLayer(inputIndices[i], inputValues[i],
-                                       inputIndices[i].size(), tmplr, i);
+          node.backPropagateFirstLayer(inputIndices[i], inputValues[i], tmplr, i);
         }
       }
     }

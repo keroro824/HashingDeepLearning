@@ -108,11 +108,11 @@ void Node::ComputeExtaStatsForSoftMax(float normalizationConstant, int inputID,
 
 void Node::backPropagate(std::vector<Node> &previousNodes,
                          const std::vector<int> &previousLayerActiveNodeIds,
-                         int previousLayerActiveNodeSize, float learningRate,
+                         float learningRate,
                          int inputID) {
   assert(("Input Not Active but still called !! BUG",
           _train[inputID]._ActiveinputIds));
-  for (int i = 0; i < previousLayerActiveNodeSize; i++) {
+  for (int i = 0; i < previousLayerActiveNodeIds.size(); i++) {
     // UpdateDelta before updating weights
     Node &prev_node = previousNodes[previousLayerActiveNodeIds[i]];
     prev_node.incrementDelta(inputID,
@@ -145,11 +145,10 @@ void Node::backPropagate(std::vector<Node> &previousNodes,
 
 void Node::backPropagateFirstLayer(const std::vector<int> &nnzindices,
                                    const std::vector<float> &nnzvalues,
-                                   int nnzSize, float learningRate,
-                                   int inputID) {
+                                   float learningRate, int inputID) {
   assert(("Input Not Active but still called !! BUG",
           _train[inputID]._ActiveinputIds));
-  for (int i = 0; i < nnzSize; i++) {
+  for (int i = 0; i < nnzindices.size(); i++) {
     float grad_t = _train[inputID]._lastDeltaforBPs * nnzvalues[i];
     float grad_tsq = grad_t * grad_t;
     if (ADAM) {
