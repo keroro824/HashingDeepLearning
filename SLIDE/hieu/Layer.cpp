@@ -9,8 +9,9 @@
 using namespace std;
 
 namespace hieu {
-Layer::Layer(size_t numNodes, size_t prevNumNodes)
-  :_numNodes(numNodes)
+Layer::Layer(size_t layerIdx, size_t numNodes, size_t prevNumNodes)
+  : _layerIdx(layerIdx)
+  , _numNodes(numNodes)
   , _prevNumNodes(prevNumNodes)
 {
 
@@ -30,46 +31,49 @@ Layer::Layer(size_t numNodes, size_t prevNumNodes)
         SubVector<float>(_weights, nodeIdx * prevNumNodes, prevNumNodes);
     float &nodeBias = _bias[nodeIdx];
 
-    _nodes.emplace_back(Node(nodeIdx, nodeWeights, nodeBias));
+    _nodes.emplace_back(new Node(nodeIdx, nodeWeights, nodeBias));
   }
 
-  cerr << "Created Layer, numNodes=" << _nodes.size() << endl;
+  cerr << "Created Layer"
+      << " layerIdx=" << _layerIdx
+      << " numNodes=" << _nodes.size() 
+      << " prevNumNodes=" << _prevNumNodes
+      << endl;
+  const Node &node = getNode(0);
+  cerr << "node.getWeights=" << node.getWeights().size() << endl;
 }
 
 Layer::~Layer() {}
 
 size_t Layer::computeActivation(std::vector<float> &dataOut, const std::vector<float> &dataIn) const
 {
-  cerr << "computeActivation3" << endl;
+  cerr << "Created Layer"
+    << " layerIdx=" << _layerIdx
+    << " numNodes=" << _nodes.size()
+    << " prevNumNodes=" << _prevNumNodes
+    << endl;
+  const Node &node = getNode(0);
+  cerr << "node.getWeights=" << node.getWeights().size() << endl;
+
   assert(dataIn.size() == _prevNumNodes);
-
-  cerr << "computeActivation4" << endl;
   dataOut.resize(_numNodes);
-
-  cerr << "computeActivation5" << endl;
-
-  if (dataIn.size() != _nodes.size()) 
-    cerr << _nodes.size() << " " << dataIn.size() << endl;
-  
   for (size_t nodeIdx = 0; nodeIdx < _nodes.size(); ++nodeIdx) {
     const Node &node = getNode(nodeIdx);
-    float inVal = dataIn.at(nodeIdx);
-    dataOut.at(nodeIdx) = node.computeActivation(inVal);
+    dataOut.at(nodeIdx) = node.computeActivation(dataIn);
   }
-  cerr << "computeActivation6" << endl;
 }
 
 
 //////////////////////////////////////////
-RELULayer::RELULayer(size_t numNodes, size_t prevNumNodes)
-    : Layer(numNodes, prevNumNodes) {
+RELULayer::RELULayer(size_t layerIdx, size_t numNodes, size_t prevNumNodes)
+    : Layer(layerIdx, numNodes, prevNumNodes) {
   cerr << "Create RELULayer" << endl;
 }
 
 RELULayer::~RELULayer() {}
 
-SoftmaxLayer::SoftmaxLayer(size_t numNodes, size_t prevNumNodes)
-    : Layer(numNodes, prevNumNodes) {
+SoftmaxLayer::SoftmaxLayer(size_t layerIdx, size_t numNodes, size_t prevNumNodes)
+    : Layer(layerIdx, numNodes, prevNumNodes) {
   cerr << "Create SoftmaxLayer" << endl;
 }
 

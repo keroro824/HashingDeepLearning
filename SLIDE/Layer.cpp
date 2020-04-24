@@ -82,6 +82,8 @@ if (ADAM){
                      _train_array);
     addtoHashTable(_Nodes[i].weights(), _Nodes[i].bias(), i);
   }
+  cerr << "_Nodes=" << _Nodes.size() << endl;
+
   auto t2 = std::chrono::high_resolution_clock::now();
   auto timeDiffInMiliseconds =
       std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();

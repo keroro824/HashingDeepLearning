@@ -13,7 +13,9 @@ public:
   Node(size_t idx, SubVector<float> &nodeWeights, float &nodeBias);
   virtual ~Node();
 
-  float computeActivation(float inVal) const;
+  const SubVector<float> &getWeights() const { return _nodeWeights; }
+
+  float computeActivation(const std::vector<float> &dataIn) const;
 
 };
 } // namespace hieu

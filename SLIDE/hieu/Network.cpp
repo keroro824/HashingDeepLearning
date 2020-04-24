@@ -10,8 +10,8 @@ Network::Network() {
   size_t inputDim = 135909;
 
   cerr << "Create Network" << endl;
-  _layers.push_back(new RELULayer(128, inputDim));
-  _layers.push_back(new SoftmaxLayer(670091, 128));
+  _layers.push_back(new RELULayer(0, 128, inputDim));
+  _layers.push_back(new SoftmaxLayer(1, 670091, 128));
 }
 
 Network::~Network() { cerr << "~Network" << endl; }
@@ -26,8 +26,8 @@ Network::predictClass(const Vec2d<float> &data,
 
   // inference
   for (size_t batchIdx = 0; batchIdx < batchSize; ++batchIdx) {
-    const std::vector<float> &data1 = data[batchIdx];
-    const std::vector<int> &labels1 = labels[batchIdx];
+    const std::vector<float> &data1 = data.at(batchIdx);
+    const std::vector<int> &labels1 = labels.at(batchIdx);
 
     const std::vector<float> *lastActivations = computeActivation(data1, labels1);
   }
@@ -40,17 +40,20 @@ const std::vector<float> *Network::computeActivation(const std::vector<float> &d
 
   std::vector<float> *dataOut = new std::vector<float>;
 
-  const Layer &layer = getLayer(0);
-  layer.computeActivation(*dataOut, data1);
+  cerr << "layerIdx0" << endl;
+  const Layer &firstLayer = getLayer(0);
+  firstLayer.computeActivation(*dataOut, data1);
 
   std::vector<float> *dataIn = dataOut;
   dataOut = new std::vector<float>;
 
   for (int layerIdx = 1; layerIdx < _layers.size(); ++layerIdx) {
     cerr << "layerIdx=" << layerIdx << endl;
+    cerr << "dataIn=" << dataIn->size() << endl;
     const Layer &layer = getLayer(layerIdx);
     layer.computeActivation(*dataOut, *dataIn);
-  
+    cerr << "dataOut=" << dataOut->size() << endl;
+
     std::swap(dataIn, dataOut);
   }
 
