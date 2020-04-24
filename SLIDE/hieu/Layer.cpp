@@ -40,18 +40,23 @@ Layer::~Layer() {}
 
 size_t Layer::computeActivation(std::vector<float> &dataOut, const std::vector<float> &dataIn) const
 {
+  cerr << "computeActivation3" << endl;
   assert(dataIn.size() == _prevNumNodes);
-  size_t maxIdx;
-  float maxActivation = -9999;
 
+  cerr << "computeActivation4" << endl;
   dataOut.resize(_numNodes);
 
+  cerr << "computeActivation5" << endl;
+
+  if (dataIn.size() != _nodes.size()) 
+    cerr << _nodes.size() << " " << dataIn.size() << endl;
+  
   for (size_t nodeIdx = 0; nodeIdx < _nodes.size(); ++nodeIdx) {
     const Node &node = getNode(nodeIdx);
-    float inVal = dataIn[nodeIdx];
+    float inVal = dataIn.at(nodeIdx);
     dataOut.at(nodeIdx) = node.computeActivation(inVal);
   }
-
+  cerr << "computeActivation6" << endl;
 }
 
 

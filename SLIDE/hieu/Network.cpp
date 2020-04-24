@@ -29,12 +29,12 @@ Network::predictClass(const Vec2d<float> &data,
     const std::vector<float> &data1 = data[batchIdx];
     const std::vector<int> &labels1 = labels[batchIdx];
 
-    size_t correctPred1 = computeActivation(data1, labels1);
+    const std::vector<float> *lastActivations = computeActivation(data1, labels1);
   }
   return correctPred;
 }
 
-size_t Network::computeActivation(const std::vector<float> &data1,
+const std::vector<float> *Network::computeActivation(const std::vector<float> &data1,
                                   const std::vector<int> &labels1) const {
   size_t correctPred = 0;
 
@@ -43,11 +43,22 @@ size_t Network::computeActivation(const std::vector<float> &data1,
   const Layer &layer = getLayer(0);
   layer.computeActivation(*dataOut, data1);
 
+  std::vector<float> *dataIn = dataOut;
+  dataOut = new std::vector<float>;
+
   for (int layerIdx = 1; layerIdx < _layers.size(); ++layerIdx) {
+    cerr << "layerIdx=" << layerIdx << endl;
     const Layer &layer = getLayer(layerIdx);
+    layer.computeActivation(*dataOut, *dataIn);
+  
+    std::swap(dataIn, dataOut);
   }
 
-  return correctPred;
+  cerr << "computeActivation1" << endl;
+  delete dataOut;
+  cerr << "computeActivation2" << endl;
+
+  return dataIn;
 }
 
 } // namespace hieu
