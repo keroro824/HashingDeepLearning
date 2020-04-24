@@ -6,12 +6,12 @@
 using namespace std;
 
 namespace hieu {
-Network::Network() {
+Network::Network(size_t maxBatchsize) {
   size_t inputDim = 135909;
 
   cerr << "Create Network" << endl;
-  _layers.push_back(new RELULayer(0, 128, inputDim));
-  _layers.push_back(new SoftmaxLayer(1, 670091, 128));
+  _layers.push_back(new RELULayer(0, 128, inputDim, maxBatchsize));
+  _layers.push_back(new SoftmaxLayer(1, 670091, 128, maxBatchsize));
 }
 
 Network::~Network() { cerr << "~Network" << endl; }
@@ -88,24 +88,20 @@ float Network::ProcessInput(const Vec2d<float> &data, const Vec2d<int> &labels,
         activeNodesIdx[nodeIdx] = nodeIdx;
       }
 
-      cerr << "batchIdx=" << batchIdx
-        << " layerIdx=" << layerIdx
-        << endl;
+      cerr << "batchIdx=" << batchIdx << " layerIdx=" << layerIdx << endl;
 
       for (size_t nodeIdx : activeNodesIdx) {
         Node &node = layer.getNode(nodeIdx);
-        
+
         if (layerIdx > 0) {
           Layer &prev_layer = getLayer(layerIdx - 1);
 
-          node.backPropagate(prev_layer.getNodes(), activeNodesIdx, tmpLR, batchIdx);
+          node.backPropagate(prev_layer.getNodes(), activeNodesIdx, tmpLR,
+                             batchIdx);
 
-        }
-        else {
+        } else {
           node.backPropagateFirstLayer(data, tmpLR, batchIdx);
-
         }
-
       }
     }
   }

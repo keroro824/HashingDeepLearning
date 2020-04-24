@@ -9,7 +9,7 @@
 using namespace std;
 
 namespace hieu {
-Layer::Layer(size_t layerIdx, size_t numNodes, size_t prevNumNodes)
+Layer::Layer(size_t layerIdx, size_t numNodes, size_t prevNumNodes, size_t maxBatchsize)
     : _layerIdx(layerIdx), _numNodes(numNodes), _prevNumNodes(prevNumNodes) {
 
   _weights.resize(numNodes * prevNumNodes);
@@ -28,7 +28,7 @@ Layer::Layer(size_t layerIdx, size_t numNodes, size_t prevNumNodes)
         SubVector<float>(_weights, nodeIdx * prevNumNodes, prevNumNodes);
     float &nodeBias = _bias.at(nodeIdx);
 
-    _nodes.emplace_back(Node(nodeIdx, nodeWeights, nodeBias));
+    _nodes.emplace_back(Node(nodeIdx, nodeWeights, nodeBias, maxBatchsize));
   }
 
   cerr << "Created Layer"
@@ -49,16 +49,16 @@ size_t Layer::computeActivation(std::vector<float> &dataOut,
 }
 
 //////////////////////////////////////////
-RELULayer::RELULayer(size_t layerIdx, size_t numNodes, size_t prevNumNodes)
-    : Layer(layerIdx, numNodes, prevNumNodes) {
+RELULayer::RELULayer(size_t layerIdx, size_t numNodes, size_t prevNumNodes, size_t maxBatchsize)
+    : Layer(layerIdx, numNodes, prevNumNodes, maxBatchsize) {
   cerr << "Create RELULayer" << endl;
 }
 
 RELULayer::~RELULayer() {}
 
 SoftmaxLayer::SoftmaxLayer(size_t layerIdx, size_t numNodes,
-                           size_t prevNumNodes)
-    : Layer(layerIdx, numNodes, prevNumNodes) {
+                           size_t prevNumNodes, size_t maxBatchsize)
+    : Layer(layerIdx, numNodes, prevNumNodes, maxBatchsize) {
   cerr << "Create SoftmaxLayer" << endl;
 }
 

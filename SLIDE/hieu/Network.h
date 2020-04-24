@@ -16,7 +16,7 @@ protected:
                     const std::vector<int> &labels) const;
 
 public:
-  Network();
+  Network(size_t maxBatchsize);
   virtual ~Network();
 
   size_t predictClass(const Vec2d<float> &data, const Vec2d<int> &labels) const;
