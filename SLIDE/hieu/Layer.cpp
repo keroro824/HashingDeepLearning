@@ -39,22 +39,12 @@ Layer::Layer(size_t layerIdx, size_t numNodes, size_t prevNumNodes)
       << " numNodes=" << _nodes.size() 
       << " prevNumNodes=" << _prevNumNodes
       << endl;
-  const Node &node = getNode(0);
-  cerr << "node.getWeights=" << node.getWeights().size() << endl;
 }
 
 Layer::~Layer() {}
 
 size_t Layer::computeActivation(std::vector<float> &dataOut, const std::vector<float> &dataIn) const
 {
-  cerr << "Created Layer"
-    << " layerIdx=" << _layerIdx
-    << " numNodes=" << _nodes.size()
-    << " prevNumNodes=" << _prevNumNodes
-    << endl;
-  const Node &node = getNode(0);
-  cerr << "node.getWeights=" << node.getWeights().size() << endl;
-
   assert(dataIn.size() == _prevNumNodes);
   dataOut.resize(_numNodes);
   for (size_t nodeIdx = 0; nodeIdx < _nodes.size(); ++nodeIdx) {

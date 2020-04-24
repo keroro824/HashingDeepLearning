@@ -15,9 +15,6 @@ Node::~Node() {}
 
 float Node::computeActivation(const std::vector<float> &dataIn) const
 {
-  if (dataIn.size() != _nodeWeights.size()) {
-    cerr << "dataIn=" << dataIn.size() << " _nodeWeights=" << _nodeWeights.size() << endl;
-  }
   assert(dataIn.size() == _nodeWeights.size());
   float ret = 0;
   for (size_t idx = 0; idx < _nodeWeights.size(); ++idx) {

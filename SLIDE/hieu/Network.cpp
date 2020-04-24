@@ -30,6 +30,9 @@ Network::predictClass(const Vec2d<float> &data,
     const std::vector<int> &labels1 = labels.at(batchIdx);
 
     const std::vector<float> *lastActivations = computeActivation(data1, labels1);
+
+
+    delete lastActivations;
   }
   return correctPred;
 }
@@ -40,7 +43,6 @@ const std::vector<float> *Network::computeActivation(const std::vector<float> &d
 
   std::vector<float> *dataOut = new std::vector<float>;
 
-  cerr << "layerIdx0" << endl;
   const Layer &firstLayer = getLayer(0);
   firstLayer.computeActivation(*dataOut, data1);
 
@@ -48,18 +50,13 @@ const std::vector<float> *Network::computeActivation(const std::vector<float> &d
   dataOut = new std::vector<float>;
 
   for (int layerIdx = 1; layerIdx < _layers.size(); ++layerIdx) {
-    cerr << "layerIdx=" << layerIdx << endl;
-    cerr << "dataIn=" << dataIn->size() << endl;
     const Layer &layer = getLayer(layerIdx);
     layer.computeActivation(*dataOut, *dataIn);
-    cerr << "dataOut=" << dataOut->size() << endl;
 
     std::swap(dataIn, dataOut);
   }
 
-  cerr << "computeActivation1" << endl;
   delete dataOut;
-  cerr << "computeActivation2" << endl;
 
   return dataIn;
 }

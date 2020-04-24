@@ -6,7 +6,7 @@ namespace hieu {
 class Node {
 protected:
   size_t _idx;
-  SubVector<float> &_nodeWeights;
+  SubVector<float> _nodeWeights;
   float &_nodeBias;
 
 public:
