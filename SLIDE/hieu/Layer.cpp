@@ -13,7 +13,7 @@ Layer::Layer(size_t layerIdx, size_t numNodes, size_t prevNumNodes)
     : _layerIdx(layerIdx), _numNodes(numNodes), _prevNumNodes(prevNumNodes) {
 
   _weights.resize(numNodes * prevNumNodes);
-  _bias.resize(_nodes.size());
+  _bias.resize(numNodes);
   random_device rd;
   default_random_engine dre(rd());
   normal_distribution<float> distribution(0.0, 0.01);
@@ -26,7 +26,7 @@ Layer::Layer(size_t layerIdx, size_t numNodes, size_t prevNumNodes)
   for (size_t nodeIdx = 0; nodeIdx < numNodes; ++nodeIdx) {
     SubVector<float> nodeWeights =
         SubVector<float>(_weights, nodeIdx * prevNumNodes, prevNumNodes);
-    float &nodeBias = _bias[nodeIdx];
+    float &nodeBias = _bias.at(nodeIdx);
 
     _nodes.emplace_back(Node(nodeIdx, nodeWeights, nodeBias));
   }

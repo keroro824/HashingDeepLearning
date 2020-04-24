@@ -18,6 +18,7 @@ public:
   float computeActivation(const std::vector<float> &dataIn) const;
   
   void backPropagate(const std::vector<Node> &prevNodes, const std::vector<int> &activeNodesIdx, float tmpLR, size_t batchIdx);
+  void backPropagateFirstLayer(const Vec2d<float> &data, float tmpLR, size_t batchIdx);
 
 };
 } // namespace hieu

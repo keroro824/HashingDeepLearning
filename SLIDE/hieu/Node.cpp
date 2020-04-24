@@ -15,7 +15,7 @@ Node::~Node() {}
 
 float Node::computeActivation(const std::vector<float> &dataIn) const {
   assert(dataIn.size() == _nodeWeights.size());
-  float ret = 0;
+  float ret = _nodeBias;
   for (size_t idx = 0; idx < _nodeWeights.size(); ++idx) {
     // ret += _nodeWeights[idx] * inVal;
   }
@@ -24,6 +24,11 @@ float Node::computeActivation(const std::vector<float> &dataIn) const {
 }
 
 void Node::backPropagate(const std::vector<Node> &prevNodes, const std::vector<int> &activeNodesIdx, float tmpLR, size_t batchIdx)
+{
+
+}
+
+void Node::backPropagateFirstLayer(const Vec2d<float> &data, float tmpLR, size_t batchIdx)
 {
 
 }
