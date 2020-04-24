@@ -94,11 +94,9 @@ float Network::ProcessInput(const Vec2d<float> &data, const Vec2d<int> &labels,
         Node &node = layer.getNode(nodeIdx);
 
         if (layerIdx > 0) {
-          Layer &prev_layer = getLayer(layerIdx - 1);
-
-          node.backPropagate(prev_layer.getNodes(), activeNodesIdx, tmpLR,
+          Layer &prevLayer = getLayer(layerIdx - 1);
+          node.backPropagate(prevLayer.getNodes(), activeNodesIdx, tmpLR,
                              batchIdx);
-
         } else {
           node.backPropagateFirstLayer(data, tmpLR, batchIdx);
         }

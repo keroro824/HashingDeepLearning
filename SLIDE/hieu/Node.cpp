@@ -25,7 +25,9 @@ float Node::computeActivation(const std::vector<float> &dataIn) const {
 
 void Node::backPropagate(const std::vector<Node> &prevNodes,
                          const std::vector<int> &activeNodesIdx, float tmpLR,
-                         size_t batchIdx) {}
+                         size_t batchIdx) {
+
+}
 
 void Node::backPropagateFirstLayer(const Vec2d<float> &data, float tmpLR,
                                    size_t batchIdx) {}
