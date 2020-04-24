@@ -12,7 +12,7 @@ using namespace std;
 
 namespace hieu {
 void EvalDataSVM(int numBatchesTest, Network &mynet, const std::string &path,
-                 size_t batchSize, size_t inputDim) {
+                 int epoch, size_t batchSize, size_t inputDim) {
   int totCorrect = 0;
   std::ifstream file(path);
   if (!file) {
@@ -41,6 +41,30 @@ void EvalDataSVM(int numBatchesTest, Network &mynet, const std::string &path,
   }
 }
 
+void ReadDataSVM(size_t numBatches, Network &mynet, const std::string &path,
+                 int epoch, size_t batchSize, size_t inputDim) {
+  std::ifstream file(path);
+  if (!file) {
+    cout << "Error file not found: " << path << endl;
+  }
+
+  std::string str;
+  // skipe header
+  std::getline(file, str);
+  for (size_t i = 0; i < numBatches; i++) {
+    Vec2d<float> data;
+    Vec2d<int> labels;
+
+    CreateData(file, data, labels, batchSize, inputDim);
+
+    bool rehash = true;
+    bool rebuild = true;
+
+    // logloss
+    mynet.ProcessInput(data, labels, epoch * numBatches + i, rehash, rebuild);
+  }
+}
+
 int main(int argc, char *argv[]) {
   cerr << "Starting" << endl;
   size_t inputDim = 135909;
@@ -55,7 +79,12 @@ int main(int argc, char *argv[]) {
 
   for (size_t epoch = 0; epoch < numEpochs; epoch++) {
     cerr << "epoch=" << epoch << endl;
-    EvalDataSVM(20, mynet, "../dataset/Amazon/amazon_test.txt", batchSize, inputDim);
+
+    ReadDataSVM(numBatches, mynet, "../dataset/Amazon/amazon_train.txt", epoch,
+                batchSize, inputDim);
+
+    EvalDataSVM(20, mynet, "../dataset/Amazon/amazon_test.txt", epoch,
+                batchSize, inputDim);
   }
 
   cerr << "Finished" << endl;

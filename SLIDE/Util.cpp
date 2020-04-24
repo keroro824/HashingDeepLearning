@@ -1,14 +1,14 @@
 #include "Util.h"
+#include <cassert>
 #include <fstream>
 #include <iostream>
 #include <string.h>
 #include <vector>
-#include <cassert>
 
 using namespace std;
 
-void CreateData(std::ifstream &file, Vec2d<float> &data, Vec2d<int> &labels, int batchSize, size_t inputDim)
-{
+void CreateData(std::ifstream &file, Vec2d<float> &data, Vec2d<int> &labels,
+                int batchSize, size_t inputDim) {
   data.resize(batchSize);
   labels.resize(batchSize);
 

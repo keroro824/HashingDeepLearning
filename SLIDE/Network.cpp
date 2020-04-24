@@ -105,9 +105,9 @@ int Network::predictClass(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
   return correctPred;
 }
 
-int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
-                          const Vec2d<int> &labels, int iter, bool rehash,
-                          bool rebuild) {
+float Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
+                            const Vec2d<int> &labels, int iter, bool rehash,
+                            bool rebuild) {
   float logloss = 0.0;
   std::vector<int> avg_retrieval(_numberOfLayers, 0);
 
@@ -126,7 +126,7 @@ int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
   Vec3d<int> activeNodesPerBatch(_currentBatchSize); // batch, layer, node
   Vec3d<float> activeValuesPerBatch(_currentBatchSize);
   Vec2d<int> sizesPerBatch(_currentBatchSize);
-#pragma omp parallel for // num_threads(1)
+#pragma omp parallel for num_threads(1)
   for (int i = 0; i < _currentBatchSize; i++) {
     Vec2d<int> &activenodesperlayer = activeNodesPerBatch[i];
     activenodesperlayer.resize(_numberOfLayers + 1);
@@ -158,6 +158,14 @@ int Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
     for (int j = _numberOfLayers - 1; j >= 0; j--) {
       Layer *layer = _hiddenlayers[j];
       Layer *prev_layer = _hiddenlayers[j - 1];
+      cerr << "i=" << i << " j=" << j << endl;
+      cerr << "layer=" << layer << endl;
+      cerr << "prev_layer=" << prev_layer << endl;
+      cerr << "sizesPerBatch[i][j + 1]=" << sizesPerBatch[i][j + 1] << endl;
+
+      const std::vector<int> &v = activeNodesPerBatch[i][j + 1];
+      Print("activeNodesPerBatch[i][j + 1]=", v);
+
       // nodes
       for (int k = 0; k < sizesPerBatch[i][j + 1]; k++) {
         Node &node = layer->getNodebyID(activeNodesPerBatch[i][j + 1][k]);

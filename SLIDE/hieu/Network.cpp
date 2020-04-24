@@ -16,9 +16,8 @@ Network::Network() {
 
 Network::~Network() { cerr << "~Network" << endl; }
 
-size_t
-Network::predictClass(const Vec2d<float> &data,
-                      const Vec2d<int> &labels) const {
+size_t Network::predictClass(const Vec2d<float> &data,
+                             const Vec2d<int> &labels) const {
   assert(data.size() == labels.size());
   size_t batchSize = data.size();
 
@@ -29,16 +28,17 @@ Network::predictClass(const Vec2d<float> &data,
     const std::vector<float> &data1 = data.at(batchIdx);
     const std::vector<int> &labels1 = labels.at(batchIdx);
 
-    const std::vector<float> *lastActivations = computeActivation(data1, labels1);
-
+    const std::vector<float> *lastActivations =
+        computeActivation(data1, labels1);
 
     delete lastActivations;
   }
   return correctPred;
 }
 
-const std::vector<float> *Network::computeActivation(const std::vector<float> &data1,
-                                  const std::vector<int> &labels1) const {
+const std::vector<float> *
+Network::computeActivation(const std::vector<float> &data1,
+                           const std::vector<int> &labels1) const {
   size_t correctPred = 0;
 
   std::vector<float> *dataOut = new std::vector<float>;
@@ -59,6 +59,30 @@ const std::vector<float> *Network::computeActivation(const std::vector<float> &d
   delete dataOut;
 
   return dataIn;
+}
+
+float Network::ProcessInput(const Vec2d<float> &data, const Vec2d<int> &labels,
+                            int iter, bool rehash, bool rebuild) {
+  assert(data.size() == labels.size());
+  size_t batchSize = data.size();
+
+  float logloss = 0.0;
+
+  for (size_t batchIdx = 0; batchIdx < batchSize; ++batchIdx) {
+    const std::vector<float> &data1 = data.at(batchIdx);
+    const std::vector<int> &labels1 = labels.at(batchIdx);
+
+    const std::vector<float> *lastActivations =
+        computeActivation(data1, labels1);
+
+    delete lastActivations;
+
+    // Now backpropagate.
+    for (int j = _layers.size() - 1; j >= 0; j--) {
+      Layer &layer = getLayer(j);
+      Layer &prev_layer = getLayer(j - 1);
+    }
+  }
 }
 
 } // namespace hieu

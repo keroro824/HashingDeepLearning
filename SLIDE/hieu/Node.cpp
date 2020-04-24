@@ -13,12 +13,11 @@ Node::Node(size_t idx, SubVector<float> &nodeWeights, float &nodeBias)
 
 Node::~Node() {}
 
-float Node::computeActivation(const std::vector<float> &dataIn) const
-{
+float Node::computeActivation(const std::vector<float> &dataIn) const {
   assert(dataIn.size() == _nodeWeights.size());
   float ret = 0;
   for (size_t idx = 0; idx < _nodeWeights.size(); ++idx) {
-    //ret += _nodeWeights[idx] * inVal;
+    // ret += _nodeWeights[idx] * inVal;
   }
 
   return ret;

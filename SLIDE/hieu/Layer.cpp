@@ -10,10 +10,7 @@ using namespace std;
 
 namespace hieu {
 Layer::Layer(size_t layerIdx, size_t numNodes, size_t prevNumNodes)
-  : _layerIdx(layerIdx)
-  , _numNodes(numNodes)
-  , _prevNumNodes(prevNumNodes)
-{
+    : _layerIdx(layerIdx), _numNodes(numNodes), _prevNumNodes(prevNumNodes) {
 
   _weights.resize(numNodes * prevNumNodes);
   _bias.resize(_nodes.size());
@@ -35,16 +32,14 @@ Layer::Layer(size_t layerIdx, size_t numNodes, size_t prevNumNodes)
   }
 
   cerr << "Created Layer"
-      << " layerIdx=" << _layerIdx
-      << " numNodes=" << _nodes.size() 
-      << " prevNumNodes=" << _prevNumNodes
-      << endl;
+       << " layerIdx=" << _layerIdx << " numNodes=" << _nodes.size()
+       << " prevNumNodes=" << _prevNumNodes << endl;
 }
 
 Layer::~Layer() {}
 
-size_t Layer::computeActivation(std::vector<float> &dataOut, const std::vector<float> &dataIn) const
-{
+size_t Layer::computeActivation(std::vector<float> &dataOut,
+                                const std::vector<float> &dataIn) const {
   assert(dataIn.size() == _prevNumNodes);
   dataOut.resize(_numNodes);
   for (size_t nodeIdx = 0; nodeIdx < _nodes.size(); ++nodeIdx) {
@@ -52,7 +47,6 @@ size_t Layer::computeActivation(std::vector<float> &dataOut, const std::vector<f
     dataOut.at(nodeIdx) = node.computeActivation(dataIn);
   }
 }
-
 
 //////////////////////////////////////////
 RELULayer::RELULayer(size_t layerIdx, size_t numNodes, size_t prevNumNodes)
@@ -62,7 +56,8 @@ RELULayer::RELULayer(size_t layerIdx, size_t numNodes, size_t prevNumNodes)
 
 RELULayer::~RELULayer() {}
 
-SoftmaxLayer::SoftmaxLayer(size_t layerIdx, size_t numNodes, size_t prevNumNodes)
+SoftmaxLayer::SoftmaxLayer(size_t layerIdx, size_t numNodes,
+                           size_t prevNumNodes)
     : Layer(layerIdx, numNodes, prevNumNodes) {
   cerr << "Create SoftmaxLayer" << endl;
 }

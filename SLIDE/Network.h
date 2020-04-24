@@ -25,9 +25,9 @@ public:
           const std::vector<float> &Sparsity, cnpy::npz_t arr);
   int predictClass(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
                    const Vec2d<int> &labels);
-  int ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
-                   const Vec2d<int> &labels, int iter, bool rehash,
-                   bool rebuild);
+  float ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
+                     const Vec2d<int> &labels, int iter, bool rehash,
+                     bool rebuild);
   void saveWeights(const std::string &file);
   ~Network();
 };
