@@ -19,7 +19,7 @@ class Node {
 private:
   int _activeInputs;
   NodeType _type;
-  SubVector<train> _train;
+  std::vector<train> _train;
   int _currentBatchsize;
   size_t _layerNum, _IDinLayer;
   size_t _dim;
@@ -62,8 +62,7 @@ public:
   void Update(int dim, int nodeID, int layerID, NodeType type, int batchsize,
               std::vector<float> &allWeights, float bias,
               std::vector<float> &allAdamAvgMom,
-              std::vector<float> &allAdamAvgVel,
-              std::vector<train> &train_blob);
+              std::vector<float> &allAdamAvgVel);
   float getLastActivation(int inputID) const;
   void incrementDelta(int inputID, float incrementValue);
   float getActivation(const std::vector<int> &indices,

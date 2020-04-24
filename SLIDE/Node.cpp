@@ -12,8 +12,7 @@ using namespace std;
 void Node::Update(int dim, int nodeID, int layerID, NodeType type,
                   int batchsize, std::vector<float> &allWeights, float bias,
                   std::vector<float> &allAdamAvgMom,
-                  std::vector<float> &allAdamAvgVel,
-                  std::vector<train> &train_blob) {
+                  std::vector<float> &allAdamAvgVel) {
   _dim = dim;
   _IDinLayer = nodeID;
   _type = type;
@@ -28,7 +27,7 @@ void Node::Update(int dim, int nodeID, int layerID, NodeType type,
 
   _activeInputs = 0;
 
-  _train = SubVector<train>(train_blob, nodeID * batchsize, batchsize);
+  _train.resize(batchsize);
   _weights = SubVector<float>(allWeights, nodeID * dim, dim);
   _bias = bias;
   _mirrorbias = _bias;

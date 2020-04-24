@@ -15,7 +15,6 @@ private:
   std::vector<int> _randNode;
   std::vector<float> _normalizationConstants;
   int _K, _L, _RangeRow, _previousLayerNumOfNodes, _batchsize;
-  std::vector<train> _train_array;
 
   int _layerID, _noOfActive;
   size_t _noOfNodes;
