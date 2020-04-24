@@ -7,12 +7,15 @@
 
 using namespace std;
 
-void CreateData(std::ifstream &file, std::vector<std::unordered_map<int, float> > &data, Vec2d<int> &labels, int batchsize)
+void CreateData(std::ifstream &file, Vec2d<float> &data, Vec2d<int> &labels, int batchSize, size_t inputDim)
 {
-  Vec2d<int> records;
-  Vec2d<float> values;
+  data.resize(batchSize);
+  labels.resize(batchSize);
 
-  CreateData(file, records, values, labels, batchsize);
+  Vec2d<int> records(batchSize);
+  Vec2d<float> values(batchSize);
+
+  CreateData(file, records, values, labels, batchSize);
   assert(records.size() == values.size());
   assert(records.size() == labels.size());
 
@@ -21,11 +24,12 @@ void CreateData(std::ifstream &file, std::vector<std::unordered_map<int, float> 
     const std::vector<float> &values1 = values[batchIdx];
     assert(records1.size() == values1.size());
 
-    std::unordered_map<int, float> &data1 = data[batchIdx];
+    std::vector<float> &data1 = data[batchIdx];
+    data1.resize(inputDim, 0);
     for (size_t featureIdx = 0; featureIdx < records1.size(); ++featureIdx) {
       int feature = records1[featureIdx];
       float value = values1[featureIdx];
-      data1[feature] = value;
+      data1.at(feature) = value;
     }
   }
 }

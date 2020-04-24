@@ -35,6 +35,14 @@ Layer::Layer(size_t numNodes, size_t prevNumNodes) {
 
 Layer::~Layer() {}
 
+size_t Layer::computeActivation(std::vector<float> &dataOut, const std::vector<float> &dataIn) const
+{
+  size_t maxIdx;
+  float maxActivation = -9999;
+
+}
+
+
 //////////////////////////////////////////
 RELULayer::RELULayer(size_t numNodes, size_t prevNumNodes)
     : Layer(numNodes, prevNumNodes) {

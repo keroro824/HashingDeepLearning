@@ -17,7 +17,7 @@ Network::Network() {
 Network::~Network() { cerr << "~Network" << endl; }
 
 size_t
-Network::predictClass(const std::vector<std::unordered_map<int, float>> &data,
+Network::predictClass(const Vec2d<float> &data,
                       const Vec2d<int> &labels) const {
   assert(data.size() == labels.size());
   size_t batchSize = data.size();
@@ -26,7 +26,7 @@ Network::predictClass(const std::vector<std::unordered_map<int, float>> &data,
 
   // inference
   for (size_t batchIdx = 0; batchIdx < batchSize; ++batchIdx) {
-    const std::unordered_map<int, float> &data1 = data[batchIdx];
+    const std::vector<float> &data1 = data[batchIdx];
     const std::vector<int> &labels1 = labels[batchIdx];
 
     size_t correctPred1 = computeActivation(data1, labels1);
@@ -34,12 +34,14 @@ Network::predictClass(const std::vector<std::unordered_map<int, float>> &data,
   return correctPred;
 }
 
-size_t Network::computeActivation(const std::unordered_map<int, float> &data1,
+size_t Network::computeActivation(const std::vector<float> &data1,
                                   const std::vector<int> &labels1) const {
   size_t correctPred = 0;
 
-  // inference
+  std::vector<float> *dataOut = new std::vector<float>;
+
   const Layer &layer = getLayer(0);
+  layer.computeActivation(*dataOut, data1);
 
   for (int layerIdx = 1; layerIdx < _layers.size(); ++layerIdx) {
     const Layer &layer = getLayer(layerIdx);

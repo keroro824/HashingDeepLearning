@@ -12,7 +12,7 @@ using namespace std;
 
 namespace hieu {
 void EvalDataSVM(int numBatchesTest, Network &mynet, const std::string &path,
-                 size_t batchSize) {
+                 size_t batchSize, size_t inputDim) {
   int totCorrect = 0;
   std::ifstream file(path);
   if (!file) {
@@ -24,10 +24,10 @@ void EvalDataSVM(int numBatchesTest, Network &mynet, const std::string &path,
   std::getline(file, str);
 
   for (int i = 0; i < numBatchesTest; i++) {
-    std::vector<std::unordered_map<int, float>> data;
-    Vec2d<int> labels(batchSize);
+    Vec2d<float> data;
+    Vec2d<int> labels;
 
-    CreateData(file, data, labels, batchSize);
+    CreateData(file, data, labels, batchSize, inputDim);
 
     int num_features = 0, num_labels = 0;
     for (int i = 0; i < batchSize; i++) {
@@ -43,6 +43,7 @@ void EvalDataSVM(int numBatchesTest, Network &mynet, const std::string &path,
 
 int main(int argc, char *argv[]) {
   cerr << "Starting" << endl;
+  size_t inputDim = 135909;
   size_t numEpochs = 5;
   size_t batchSize = 128;
   size_t totRecords = 490449;
@@ -54,7 +55,7 @@ int main(int argc, char *argv[]) {
 
   for (size_t epoch = 0; epoch < numEpochs; epoch++) {
     cerr << "epoch=" << epoch << endl;
-    EvalDataSVM(20, mynet, "../dataset/Amazon/amazon_test.txt", batchSize);
+    EvalDataSVM(20, mynet, "../dataset/Amazon/amazon_test.txt", batchSize, inputDim);
   }
 
   cerr << "Finished" << endl;

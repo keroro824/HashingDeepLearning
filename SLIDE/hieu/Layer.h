@@ -1,6 +1,7 @@
 #pragma once
 #include "Node.h"
 #include <vector>
+#include <unordered_map>
 
 namespace hieu {
 class Layer {
@@ -13,8 +14,7 @@ public:
   Layer(size_t numNodes, size_t prevNumNodes);
   virtual ~Layer();
 
-  void computeActivation(const std::vector<int> &inputIndices1,
-                         const std::vector<float> &inputValues1) const;
+  virtual size_t computeActivation(std::vector<float> &dataOut, const std::vector<float> &dataIn) const;
 };
 
 class RELULayer : public Layer {
