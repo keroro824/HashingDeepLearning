@@ -12,4 +12,15 @@ Node::Node(size_t idx, SubVector<float> &nodeWeights, float &nodeBias)
 }
 
 Node::~Node() {}
+
+float Node::computeActivation(float inVal) const
+{
+  float ret = 0;
+  for (size_t idx = 0; idx < _nodeWeights.size(); ++idx) {
+    ret += _nodeWeights[idx] * inVal;
+  }
+
+  return ret;
+}
+
 } // namespace hieu

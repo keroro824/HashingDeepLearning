@@ -9,7 +9,10 @@
 using namespace std;
 
 namespace hieu {
-Layer::Layer(size_t numNodes, size_t prevNumNodes) {
+Layer::Layer(size_t numNodes, size_t prevNumNodes)
+  :_numNodes(numNodes)
+  , _prevNumNodes(prevNumNodes)
+{
 
   _weights.resize(numNodes * prevNumNodes);
   _bias.resize(_nodes.size());
@@ -37,8 +40,17 @@ Layer::~Layer() {}
 
 size_t Layer::computeActivation(std::vector<float> &dataOut, const std::vector<float> &dataIn) const
 {
+  assert(dataIn.size() == _prevNumNodes);
   size_t maxIdx;
   float maxActivation = -9999;
+
+  dataOut.resize(_numNodes);
+
+  for (size_t nodeIdx = 0; nodeIdx < _nodes.size(); ++nodeIdx) {
+    const Node &node = getNode(nodeIdx);
+    float inVal = dataIn[nodeIdx];
+    dataOut.at(nodeIdx) = node.computeActivation(inVal);
+  }
 
 }
 

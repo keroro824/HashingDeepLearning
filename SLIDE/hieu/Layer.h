@@ -9,6 +9,10 @@ protected:
   std::vector<Node> _nodes;
   std::vector<float> _weights;
   std::vector<float> _bias;
+  size_t _numNodes, _prevNumNodes;
+
+  const Node &getNode(size_t idx) const { return _nodes.at(idx); }
+  Node &getNode(size_t idx) { return _nodes.at(idx); }
 
 public:
   Layer(size_t numNodes, size_t prevNumNodes);

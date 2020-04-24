@@ -8,8 +8,8 @@ class Network {
 protected:
   std::vector<Layer *> _layers;
 
-  const Layer &getLayer(size_t idx) const { return *_layers[idx]; }
-  Layer &getLayer(size_t idx) { return *_layers[idx]; }
+  const Layer &getLayer(size_t idx) const { return *_layers.at(idx); }
+  Layer &getLayer(size_t idx) { return *_layers.at(idx); }
 
   size_t computeActivation(const std::vector<float> &data1,
                            const std::vector<int> &labels) const;
