@@ -23,6 +23,7 @@ public:
   const Node &getNode(size_t idx) const { return _nodes.at(idx); }
   Node &getNode(size_t idx) { return _nodes.at(idx); }
   const std::vector<Node> &getNodes() const { return _nodes; }
+  std::vector<Node> &getNodes() { return _nodes; }
 };
 
 /////////////////////////////////////////////////////////////

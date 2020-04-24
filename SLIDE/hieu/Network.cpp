@@ -84,7 +84,7 @@ float Network::ProcessInput(const Vec2d<float> &data, const Vec2d<int> &labels,
 
       // active nodes
       std::vector<int> activeNodesIdx(layer.getNumNodes());
-      for (size_t nodeIdx = 0; nodeIdx < layer.getNumNodes(); ++nodeIdx) {
+      for (size_t nodeIdx = 0; nodeIdx < activeNodesIdx.size(); ++nodeIdx) {
         activeNodesIdx[nodeIdx] = nodeIdx;
       }
 
@@ -95,7 +95,14 @@ float Network::ProcessInput(const Vec2d<float> &data, const Vec2d<int> &labels,
 
         if (layerIdx > 0) {
           Layer &prevLayer = getLayer(layerIdx - 1);
-          node.backPropagate(prevLayer.getNodes(), activeNodesIdx, tmpLR,
+
+          // PREVIOUS active nodes
+          std::vector<int> prevActiveNodesIdx(prevLayer.getNumNodes());
+          for (size_t nodeIdx = 0; nodeIdx < prevActiveNodesIdx.size(); ++nodeIdx) {
+            prevActiveNodesIdx[nodeIdx] = nodeIdx;
+          }
+
+          node.backPropagate(prevLayer.getNodes(), prevActiveNodesIdx, tmpLR,
                              batchIdx);
         } else {
           node.backPropagateFirstLayer(data, tmpLR, batchIdx);

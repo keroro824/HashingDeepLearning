@@ -77,6 +77,12 @@ public:
     assert(startIdx + size <= vec.size());
   }
 
+  virtual const T &at(size_t idx) const {
+    assert(_ptrConst);
+    assert(idx < SubVectorConst<T>::_size);
+    return _ptrConst[idx];
+  }
+
   virtual const T &operator[](size_t idx) const {
     assert(_ptrConst);
     assert(idx < SubVectorConst<T>::_size);
@@ -97,6 +103,12 @@ public:
 
   SubVector(std::vector<T> &vec, size_t startIdx, size_t size)
       : SubVectorConst<T>(vec, startIdx, size), _ptr(vec.data() + startIdx) {}
+
+  virtual T &at(size_t idx) {
+    assert(_ptr);
+    assert(idx < SubVectorConst<T>::_size);
+    return _ptr[idx];
+  }
 
   const T &operator[](size_t idx) const { // shouldn't need this
     return SubVectorConst<T>::operator[](idx);
