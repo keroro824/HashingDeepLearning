@@ -123,7 +123,7 @@ float Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
 
   Vec3d<int> activeNodesPerBatch(_currentBatchSize); // batch, layer, node
   Vec3d<float> activeValuesPerBatch(_currentBatchSize);
-#pragma omp parallel for //num_threads(1)
+#pragma omp parallel for num_threads(1)
   for (int i = 0; i < _currentBatchSize; i++) {
     Vec2d<int> &activenodesperlayer = activeNodesPerBatch[i];
     activenodesperlayer.resize(_numberOfLayers + 1);
@@ -152,6 +152,8 @@ float Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
       Layer *layer = _hiddenlayers[j];
       Layer *prev_layer = _hiddenlayers[j - 1];
 
+      //cerr << "i=" << i << " j=" << j << endl;
+      //Print("activeNodesPerBatch[i][j + 1]", activeNodesPerBatch[i][j + 1]);
       // nodes
       for (int k = 0; k < activeNodesPerBatch[i][j + 1].size(); k++) {
         Node &node = layer->getNodebyID(activeNodesPerBatch[i][j + 1][k]);
