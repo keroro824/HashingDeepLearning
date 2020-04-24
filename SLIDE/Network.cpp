@@ -62,21 +62,19 @@ int Network::predictClass(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
   for (int i = 0; i < _currentBatchSize; i++) {
     Vec2d<int> activenodesperlayer(_numberOfLayers + 1);
     Vec2d<float> activeValuesperlayer(_numberOfLayers + 1);
-    std::vector<int> sizes(_numberOfLayers + 1);
 
     activenodesperlayer[0] = inputIndices[i];
     activeValuesperlayer[0] = inputValues[i];
-    sizes[0] = inputIndices[i].size();
 
     // inference
     for (int j = 0; j < _numberOfLayers; j++) {
       _hiddenlayers[j]->queryActiveNodeandComputeActivations(
-          activenodesperlayer, activeValuesperlayer, sizes, i, labels[i],
+          activenodesperlayer, activeValuesperlayer, i, labels[i],
           _Sparsity.at(_numberOfLayers + j), -1, false);
     }
 
     // compute softmax
-    int noOfClasses = sizes[_numberOfLayers];
+    int noOfClasses = activenodesperlayer[_numberOfLayers].size();
     float max_act = -222222222;
     int predict_class = -1;
     for (int k = 0; k < noOfClasses; k++) {
@@ -125,8 +123,7 @@ float Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
 
   Vec3d<int> activeNodesPerBatch(_currentBatchSize); // batch, layer, node
   Vec3d<float> activeValuesPerBatch(_currentBatchSize);
-  Vec2d<int> sizesPerBatch(_currentBatchSize);
-#pragma omp parallel for num_threads(1)
+#pragma omp parallel for //num_threads(1)
   for (int i = 0; i < _currentBatchSize; i++) {
     Vec2d<int> &activenodesperlayer = activeNodesPerBatch[i];
     activenodesperlayer.resize(_numberOfLayers + 1);
@@ -134,13 +131,9 @@ float Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
     Vec2d<float> &activeValuesperlayer = activeValuesPerBatch[i];
     activeValuesperlayer.resize(_numberOfLayers + 1);
 
-    std::vector<int> &sizes = sizesPerBatch[i];
-    sizes.resize(_numberOfLayers + 1);
-
     activenodesperlayer[0] =
         inputIndices[i]; // inputs parsed from training data file
     activeValuesperlayer[0] = inputValues[i];
-    sizes[0] = inputIndices[i].size();
     int in;
     // auto t1 = std::chrono::high_resolution_clock::now();
     for (int j = 0; j < _numberOfLayers; j++) {
@@ -148,7 +141,7 @@ float Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
       // layer.Reset();
 
       in = _hiddenlayers[j]->queryActiveNodeandComputeActivations(
-          activenodesperlayer, activeValuesperlayer, sizes, i, labels[i],
+          activenodesperlayer, activeValuesperlayer, i, labels[i],
           _Sparsity.at(j), iter * _currentBatchSize + i, true);
       avg_retrieval[j] += in;
     }
@@ -158,16 +151,9 @@ float Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
     for (int j = _numberOfLayers - 1; j >= 0; j--) {
       Layer *layer = _hiddenlayers[j];
       Layer *prev_layer = _hiddenlayers[j - 1];
-      cerr << "i=" << i << " j=" << j << endl;
-      cerr << "layer=" << layer << endl;
-      cerr << "prev_layer=" << prev_layer << endl;
-      cerr << "sizesPerBatch[i][j + 1]=" << sizesPerBatch[i][j + 1] << endl;
-
-      const std::vector<int> &v = activeNodesPerBatch[i][j + 1];
-      Print("activeNodesPerBatch[i][j + 1]=", v);
 
       // nodes
-      for (int k = 0; k < sizesPerBatch[i][j + 1]; k++) {
+      for (int k = 0; k < activeNodesPerBatch[i][j + 1].size(); k++) {
         Node &node = layer->getNodebyID(activeNodesPerBatch[i][j + 1][k]);
         if (j == _numberOfLayers - 1) {
           // TODO: Compute Extra stats: labels[i];
@@ -176,7 +162,7 @@ float Network::ProcessInput(Vec2d<int> &inputIndices, Vec2d<float> &inputValues,
         }
         if (j != 0) {
           node.backPropagate(prev_layer->getAllNodes(),
-                             activeNodesPerBatch[i][j], sizesPerBatch[i][j],
+                             activeNodesPerBatch[i][j], activeNodesPerBatch[i][j].size(),
                              tmplr, i);
         } else {
           node.backPropagateFirstLayer(inputIndices[i], inputValues[i],

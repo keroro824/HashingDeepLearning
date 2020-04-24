@@ -82,7 +82,6 @@ if (ADAM){
                      _train_array);
     addtoHashTable(_Nodes[i].weights(), _Nodes[i].bias(), i);
   }
-  cerr << "_Nodes=" << _Nodes.size() << endl;
 
   auto t2 = std::chrono::high_resolution_clock::now();
   auto timeDiffInMiliseconds =
@@ -198,8 +197,7 @@ float collision(int *hashes, int *table_hashes, int k, int l) {
 }
 
 int Layer::queryActiveNodeandComputeActivations(
-    Vec2d<int> &activenodesperlayer, Vec2d<float> &activeValuesperlayer,
-    std::vector<int> &lengths, int inputID, const std::vector<int> &label,
+    Vec2d<int> &activenodesperlayer, Vec2d<float> &activeValuesperlayer, int inputID, const std::vector<int> &label,
     float Sparsity, int iter, bool train) {
   // LSH QueryLogic
   // Beidi. Query out all the candidate nodes
@@ -208,7 +206,6 @@ int Layer::queryActiveNodeandComputeActivations(
 
   if (Sparsity == 1.0) {
     len = _noOfNodes;
-    lengths[_layerID + 1] = len;
     activenodesperlayer[_layerID + 1].resize(len); // assuming not intitialized;
     for (int i = 0; i < len; i++) {
       activenodesperlayer[_layerID + 1][i] = i;
@@ -265,7 +262,6 @@ int Layer::queryActiveNodeandComputeActivations(
       }
 
       len = vect.size();
-      lengths[_layerID + 1] = len;
       activenodesperlayer[_layerID + 1].resize(len);
 
       for (int i = 0; i < len; i++) {
@@ -339,7 +335,6 @@ int Layer::queryActiveNodeandComputeActivations(
       }
 
       len = counts.size();
-      lengths[_layerID + 1] = len;
       activenodesperlayer[_layerID + 1].resize(len);
 
       // copy map into new array
@@ -350,7 +345,6 @@ int Layer::queryActiveNodeandComputeActivations(
       }
     } else if (Mode == 2 & _type == NodeType::Softmax) {
       len = floor(_noOfNodes * Sparsity);
-      lengths[_layerID + 1] = len;
       activenodesperlayer[_layerID + 1].resize(len);
 
       auto t1 = std::chrono::high_resolution_clock::now();
@@ -383,7 +377,6 @@ int Layer::queryActiveNodeandComputeActivations(
 
     else if (Mode == 3 & _type == NodeType::Softmax) {
       len = floor(_noOfNodes * Sparsity);
-      lengths[_layerID + 1] = len;
       activenodesperlayer[_layerID + 1].resize(len);
       vector<pair<float, int>> sortW;
       int what = 0;
@@ -391,7 +384,7 @@ int Layer::queryActiveNodeandComputeActivations(
       for (size_t s = 0; s < _noOfNodes; s++) {
         float tmp = innerproduct(activenodesperlayer[_layerID].data(),
                                  activeValuesperlayer[_layerID].data(),
-                                 lengths[_layerID], _Nodes[s].weights().data());
+          activenodesperlayer[_layerID].size(), _Nodes[s].weights().data());
         tmp += _Nodes[s].bias();
         if (find(label.begin(), label.end(), s) != label.end()) {
           sortW.push_back(make_pair(-1000000000, s));
@@ -425,7 +418,7 @@ int Layer::queryActiveNodeandComputeActivations(
     activeValuesperlayer[_layerID + 1][i] =
         _Nodes[activenodesperlayer[_layerID + 1][i]].getActivation(
             activenodesperlayer[_layerID], activeValuesperlayer[_layerID],
-            lengths[_layerID], inputID);
+          activenodesperlayer[_layerID].size(), inputID);
     if (_type == NodeType::Softmax &&
         activeValuesperlayer[_layerID + 1][i] > maxValue) {
       maxValue = activeValuesperlayer[_layerID + 1][i];
