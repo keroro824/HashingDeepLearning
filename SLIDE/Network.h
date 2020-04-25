@@ -14,8 +14,6 @@ private:
   const std::vector<float> _Sparsity;
   const int _currentBatchSize;
 
-  void PrintNumberActive(const std::string &str) const;
-
 public:
   Network() = delete;
   Network(const std::vector<int> &sizesOfLayers,

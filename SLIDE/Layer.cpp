@@ -468,9 +468,3 @@ Layer::~Layer() {
   delete _MinHasher;
 }
 
-void Layer::Reset() {
-  for (size_t i = 0; i < _Nodes.size(); ++i) {
-    Node &node = _Nodes[i];
-    node.Reset();
-  }
-}
