@@ -1,4 +1,5 @@
 #include "Node.h"
+#include "../Config.h"
 #include <cassert>
 #include <iostream>
 #include <stddef.h>
@@ -25,7 +26,7 @@ float Node::computeActivation(const std::vector<float> &dataIn) const {
 }
 
 void Node::backPropagate(std::vector<Node> &prevNodes,
-                         const std::vector<int> &prevActiveNodesIdx, float tmpLR,
+                         const std::vector<int> &prevActiveNodesIdx, float learningRate,
                          size_t batchIdx) {
   Train &train = _train.at(batchIdx);
   assert(("Input Not Active but still called !! BUG",
@@ -40,12 +41,27 @@ void Node::backPropagate(std::vector<Node> &prevNodes,
 
     float grad_t = train._lastDeltaforBPs * prevNode.getLastActivation(batchIdx);
 
+    if (ADAM) {
+      _t[prevActiveNodeIdx] += grad_t;
+    }
+    else {
+      assert(false);
+      //_mirrorWeights[prevActiveNodeIdx] += learningRate * grad_t;
+    }
+  }
 
+  if (ADAM) {
+    float biasgrad_t = _train[batchIdx]._lastDeltaforBPs;
+    float biasgrad_tsq = biasgrad_t * biasgrad_t;
+    _tbias += biasgrad_t;
+  }
+  else {
+    _mirrorbias += learningRate * _train[batchIdx]._lastDeltaforBPs;
   }
 
 }
 
-void Node::backPropagateFirstLayer(const Vec2d<float> &data, float tmpLR,
+void Node::backPropagateFirstLayer(const Vec2d<float> &data, float learningRate,
                                    size_t batchIdx) {}
 
 void Node::incrementDelta(int batchIdx, float incrValue)
