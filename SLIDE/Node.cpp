@@ -186,3 +186,7 @@ float Node::purturbWeight(int weightid, float delta) {
 float Node::getGradient(int weightid, int inputID, float InputVal) {
   return -_train[inputID]._lastDeltaforBPs * InputVal;
 }
+
+const Train &Node::getTrain(size_t idx) const { 
+  return _train[idx];
+}
