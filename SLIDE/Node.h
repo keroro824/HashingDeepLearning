@@ -5,6 +5,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <vector>
+#include <mutex>
 
 enum NodeType { ReLU, Softmax };
 
@@ -29,8 +30,14 @@ private:
   float _mirrorbias = 0; // not adam
 
   std::vector<float> _t; // for adam
+  //std::mutex *_mutex;
+
+  Train &getTrain(size_t idx);
 
 public:
+  Node();
+  ~Node();
+
   const size_t &dim() const { return _dim; }
 
   const SubVector<float> &weights() const { return _weights; }
@@ -51,7 +58,6 @@ public:
   void setT(size_t idx, float val) { _t[idx] = val; }
 
   ////////////////////
-  Node(){};
   void Update(int dim, int nodeID, int layerID, NodeType type, int batchsize,
               std::vector<float> &allWeights, float bias,
               std::vector<float> &allAdamAvgMom,
@@ -70,7 +76,6 @@ public:
   void backPropagateFirstLayer(const std::vector<int> &nnzindices,
                                const std::vector<float> &nnzvalues,
                                float learningRate, int inputID);
-  ~Node();
 
   // only for debugging
   float purturbWeight(int weightid, float delta);

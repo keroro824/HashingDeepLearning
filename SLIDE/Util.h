@@ -164,6 +164,7 @@ struct Train {
   bool _ActiveinputIds;
 };
 
+//typedef std::unordered_map<size_t, Train> BatchTrain;
 typedef std::vector<Train> BatchTrain;
 
 ///////////////////////////////////////////////////////

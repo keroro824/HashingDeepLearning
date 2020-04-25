@@ -9,6 +9,14 @@
 
 using namespace std;
 
+Node::Node() {
+  //_mutex = new std::mutex();
+}
+
+Node::~Node() {
+  //delete _mutex;
+}
+
 void Node::Update(int dim, int nodeID, int layerID, NodeType type,
                   int batchsize, std::vector<float> &allWeights, float bias,
                   std::vector<float> &allAdamAvgMom,
@@ -34,16 +42,16 @@ void Node::Update(int dim, int nodeID, int layerID, NodeType type,
 }
 
 float Node::getLastActivation(int inputID) const {
-  if (!_train[inputID]._ActiveinputIds)
+  if (!getTrain(inputID)._ActiveinputIds)
     return 0.0;
-  return _train[inputID]._lastActivations;
+  return getTrain(inputID)._lastActivations;
 }
 
 void Node::incrementDelta(int inputID, float incrementValue) {
   assert(("Input Not Active but still called !! BUG",
-          _train[inputID]._ActiveinputIds));
-  if (_train[inputID]._lastActivations > 0)
-    _train[inputID]._lastDeltaforBPs += incrementValue;
+    getTrain(inputID)._ActiveinputIds));
+  if (getTrain(inputID)._lastActivations > 0)
+    getTrain(inputID)._lastDeltaforBPs += incrementValue;
 }
 
 float Node::getActivation(const std::vector<int> &indices,
@@ -53,26 +61,26 @@ float Node::getActivation(const std::vector<int> &indices,
 
   // FUTURE TODO: shrink batchsize and check if input is alread active then
   // ignore and ensure backpopagation is ignored too.
-  if (!_train[inputID]._ActiveinputIds) {
-    _train[inputID]._ActiveinputIds = true; // activate input
+  if (!getTrain(inputID)._ActiveinputIds) {
+    getTrain(inputID)._ActiveinputIds = true; // activate input
     _activeInputs++;
   }
 
-  _train[inputID]._lastActivations = 0;
+  getTrain(inputID)._lastActivations = 0;
   for (int i = 0; i < length; i++) {
-    _train[inputID]._lastActivations += _weights[indices[i]] * values[i];
+    getTrain(inputID)._lastActivations += _weights[indices[i]] * values[i];
   }
-  _train[inputID]._lastActivations += _bias;
+  getTrain(inputID)._lastActivations += _bias;
 
   switch (_type) {
   case NodeType::ReLU:
-    if (_train[inputID]._lastActivations < 0) {
-      _train[inputID]._lastActivations = 0;
-      _train[inputID]._lastGradients = 1;
-      _train[inputID]._lastDeltaforBPs = 0;
+    if (getTrain(inputID)._lastActivations < 0) {
+      getTrain(inputID)._lastActivations = 0;
+      getTrain(inputID)._lastGradients = 1;
+      getTrain(inputID)._lastDeltaforBPs = 0;
 
     } else {
-      _train[inputID]._lastGradients = 0;
+      getTrain(inputID)._lastGradients = 0;
     }
     break;
   case NodeType::Softmax:
@@ -83,25 +91,25 @@ float Node::getActivation(const std::vector<int> &indices,
     break;
   }
 
-  return _train[inputID]._lastActivations;
+  return getTrain(inputID)._lastActivations;
 }
 
 void Node::ComputeExtaStatsForSoftMax(float normalizationConstant, int inputID,
                                       const std::vector<int> &label) {
   assert(("Input Not Active but still called !! BUG",
-          _train[inputID]._ActiveinputIds));
+          getTrain(inputID)._ActiveinputIds));
 
-  _train[inputID]._lastActivations /= normalizationConstant + 0.0000001;
+  getTrain(inputID)._lastActivations /= normalizationConstant + 0.0000001;
 
   // TODO:check  gradient
-  _train[inputID]._lastGradients = 1;
+  getTrain(inputID)._lastGradients = 1;
   if (find(label.begin(), label.end(), _IDinLayer) != label.end()) {
-    _train[inputID]._lastDeltaforBPs =
-        (1.0 / label.size() - _train[inputID]._lastActivations) /
+    getTrain(inputID)._lastDeltaforBPs =
+        (1.0 / label.size() - getTrain(inputID)._lastActivations) /
         _currentBatchsize;
   } else {
-    _train[inputID]._lastDeltaforBPs =
-        (-_train[inputID]._lastActivations) / _currentBatchsize;
+    getTrain(inputID)._lastDeltaforBPs =
+        (-getTrain(inputID)._lastActivations) / _currentBatchsize;
   }
 }
 
@@ -110,16 +118,16 @@ void Node::backPropagate(std::vector<Node> &previousNodes,
                          float learningRate,
                          int inputID) {
   assert(("Input Not Active but still called !! BUG",
-          _train[inputID]._ActiveinputIds));
+          getTrain(inputID)._ActiveinputIds));
   for (int i = 0; i < previousLayerActiveNodeIds.size(); i++) {
     // UpdateDelta before updating weights
     Node &prev_node = previousNodes[previousLayerActiveNodeIds[i]];
     prev_node.incrementDelta(inputID,
-                             _train[inputID]._lastDeltaforBPs *
+                             getTrain(inputID)._lastDeltaforBPs *
                                  _weights[previousLayerActiveNodeIds[i]]);
 
     float grad_t =
-        _train[inputID]._lastDeltaforBPs * prev_node.getLastActivation(inputID);
+        getTrain(inputID)._lastDeltaforBPs * prev_node.getLastActivation(inputID);
 
     if (ADAM) {
       _t[previousLayerActiveNodeIds[i]] += grad_t;
@@ -129,16 +137,16 @@ void Node::backPropagate(std::vector<Node> &previousNodes,
   }
 
   if (ADAM) {
-    float biasgrad_t = _train[inputID]._lastDeltaforBPs;
+    float biasgrad_t = getTrain(inputID)._lastDeltaforBPs;
     float biasgrad_tsq = biasgrad_t * biasgrad_t;
     _tbias += biasgrad_t;
   } else {
-    _mirrorbias += learningRate * _train[inputID]._lastDeltaforBPs;
+    _mirrorbias += learningRate * getTrain(inputID)._lastDeltaforBPs;
   }
 
-  _train[inputID]._ActiveinputIds = false;
-  _train[inputID]._lastDeltaforBPs = 0;
-  _train[inputID]._lastActivations = 0;
+  getTrain(inputID)._ActiveinputIds = false;
+  getTrain(inputID)._lastDeltaforBPs = 0;
+  getTrain(inputID)._lastActivations = 0;
   _activeInputs--;
 }
 
@@ -146,9 +154,9 @@ void Node::backPropagateFirstLayer(const std::vector<int> &nnzindices,
                                    const std::vector<float> &nnzvalues,
                                    float learningRate, int inputID) {
   assert(("Input Not Active but still called !! BUG",
-          _train[inputID]._ActiveinputIds));
+          getTrain(inputID)._ActiveinputIds));
   for (int i = 0; i < nnzindices.size(); i++) {
-    float grad_t = _train[inputID]._lastDeltaforBPs * nnzvalues[i];
+    float grad_t = getTrain(inputID)._lastDeltaforBPs * nnzvalues[i];
     float grad_tsq = grad_t * grad_t;
     if (ADAM) {
       _t[nnzindices[i]] += grad_t;
@@ -158,24 +166,22 @@ void Node::backPropagateFirstLayer(const std::vector<int> &nnzindices,
   }
 
   if (ADAM) {
-    float biasgrad_t = _train[inputID]._lastDeltaforBPs;
+    float biasgrad_t = getTrain(inputID)._lastDeltaforBPs;
     float biasgrad_tsq = biasgrad_t * biasgrad_t;
     _tbias += biasgrad_t;
   } else {
-    _mirrorbias += learningRate * _train[inputID]._lastDeltaforBPs;
+    _mirrorbias += learningRate * getTrain(inputID)._lastDeltaforBPs;
   }
 
-  _train[inputID]._ActiveinputIds = false; // deactivate inputIDs
-  _train[inputID]._lastDeltaforBPs = 0;
-  _train[inputID]._lastActivations = 0;
+  getTrain(inputID)._ActiveinputIds = false; // deactivate inputIDs
+  getTrain(inputID)._lastDeltaforBPs = 0;
+  getTrain(inputID)._lastActivations = 0;
   _activeInputs--;
 }
 
 void Node::SetlastActivation(int inputID, float realActivation) {
-  _train[inputID]._lastActivations = realActivation;
+  getTrain(inputID)._lastActivations = realActivation;
 }
-
-Node::~Node() {}
 
 // for debugging gradients.
 float Node::purturbWeight(int weightid, float delta) {
@@ -184,9 +190,20 @@ float Node::purturbWeight(int weightid, float delta) {
 }
 
 float Node::getGradient(int weightid, int inputID, float InputVal) {
-  return -_train[inputID]._lastDeltaforBPs * InputVal;
+  return -getTrain(inputID)._lastDeltaforBPs * InputVal;
 }
 
 const Train &Node::getTrain(size_t idx) const { 
+  //std::lock_guard<std::mutex> guard(*_mutex);
+  return _train[idx];
+  /*
+  BatchTrain::const_iterator iter = _train.find(idx);
+  assert(iter != _train.end());
+  return iter->second;
+  */
+}
+
+Train &Node::getTrain(size_t idx) {
+  //std::lock_guard<std::mutex> guard(*_mutex);
   return _train[idx];
 }

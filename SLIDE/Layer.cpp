@@ -73,7 +73,7 @@ if (ADAM){
   auto t1 = std::chrono::high_resolution_clock::now();
 
   // create nodes for this layer
-#pragma omp parallel for // num_threads(1)
+#pragma omp parallel for //num_threads(1)
   for (size_t i = 0; i < noOfNodes; i++) {
     _Nodes[i].Update(previousLayerNumOfNodes, i, _layerID, type, batchsize,
                      _weights, _bias[i], _adamAvgMom, _adamAvgVel);
