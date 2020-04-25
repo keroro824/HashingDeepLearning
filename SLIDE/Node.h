@@ -8,18 +8,11 @@
 
 enum NodeType { ReLU, Softmax };
 
-struct Train {
-  float _lastDeltaforBPs;
-  float _lastActivations;
-  float _lastGradients;
-  bool _ActiveinputIds;
-};
-
 class Node {
 private:
   int _activeInputs;
   NodeType _type;
-  std::vector<Train> _train;
+  BatchTrain _train;
   int _currentBatchsize;
   size_t _layerNum, _IDinLayer;
   size_t _dim;
@@ -83,5 +76,6 @@ public:
   float purturbWeight(int weightid, float delta);
   float getGradient(int weightid, int inputID, float InputVal);
 
-  const Train &getTrain(size_t idx) const { return _train[idx]; }
+  const Train &getTrain(size_t idx) const;
 };
+
