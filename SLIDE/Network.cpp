@@ -247,6 +247,7 @@ int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths,
                 tmp->_adamAvgVelbias = BETA2 * tmp->_adamAvgVelbias + (1 - BETA2) * tmp->_tbias * tmp->_tbias;
                 tmp->_bias += ratio*tmplr * tmp->_adamAvgMombias / (sqrt(tmp->_adamAvgVelbias) + EPS);
                 tmp->_tbias = 0;
+                std::copy(local_weights, local_weights + dim, tmp->_weights);
             }
             else
             {
@@ -273,7 +274,7 @@ int Network::ProcessInput(int **inputIndices, float **inputValues, int *lengths,
                 delete[] bucketIndices;
             }
 
-            std::copy(local_weights, local_weights + dim, tmp->_weights);
+
             delete[] local_weights;
         }
     }
