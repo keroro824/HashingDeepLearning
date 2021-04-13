@@ -2,6 +2,8 @@
 
 The SLIDE package contains the source code for reproducing the main experiments in this [paper](https://arxiv.org/abs/1903.03129).
 
+For Optimized Code on CPUs (with AVX, BFloat and other memory optimization) from the newer [paper](https://proceedings.mlsys.org/paper/2021/file/3636638817772e42b59d74cff571fbb3-Paper.pdf) please refer [here](https://github.com/RUSH-LAB/SLIDE) 
+
 ## Dataset
 
 The Datasets can be downloaded in [Amazon-670K](https://drive.google.com/open?id=0B3lPMIHmG6vGdUJwRzltS1dvUVk). Note that the data is sorted by labels so please shuffle at least the validation/testing data.
