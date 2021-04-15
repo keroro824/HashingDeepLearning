@@ -81,7 +81,7 @@ public:
 	float* _adamAvgVel;
 	float* _t; //for adam
 	int* _update;
-	float _bias =0;
+	float *_bias = NULL;
 	float _tbias = 0;
 	float _adamAvgMombias=0;
 	float _adamAvgVelbias=0;
@@ -89,7 +89,7 @@ public:
 
 	Node(){};
 	Node(int dim, int nodeID, int layerID, NodeType type, int batchsize, float *weights, float bias, float *adamAvgMom, float *adamAvgVel);
-	void Update(int dim, int nodeID, int layerID, NodeType type, int batchsize, float *weights, float bias, float *adamAvgMom, float *adamAvgVel, train* train_blob);
+	void Update(int dim, int nodeID, int layerID, NodeType type, int batchsize, float *weights, float &bias, float *adamAvgMom, float *adamAvgVel, train* train_blob);
 	void updateWeights(float* newWeights, float newbias);
 	float getLastActivation(int inputID);
 	void incrementDelta(int inputID, float incrementValue);
